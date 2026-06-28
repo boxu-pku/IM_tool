@@ -510,6 +510,9 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
         for mid, mat in self.materials.items():
             if not self._mat_visible.get(mid, True):
                 continue
+            # 防御：参考曲线等可能缺失 up 或 p（如只有 P-T 的参考曲线），跳过避免崩溃
+            if mat.up is None or mat.p is None or len(mat.up) == 0 or len(mat.up) != len(mat.p):
+                continue
             color = self._material_color_map[mid]
             material_colors[mid] = color
 
@@ -929,39 +932,42 @@ class EOSPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
                     del self._material_color_map[old_mid]
 
             for mid, mat in materials.items():
-                if mat.compression is not None and len(mat.compression) > 0:
-                    color = self._material_color_map[mid]
-                    label = mat.name
-                    if "_" in mid:
-                        source = mid.split("_", 1)[1] if len(mid.split("_")) > 1 else ""
-                        if source and source not in label.lower():
-                            label = f"{mat.name} ({source})"
+                # 防御：compression 和 p 都要存在且长度一致；参考曲线可能缺这两列
+                if (mat.compression is None or len(mat.compression) == 0
+                        or mat.p is None or len(mat.p) != len(mat.compression)):
+                    continue
+                color = self._material_color_map[mid]
+                label = mat.name
+                if "_" in mid:
+                    source = mid.split("_", 1)[1] if len(mid.split("_")) > 1 else ""
+                    if source and source not in label.lower():
+                        label = f"{mat.name} ({source})"
 
-                    # 选中状态：加粗线条
-                    element_id = f"mat_{mid}"
-                    is_selected = (self._selected_element_id == element_id)
+                # 选中状态：加粗线条
+                element_id = f"mat_{mid}"
+                is_selected = (self._selected_element_id == element_id)
 
-                    style_dict = self._element_meta.get(element_id, {}).get(
-                        "style",
-                        ElementStyle(TYPE_MATERIAL, color=color, linewidth=1.2,
-                                     alpha=0.6).to_dict()
-                    )
-                    line_color = style_dict.get("color", color)
-                    lw = style_dict.get("linewidth", 1.2)
-                    ls = style_dict.get("linestyle") or "-"
-                    if is_selected:
-                        lw *= 1.5
+                style_dict = self._element_meta.get(element_id, {}).get(
+                    "style",
+                    ElementStyle(TYPE_MATERIAL, color=color, linewidth=1.2,
+                                 alpha=0.6).to_dict()
+                )
+                line_color = style_dict.get("color", color)
+                lw = style_dict.get("linewidth", 1.2)
+                ls = style_dict.get("linestyle") or "-"
+                if is_selected:
+                    lw *= 1.5
 
-                    line, = self.ax.plot(mat.compression, mat.p, color=line_color,
-                                         linewidth=lw, linestyle=ls,
-                                         label=label, alpha=style_dict.get("alpha") or 0.6,
-                                         picker=10, pickradius=15, zorder=1)
-                    # 注册到交互模型（Edit Style / Change Color 可用）
-                    self._register_artist(
-                        line, element_id, TYPE_MATERIAL, style_dict,
-                        data_id=mid, zorder=1, picker=10, pickradius=15,
-                    )
-                    has_content = True
+                line, = self.ax.plot(mat.compression, mat.p, color=line_color,
+                                     linewidth=lw, linestyle=ls,
+                                     label=label, alpha=style_dict.get("alpha") or 0.6,
+                                     picker=10, pickradius=15, zorder=1)
+                # 注册到交互模型（Edit Style / Change Color 可用）
+                self._register_artist(
+                    line, element_id, TYPE_MATERIAL, style_dict,
+                    data_id=mid, zorder=1, picker=10, pickradius=15,
+                )
+                has_content = True
 
         # Plot scatter points via shared helper（注册到交互模型）
         if scatter_points:

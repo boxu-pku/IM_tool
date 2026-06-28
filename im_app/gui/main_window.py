@@ -718,7 +718,7 @@ class MainWindow(QMainWindow):
             defaults = PLOT_DEFAULTS[key]
             settings["xlim"] = defaults[0]
             settings["ylim"] = defaults[1]
-            settings["show_legend"] = False
+            settings["show_legend"] = True   # 默认显示图例（之前误设 False 致使切 tab 后 legend 消失）
         if hasattr(self, '_sync_plot_settings_to_ui'):
             self._sync_plot_settings_to_ui()
 

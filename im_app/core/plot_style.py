@@ -29,7 +29,7 @@ PRL_FIGSIZE_DOUBLE = (6.75, 6.75 * 0.5)      # PRL double-column width
 # 字体大小（pt）—— 改这里就能全局调整。
 # Mac 上字体渲染比 Windows 略大，若觉得 legend / 标签偏大可整体下调。
 # ---------------------------------------------------------------------------
-LEGEND_FONTSIZE    = 12   # 图例字号（被 plotter.py 的 ax.legend() 引用）
+LEGEND_FONTSIZE    = 14   # 图例字号（被 plotter.py 的 ax.legend() 引用）
 BASE_FONTSIZE      = 18   # 全局基础字号
 TICK_LABELSIZE     = 16   # 坐标轴刻度数字
 AXES_LABELSIZE     = 20   # 坐标轴标签（如 "Up (km/s)"）
