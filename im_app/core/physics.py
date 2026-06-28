@@ -127,6 +127,11 @@ class Intersection:
     type: str
     material_id: Optional[str] = None
     compression_ratio: Optional[float] = None
+    # 自适应刷新用的源曲线数据 ID（display name 在 curve1_id/curve2_id）。
+    # 老 workflow JSON 加载时为 None，这些 ix 不参与自动刷新，需手动重 Find。
+    source_curve1_id: Optional[str] = None
+    source_curve2_id: Optional[str] = None
+    ignore_first_at_creation: bool = True
 
 
 # ---------------------------------------------------------------------------

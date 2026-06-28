@@ -45,6 +45,15 @@ class IntersectionPanel(QWidget):
         find_grp = QGroupBox("Find Intersection")
         find_layout = QVBoxLayout(find_grp)
 
+        # 自适应刷新开关：Rayleigh / 反射线变化时自动重算依赖它们的交点。
+        self.auto_update_check = QCheckBox("Auto-update intersections when curves change")
+        self.auto_update_check.setChecked(True)
+        self.auto_update_check.setToolTip(
+            "勾选时，修改 Rayleigh 线 D / ρ₀ 或删除曲线后，已有交点会自动重算。\n"
+            "关闭则恢复旧行为：交点画上去后位置冻结，需手动 Find Intersection。"
+        )
+        find_layout.addWidget(self.auto_update_check)
+
         # Curve selection
         curve_row = QHBoxLayout()
         curve_row.addWidget(QLabel("Curve 1:"))
@@ -215,6 +224,10 @@ class IntersectionPanel(QWidget):
     def clear(self):
         """清空交点表（用于 material refresh 全局重置）。"""
         self.set_intersections([], {})
+
+    def is_auto_update_enabled(self) -> bool:
+        """自适应刷新是否开启（默认 True）。"""
+        return self.auto_update_check.isChecked()
 
     def update_rayleigh_lines(self, rayleigh_lines: dict):
         """Update available Rayleigh lines."""

@@ -69,11 +69,21 @@ class RayleighPanel(QWidget):
 
         self.add_btn = QPushButton("Add Rayleigh Line")
         self.add_btn.clicked.connect(self._add_line)
-        vbox.addWidget(self.add_btn)
+
+        # 「Update Selected」：原位修改当前选中 Rayleigh 线的 D / ρ₀
+        self.update_btn = QPushButton("Update Selected")
+        self.update_btn.clicked.connect(self._update_selected)
+
+        btn_row = QHBoxLayout()
+        btn_row.addWidget(self.add_btn)
+        btn_row.addWidget(self.update_btn)
+        vbox.addLayout(btn_row)
 
         # List of added lines
         self.line_list = QListWidget()
         self.line_list.itemChanged.connect(self._on_visibility_changed)
+        # 选中列表项时，回填 D / ρ₀ / 名称到上面的输入框，便于原位修改
+        self.line_list.itemSelectionChanged.connect(self._on_list_selection_changed)
         vbox.addWidget(self.line_list)
 
         self.remove_btn = QPushButton("Remove Selected")
@@ -158,6 +168,67 @@ class RayleighPanel(QWidget):
         rl_id = current.data(Qt.UserRole)
         self._lines.pop(rl_id, None)
         self.line_list.takeItem(self.line_list.row(current))
+        self.rayleigh_changed.emit()
+
+    def _on_list_selection_changed(self):
+        """选中列表项时把 D / ρ₀ / 名称回填到输入框，方便原位编辑。"""
+        current = self.line_list.currentItem()
+        if current is None:
+            return
+        rl_id = current.data(Qt.UserRole)
+        rl = self._lines.get(rl_id)
+        if rl is None:
+            return
+
+        # blockSignals 防止 setValue 触发 _on_material_selected 改写 rho0
+        self.D_spin.blockSignals(True)
+        self.rho0_spin.blockSignals(True)
+        self.D_spin.setValue(rl.D)
+        self.rho0_spin.setValue(rl.rho0)
+        self.D_spin.blockSignals(False)
+        self.rho0_spin.blockSignals(False)
+
+        # 还原 material 名称：命中预设就选中对应项，否则把保存的 material_id
+        # （可能是用户自定义文本）作为 edit text 还原。
+        combo = self.custom_name_edit
+        idx = combo.findData(rl.material_id)
+        if idx >= 0:
+            combo.setCurrentIndex(idx)
+        else:
+            combo.setEditText(rl.material_id)
+
+    def _update_selected(self):
+        """原位修改当前选中 Rayleigh 线的 D / ρ₀；交点会通过自适应刷新跟随。"""
+        current = self.line_list.currentItem()
+        if current is None:
+            return
+        rl_id = current.data(Qt.UserRole)
+        rl = self._lines.get(rl_id)
+        if rl is None:
+            return
+
+        D = self.D_spin.value()
+        rho0 = self.rho0_spin.value()
+
+        # 名称可能也被改了，同步更新 material_id（命中预设就关联；否则当自定义文本）
+        custom_name = self.custom_name_edit.lineEdit().text().strip()
+        if custom_name:
+            matched_idx = self.custom_name_edit.findText(custom_name, Qt.MatchExactly)
+            mat_id = self.custom_name_edit.itemData(matched_idx) if matched_idx >= 0 else None
+            new_material_id = mat_id if mat_id else custom_name
+            rl.material_id = new_material_id
+            # 列表项展示名也跟着改
+            current.setText(f"{custom_name}: D={D:.2f} km/s, rho0={rho0:.2f}")
+        else:
+            # 没有名字就保留旧名
+            current.setText(f"{rl.material_id}: D={D:.2f} km/s, rho0={rho0:.2f}")
+
+        # 原位重算 Rayleigh line
+        rl.D = D
+        rl.rho0 = rho0
+        rl.up = np.linspace(0, 40, 500)
+        rl.p = rayleigh_line(rl.up, rho0, D)
+
         self.rayleigh_changed.emit()
 
     def _on_visibility_changed(self, item: QListWidgetItem):

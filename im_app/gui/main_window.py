@@ -731,6 +731,224 @@ class MainWindow(QMainWindow):
         self.hugoniot_plot.refresh()
         self.intersection_panel.update_rayleigh_lines(self.hugoniot_plot.rayleigh_lines)
         self._update_status()
+        # 自适应刷新：依赖 Rayleigh 的交点 / 反射线跟随移动
+        if self.intersection_panel.is_auto_update_enabled():
+            self._auto_refresh_intersections()
+
+    def _resolve_curve_data(self, curve_id):
+        """根据数据 ID 找 (up, p) 数组。
+
+        顺序：可见 material → 已加载但隐藏的 material → 全部 Rayleigh（含未显示）→ 反射曲线。
+        找不到返回 (None, None)。
+        """
+        if curve_id is None:
+            return None, None
+        if curve_id in self.hugoniot_plot.materials:
+            mat = self.hugoniot_plot.materials[curve_id]
+            return mat.up, mat.p
+        loaded = getattr(self.material_panel, "_loaded", {})
+        if curve_id in loaded:
+            mat = loaded[curve_id]
+            return mat.up, mat.p
+        all_rl = self.rayleigh_panel.get_all_rayleigh_lines()
+        if curve_id in all_rl:
+            rl = all_rl[curve_id]
+            return rl.up, rl.p
+        for rc in self.hugoniot_plot.reflected_curves:
+            if rc["id"] == curve_id:
+                return rc["up"], rc["p"]
+        return None, None
+
+    def _compute_compression_for_ix(self, ix, up_val):
+        """根据 ix 的 source_curve IDs 与当前曲线数据，计算 up_val 处的 compression_ratio。
+
+        优先级：Hugoniot 表中 compression 列（更准）> Rayleigh 的 D/(D-up) 解析值。
+        """
+        compression = None
+        rl_D = None
+        materials_with_cr = []
+        for src_id in (ix.source_curve1_id, ix.source_curve2_id):
+            if src_id is None:
+                continue
+            all_rl = self.rayleigh_panel.get_all_rayleigh_lines()
+            if src_id in all_rl:
+                rl_D = all_rl[src_id].D
+                continue
+            mat = self.hugoniot_plot.materials.get(src_id)
+            if mat is None:
+                mat = getattr(self.material_panel, "_loaded", {}).get(src_id)
+            if mat is not None and mat.compression is not None and len(mat.compression) > 0:
+                materials_with_cr.append(mat)
+
+        # 1) Rayleigh D/(D-up) 初值
+        if rl_D is not None and (rl_D - up_val) > 0:
+            try:
+                compression = float(rl_D / (rl_D - up_val))
+            except Exception:
+                pass
+        # 2) Hugoniot compression 列覆盖（更准）
+        for m in materials_with_cr:
+            try:
+                from scipy.interpolate import interp1d as _interp1d
+                cr_interp = _interp1d(m.up, m.compression, bounds_error=False, fill_value=np.nan)
+                cr_val = float(cr_interp(up_val))
+                if np.isfinite(cr_val):
+                    compression = cr_val
+                    break
+            except Exception:
+                pass
+        return compression
+
+    def _auto_refresh_intersections(self):
+        """当 Rayleigh / 反射线 / material 变化时，自动重算依赖它们的交点。
+
+        依赖顺序（同一帧内分 4 pass，全部原位修改保住 id / 样式）：
+          1) 重算 Hugoniot × Rayleigh 类交点（不依赖反射线）
+          2) 锚定到这些交点的反射曲线跟随移动
+          3) 反射线依赖的交点重算（如 reverse-match / 用户 Reflect 出的二级 ix）
+          4) 清理孤儿（连带级联）
+
+        递归安全：本方法不 emit rayleigh_changed / materials_changed，只原位改 + refresh。
+        """
+        from im_app.core.physics import find_intersections, reflect_hugoniot
+        from scipy.interpolate import interp1d
+
+        ix_orphans: set[str] = set()
+        refl_orphans: set[str] = set()
+
+        def depends_on_reflected(ix) -> bool:
+            for src in (ix.source_curve1_id, ix.source_curve2_id):
+                if src and src.startswith("refl_"):
+                    return True
+            return False
+
+        def recompute_ix(ix) -> bool:
+            up1, p1 = self._resolve_curve_data(ix.source_curve1_id)
+            up2, p2 = self._resolve_curve_data(ix.source_curve2_id)
+            if up1 is None or up2 is None:
+                ix_orphans.add(ix.id)
+                return False
+            try:
+                up_ints = find_intersections(
+                    up1, p1, up2, p2,
+                    ignore_first=ix.ignore_first_at_creation,
+                )
+            except Exception:
+                up_ints = np.array([])
+            if len(up_ints) == 0:
+                ix_orphans.add(ix.id)
+                return False
+            up_val = float(up_ints[0])
+            # 用 curve1 的 (up, p) 插值取 p（与 _find_specific_intersection 一致）
+            try:
+                sort_idx = np.argsort(up1)
+                interp = interp1d(
+                    np.asarray(up1)[sort_idx], np.asarray(p1)[sort_idx],
+                    bounds_error=False, fill_value="extrapolate",
+                )
+                p_val = float(interp(up_val))
+            except Exception:
+                p_val = float(np.interp(up_val, up1, p1))
+            ix.up = up_val
+            ix.p = p_val
+            ix.compression_ratio = self._compute_compression_for_ix(ix, up_val)
+            return True
+
+        # Pass 1: Hugoniot × Rayleigh 类交点
+        for ix in self.hugoniot_plot.intersections:
+            if depends_on_reflected(ix):
+                continue
+            if ix.source_curve1_id is None and ix.source_curve2_id is None:
+                continue  # 老 workflow 加载的，没有 source 信息，跳过
+            recompute_ix(ix)
+
+        # Pass 2: 锚定反射曲线跟随
+        for rc in self.hugoniot_plot.reflected_curves:
+            anchor_id = rc.get("anchor_intersection_id")
+            if anchor_id is None:
+                continue
+            anchor_ix = next((x for x in self.hugoniot_plot.intersections if x.id == anchor_id), None)
+            if anchor_ix is None or anchor_ix.id in ix_orphans:
+                refl_orphans.add(rc["id"])
+                continue
+            new_center = anchor_ix.up
+            if abs(new_center - rc["center_up"]) <= 1e-9:
+                continue
+            source_mat = (self.hugoniot_plot.materials.get(rc["source_id"])
+                          or getattr(self.material_panel, "_loaded", {}).get(rc["source_id"]))
+            if source_mat is None:
+                refl_orphans.add(rc["id"])
+                continue
+            up_r, p_r = reflect_hugoniot(source_mat.up, source_mat.p, new_center)
+            rc["up"] = up_r
+            rc["p"] = p_r
+            rc["center_up"] = new_center
+            # 同步 refl_list 文本（保留 item 本身不破坏 selection）
+            for i in range(self.intersection_panel.refl_list.count()):
+                item = self.intersection_panel.refl_list.item(i)
+                if item.data(Qt.UserRole) == rc["id"]:
+                    item.setText(f"Reflected {source_mat.name} @ center_up={new_center:.3f}")
+                    break
+
+        # Pass 3: 反射线依赖的 ix（包含 reverse-match 类）
+        for ix in self.hugoniot_plot.intersections:
+            if not depends_on_reflected(ix):
+                continue
+            if ix.id in ix_orphans:
+                continue
+            # 若 source 中的反射线即将被删，标记本 ix 为孤儿
+            src_refls = [s for s in (ix.source_curve1_id, ix.source_curve2_id)
+                         if s and s.startswith("refl_")]
+            if any(s in refl_orphans for s in src_refls):
+                ix_orphans.add(ix.id)
+                continue
+            recompute_ix(ix)
+
+        # Pass 4: 清理孤儿（含级联）
+        if ix_orphans:
+            # 锚到孤儿 ix 的反射线也孤儿
+            for rc in self.hugoniot_plot.reflected_curves:
+                anchor_id = rc.get("anchor_intersection_id")
+                if anchor_id and anchor_id in ix_orphans:
+                    refl_orphans.add(rc["id"])
+            self.hugoniot_plot.intersections = [
+                ix for ix in self.hugoniot_plot.intersections if ix.id not in ix_orphans
+            ]
+            if self.hugoniot_plot.selected_intersection_id in ix_orphans:
+                self.hugoniot_plot.selected_intersection_id = None
+
+        if refl_orphans:
+            # 反射线被删 → 依赖它的 ix 也孤儿（保险；通常 Pass 3 已处理）
+            refl_lookup = {rc["id"]: rc for rc in self.hugoniot_plot.reflected_curves}
+            for ix in self.hugoniot_plot.intersections:
+                for src in (ix.source_curve1_id, ix.source_curve2_id):
+                    if src and src.startswith("refl_") and src in refl_orphans:
+                        ix_orphans.add(ix.id)
+                        break
+            if ix_orphans:
+                self.hugoniot_plot.intersections = [
+                    ix for ix in self.hugoniot_plot.intersections if ix.id not in ix_orphans
+                ]
+                if self.hugoniot_plot.selected_intersection_id in ix_orphans:
+                    self.hugoniot_plot.selected_intersection_id = None
+            self.hugoniot_plot.reflected_curves = [
+                rc for rc in self.hugoniot_plot.reflected_curves if rc["id"] not in refl_orphans
+            ]
+            for i in range(self.intersection_panel.refl_list.count() - 1, -1, -1):
+                item = self.intersection_panel.refl_list.item(i)
+                if item.data(Qt.UserRole) in refl_orphans:
+                    self.intersection_panel.refl_list.takeItem(i)
+
+        # 收尾：refresh + 重建表格 / 反射线 combo
+        self.hugoniot_plot.refresh()
+        self.intersection_panel.set_intersections(
+            self.hugoniot_plot.intersections,
+            self.hugoniot_plot.materials,
+        )
+        self.intersection_panel.update_reflected_curves(self.hugoniot_plot.reflected_curves)
+        if hasattr(self, '_refresh_scatter_ix_combo'):
+            self._refresh_scatter_ix_combo()
+        self._update_status()
 
     def _on_intersection_selected(self, ix_id: str):
         for i, ix in enumerate(self.hugoniot_plot.intersections):
@@ -863,6 +1081,9 @@ class MainWindow(QMainWindow):
             type="custom",
             material_id=primary_mat_id,
             compression_ratio=float(compression) if compression != "-" else None,
+            source_curve1_id=curve1_id,
+            source_curve2_id=curve2_id,
+            ignore_first_at_creation=True,
         )
 
         # Add to plot
@@ -888,6 +1109,13 @@ class MainWindow(QMainWindow):
     def _on_reflect(self, source_mat_id: str, center_up: float):
         refl_id = self.hugoniot_plot.add_reflected(source_mat_id, center_up)
         if refl_id:
+            # 记录锚 ix.id，让自适应刷新能跟随锚交点移动这条反射线
+            anchor_ix_id = self.intersection_panel.reflect_center_combo.currentData()
+            if anchor_ix_id:
+                for rc in self.hugoniot_plot.reflected_curves:
+                    if rc["id"] == refl_id:
+                        rc["anchor_intersection_id"] = anchor_ix_id
+                        break
             mat = self.hugoniot_plot.materials.get(source_mat_id)
             name = mat.name if mat else source_mat_id
             self.intersection_panel.add_reflected_entry(refl_id, name, center_up)
@@ -1051,6 +1279,9 @@ class MainWindow(QMainWindow):
             type="reverse-match",
             material_id=hugoniot_id,
             compression_ratio=None,  # Will be set below if available
+            source_curve1_id=hugoniot_id,
+            source_curve2_id=rid,
+            ignore_first_at_creation=True,
         )
 
         # Calculate compression ratio from Hugoniot table
@@ -1960,6 +2191,9 @@ class MainWindow(QMainWindow):
                     "type": ix.type,
                     "material_id": getattr(ix, "material_id", None),
                     "compression_ratio": getattr(ix, "compression_ratio", None),
+                    "source_curve1_id": getattr(ix, "source_curve1_id", None),
+                    "source_curve2_id": getattr(ix, "source_curve2_id", None),
+                    "ignore_first_at_creation": getattr(ix, "ignore_first_at_creation", True),
                 }
                 for ix in self.hugoniot_plot.intersections
             ],
@@ -1968,6 +2202,7 @@ class MainWindow(QMainWindow):
                     "id": rc["id"],
                     "source_id": rc["source_id"],
                     "center_up": rc["center_up"],
+                    "anchor_intersection_id": rc.get("anchor_intersection_id"),
                 }
                 for rc in self.hugoniot_plot.reflected_curves
             ],
@@ -2037,6 +2272,13 @@ class MainWindow(QMainWindow):
                 center_up = refl_data["center_up"]
                 refl_id = self.hugoniot_plot.add_reflected(source_id, center_up)
                 if refl_id:
+                    # 恢复 anchor_intersection_id（若保存在 workflow 中）
+                    anchor_id = refl_data.get("anchor_intersection_id")
+                    if anchor_id is not None:
+                        for rc in self.hugoniot_plot.reflected_curves:
+                            if rc["id"] == refl_id:
+                                rc["anchor_intersection_id"] = anchor_id
+                                break
                     mat = self.hugoniot_plot.materials.get(source_id)
                     name = mat.name if mat else source_id
                     self.intersection_panel.add_reflected_entry(refl_id, name, center_up)
@@ -2054,6 +2296,9 @@ class MainWindow(QMainWindow):
                     type=ix_data.get("type", "custom"),
                     material_id=ix_data.get("material_id"),
                     compression_ratio=ix_data.get("compression_ratio"),
+                    source_curve1_id=ix_data.get("source_curve1_id"),
+                    source_curve2_id=ix_data.get("source_curve2_id"),
+                    ignore_first_at_creation=ix_data.get("ignore_first_at_creation", True),
                 )
                 self.hugoniot_plot.intersections.append(ix)
 
