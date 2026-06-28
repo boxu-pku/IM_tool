@@ -1,0 +1,194 @@
+{
+    "version": "1.0",
+    "materials": [
+        {
+            "id": "Al_3717_sesame",
+            "name": "Aluminum",
+            "source": "SESAME 3717",
+            "rho0": 2.7,
+            "file": "materials/Al_3717_sesame.txt",
+            "tags": [],
+            "points": 1000,
+            "up_range": [
+                0.0111795,
+                52.893
+            ],
+            "p_range": [
+                0.001,
+                100.0
+            ],
+            "compression_range": [
+                1.0021444444444445,
+                4.08774074074074
+            ]
+        },
+        {
+            "id": "Al_3720_sesame",
+            "name": "Aluminum",
+            "source": "SESAME 3720",
+            "rho0": 2.7,
+            "file": "materials/Al_3720_sesame.txt",
+            "tags": [],
+            "points": 1000,
+            "up_range": [
+                0.00626298,
+                53.1187
+            ],
+            "p_range": [
+                0.001,
+                100.0
+            ],
+            "compression_range": [
+                1.0011666666666663,
+                4.198703703703703
+            ]
+        },
+        {
+            "id": "Quartz_7360_sesame",
+            "name": "Alpha Quartz",
+            "source": "SESAME 7360",
+            "rho0": 2.65,
+            "file": "materials/Quartz_7360_sesame.txt",
+            "tags": [],
+            "points": 300,
+            "up_range": [
+                0.009762,
+                22.673
+            ],
+            "p_range": [
+                0.001,
+                20.0
+            ],
+            "compression_range": [
+                1.001811320754717,
+                3.1289433962264157
+            ]
+        },
+        {
+            "id": "Quartz_7385_sesame",
+            "name": "Alpha Quartz",
+            "source": "SESAME 7385",
+            "rho0": 2.65,
+            "file": "materials/Quartz_7385_sesame.txt",
+            "tags": [],
+            "points": 108,
+            "up_range": [
+                0.07959,
+                1687.0
+            ],
+            "p_range": [
+                0.008274,
+                100000.0
+            ],
+            "compression_range": [
+                1.0207547169811322,
+                4.713207547169811
+            ]
+        },
+        {
+            "id": "BN_LEA",
+            "name": "Boron Nitride",
+            "source": "LEA SESAME",
+            "rho0": 2.04,
+            "file": "materials/BN_LEA.txt",
+            "tags": [],
+            "points": 199,
+            "up_range": [
+                0.0,
+                10857.0
+            ],
+            "p_range": [
+                0.00014382,
+                3207000.0
+            ],
+            "compression_range": [
+                1.0,
+                4.3377
+            ]
+        },
+        {
+            "id": "Al_Celliers2005",
+            "name": "Aluminum",
+            "source": "Celliers et al. 2005, PRL",
+            "rho0": 2.7,
+            "file": "materials/Al_Celliers2005.txt",
+            "tags": [],
+            "points": 500,
+            "up_range": [
+                0.0,
+                50.0
+            ],
+            "p_range": [
+                0.0,
+                87.5624229
+            ],
+            "compression_range": [
+                1.0,
+                4.364498911046283
+            ]
+        },
+        {
+            "id": "Quartz_Hamel2012",
+            "name": "Alpha Quartz",
+            "source": "Hamel et al. 2012",
+            "rho0": 2.65,
+            "file": "materials/Quartz_Hamel2012.txt",
+            "tags": [],
+            "points": 500,
+            "up_range": [
+                0.1,
+                50.0
+            ],
+            "p_range": [
+                0.00680479,
+                88.2946875
+            ],
+            "compression_range": [
+                1.04052118,
+                4.0052592
+            ]
+        },
+        {
+            "id": "Al_FEOS",
+            "name": "Al_FEOS",
+            "source": "FEOS",
+            "rho0": 2.7,
+            "file": "materials/Al_FEOS.hug",
+            "tags": [],
+            "points": 172,
+            "up_range": [
+                0.0,
+                3772.846
+            ],
+            "p_range": [
+                0.0002578641,
+                512225.6
+            ],
+            "compression_range": [
+                1.0,
+                4.728988888888888
+            ]
+        },
+        {
+            "id": "CH_foam_ideal_plasma",
+            "name": "CH foam",
+            "source": "Ideal Plasma (γ=1.667)",
+            "rho0": 0.089,
+            "file": "materials/CH_foam_ideal_plasma.txt",
+            "tags": [],
+            "points": 500,
+            "up_range": [
+                1e-06,
+                200.0
+            ],
+            "p_range": [
+                1.1868150000000001e-15,
+                47.4726
+            ],
+            "compression_range": [
+                3.99850075,
+                3.99850075
+            ]
+        }
+    ]
+}

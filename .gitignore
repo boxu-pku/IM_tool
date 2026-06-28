@@ -1,0 +1,61 @@
+# ============================================================
+# IM Tool — .gitignore
+# ============================================================
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Test / coverage
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.htmlcov/
+.tox/
+
+# ---- Project-specific ----
+# 归档目录：历史/参考文件，不纳入版本控制（见 _archive/README.md）
+_archive/
+
+# Claude Code 本地设置（per-user，不应共享）
+.claude/settings.local.json
+
+# ---- IDE / editors ----
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Logs / temp ----
+*.log
+*.tmp
+*.bak

@@ -1,0 +1,5 @@
+include README.md
+include requirements.txt
+recursive-include im_app/standard_library *
+recursive-include im_app/workflows *
+recursive-include im_app/config *

@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "im-tool"
+version = "1.0.0"
+description = "Impedance Matching Analysis Tool for Shock Physics (HEDP)"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "PyQt5>=5.15",
+    "numpy>=1.21",
+    "pandas>=1.3",
+    "matplotlib>=3.5",
+    "scipy>=1.7",
+    "xlrd>=2.0",
+    "openpyxl>=3.0",
+]
+
+[project.scripts]
+im-tool = "im_app.main:main"
+
+[tool.setuptools.packages.find]
+include = ["im_app*"]
+
+[tool.setuptools.package-data]
+"im_app" = [
+    "standard_library/**/*",
+    "workflows/**/*",
+    "config/**/*",
+]
