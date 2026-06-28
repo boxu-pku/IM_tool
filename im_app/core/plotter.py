@@ -21,6 +21,7 @@ from im_app.core.plot_style import (
     PRL_FIGSIZE_DOUBLE, PRL_COLORS,
     LABEL_UP, LABEL_P, LABEL_COMP, LABEL_US, LABEL_RHO, LABEL_T, LABEL_E,
     apply_prl_style, save_prl_figure,
+    LEGEND_FONTSIZE,
 )
 from im_app.core.element_style import (
     ElementStyle, TYPE_MATERIAL, TYPE_RAYLEIGH, TYPE_REFLECTED, TYPE_INTERSECTION,
@@ -695,7 +696,7 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
                          xlim=xlim or self.xlim, ylim=ylim or self.ylim)
 
         if (self.materials or self.rayleigh_lines or self.intersections) and (show_legend if show_legend is not None else self.show_legend):
-            self.ax.legend(loc="best", fontsize=16)
+            self.ax.legend(loc="best", fontsize=LEGEND_FONTSIZE)
 
         # Render scatter points (interactive on P-Up)
         if self._scatter_points:
@@ -979,7 +980,7 @@ class EOSPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
 
         # Add legend if there's content
         if has_content:
-            self.ax.legend(loc="best", fontsize=16)
+            self.ax.legend(loc="best", fontsize=LEGEND_FONTSIZE)
 
         self.draw_idle()
 
@@ -1234,7 +1235,7 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
 
         # Add legend
         if has_content and self.show_legend:
-            self.ax.legend(loc="best", fontsize=16)
+            self.ax.legend(loc="best", fontsize=LEGEND_FONTSIZE)
 
         self.draw_idle()
 

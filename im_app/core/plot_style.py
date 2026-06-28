@@ -26,6 +26,16 @@ PRL_FIGSIZE_SINGLE = (3.375, 3.375 * 0.75)   # PRL single-column width
 PRL_FIGSIZE_DOUBLE = (6.75, 6.75 * 0.5)      # PRL double-column width
 
 # ---------------------------------------------------------------------------
+# 字体大小（pt）—— 改这里就能全局调整。
+# Mac 上字体渲染比 Windows 略大，若觉得 legend / 标签偏大可整体下调。
+# ---------------------------------------------------------------------------
+LEGEND_FONTSIZE    = 12   # 图例字号（被 plotter.py 的 ax.legend() 引用）
+BASE_FONTSIZE      = 18   # 全局基础字号
+TICK_LABELSIZE     = 16   # 坐标轴刻度数字
+AXES_LABELSIZE     = 20   # 坐标轴标签（如 "Up (km/s)"）
+AXES_TITLESIZE     = 20   # 图标题
+
+# ---------------------------------------------------------------------------
 # Colorblind-friendly palette
 # ---------------------------------------------------------------------------
 PRL_COLORS = {
@@ -44,12 +54,12 @@ PRL_STYLE = {
     # 字体
     "font.family":        "serif",
     "font.serif":         ["Times New Roman", "DejaVu Serif", "Computer Modern Roman"],
-    "font.size":          18,      # 增大字体：14 -> 18
+    "font.size":          BASE_FONTSIZE,
 
     # 坐标轴
     "axes.linewidth":     1.2,     # 增大线宽：1.0 -> 1.2
-    "axes.labelsize":     20,      # 增大标签：16 -> 20
-    "axes.titlesize":     20,      # 增大标题：16 -> 20
+    "axes.labelsize":     AXES_LABELSIZE,
+    "axes.titlesize":     AXES_TITLESIZE,
     "axes.grid":          False,
 
     # 刻度线 — 朝内
@@ -63,13 +73,13 @@ PRL_STYLE = {
     "ytick.major.width":  1.2,
     "xtick.minor.width":  0.8,     # 增大线宽：0.6 -> 0.8
     "ytick.minor.width":  0.8,
-    "xtick.labelsize":    16,      # 增大刻度标签：12 -> 16
-    "ytick.labelsize":    16,
+    "xtick.labelsize":    TICK_LABELSIZE,
+    "ytick.labelsize":    TICK_LABELSIZE,
     "xtick.top":          True,
     "ytick.right":        True,
 
     # 图例
-    "legend.fontsize":    14,      # 增大图例：11 -> 14
+    "legend.fontsize":    LEGEND_FONTSIZE,
     "legend.frameon":     False,
     "legend.handlelength": 1.5,
 
