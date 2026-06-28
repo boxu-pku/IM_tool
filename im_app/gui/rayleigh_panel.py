@@ -11,10 +11,44 @@ from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QGroupBox, QFormLayout,
     QComboBox, QDoubleSpinBox, QPushButton,
     QListWidget, QListWidgetItem, QHBoxLayout, QLabel,
+    QDialog, QDialogButtonBox,
 )
 from PyQt5.QtCore import pyqtSignal, Qt
 
 from im_app.core.physics import RayleighLine, rayleigh_line
+
+
+class RayleighEditDialog(QDialog):
+    """双击 Rayleigh 列表项时弹出的小对话框，编辑 D / ρ₀。"""
+
+    def __init__(self, rl: RayleighLine, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Edit Rayleigh Line")
+
+        form = QFormLayout(self)
+
+        self.D_spin = QDoubleSpinBox()
+        self.D_spin.setRange(0.01, 200)
+        self.D_spin.setDecimals(3)
+        self.D_spin.setValue(rl.D)
+        self.D_spin.setSuffix(" km/s")
+        self.D_spin.setSingleStep(0.1)
+        form.addRow("D (shock vel):", self.D_spin)
+
+        self.rho0_spin = QDoubleSpinBox()
+        self.rho0_spin.setRange(0.01, 100)
+        self.rho0_spin.setDecimals(2)
+        self.rho0_spin.setValue(rl.rho0)
+        self.rho0_spin.setSuffix(" g/cm³")
+        form.addRow("ρ₀ (density):", self.rho0_spin)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        form.addWidget(buttons)
+
+    def values(self) -> tuple[float, float]:
+        return self.D_spin.value(), self.rho0_spin.value()
 
 
 class RayleighPanel(QWidget):
@@ -84,6 +118,8 @@ class RayleighPanel(QWidget):
         self.line_list.itemChanged.connect(self._on_visibility_changed)
         # 选中列表项时，回填 D / ρ₀ / 名称到上面的输入框，便于原位修改
         self.line_list.itemSelectionChanged.connect(self._on_list_selection_changed)
+        # 双击列表项直接弹出编辑对话框，OK 后自动更新（无需点 Update Selected）
+        self.line_list.itemDoubleClicked.connect(self._on_item_double_clicked)
         vbox.addWidget(self.line_list)
 
         self.remove_btn = QPushButton("Remove Selected")
@@ -113,7 +149,7 @@ class RayleighPanel(QWidget):
             mat = self._materials_dict[mat_id]
             self.rho0_spin.setValue(mat.rho0)
 
-    def _add_line(self):
+    def _add_line(self, explicit_id: str | None = None):
         # For editable combo boxes, use lineEdit().text() instead of currentText()
         # to reliably get the custom text, especially when setEditText() is called
         # programmatically (e.g., during workflow loading).
@@ -133,8 +169,19 @@ class RayleighPanel(QWidget):
         D = self.D_spin.value()
         rho0 = self.rho0_spin.value()
 
-        self._counter += 1
-        rl_id = f"rl_{self._counter}"
+        if explicit_id:
+            # workflow 加载路径：保留原 id，避免 ix.source_curve*_id 失效
+            rl_id = explicit_id
+            try:
+                n = int(explicit_id.split("_", 1)[1])
+                if n > self._counter:
+                    self._counter = n
+            except (IndexError, ValueError):
+                self._counter += 1
+                rl_id = f"rl_{self._counter}"
+        else:
+            self._counter += 1
+            rl_id = f"rl_{self._counter}"
 
         up = np.linspace(0, 40, 500)
         p = rayleigh_line(up, rho0, D)
@@ -196,6 +243,29 @@ class RayleighPanel(QWidget):
             combo.setCurrentIndex(idx)
         else:
             combo.setEditText(rl.material_id)
+
+    def _on_item_double_clicked(self, item):
+        """双击列表项弹编辑对话框，OK 后原位更新 Rayleigh line。
+
+        触发 rayleigh_changed → MainWindow._auto_refresh_intersections 自动重算 ix。
+        """
+        rl_id = item.data(Qt.UserRole)
+        rl = self._lines.get(rl_id)
+        if rl is None:
+            return
+        dlg = RayleighEditDialog(rl, self)
+        if dlg.exec_() != QDialog.Accepted:
+            return
+        D, rho0 = dlg.values()
+        if abs(D - rl.D) < 1e-9 and abs(rho0 - rl.rho0) < 1e-9:
+            return  # 没变化，避免无谓的 refresh
+
+        rl.D = D
+        rl.rho0 = rho0
+        rl.up = np.linspace(0, 40, 500)
+        rl.p = rayleigh_line(rl.up, rho0, D)
+        item.setText(f"{rl.material_id}: D={D:.2f} km/s, rho0={rho0:.2f}")
+        self.rayleigh_changed.emit()
 
     def _update_selected(self):
         """原位修改当前选中 Rayleigh 线的 D / ρ₀；交点会通过自适应刷新跟随。"""

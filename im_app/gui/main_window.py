@@ -327,7 +327,7 @@ class MainWindow(QMainWindow):
 
     def _init_ui(self):
         self.setWindowTitle("Impedance Matching Tool")
-        self.setMinimumSize(1200, 800)
+        self.setMinimumSize(1000, 700)
 
         # Global group box title style: bold + larger font
         self.setStyleSheet("""
@@ -398,9 +398,9 @@ class MainWindow(QMainWindow):
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
-        # Set left panel width (2x wider: 1140-1350px)
-        scroll_area.setMinimumWidth(1140)
-        scroll_area.setMaximumWidth(1350)
+        # 左面板最小宽 600px（既保证控件可读，又不会挤掉右侧画图区）。
+        # 不设 maximumWidth，让用户可以随意拖宽。
+        scroll_area.setMinimumWidth(600)
 
         # Right panel: square canvas plot
         self.plot_tabs = QTabWidget()
@@ -429,9 +429,14 @@ class MainWindow(QMainWindow):
         # Add to splitter
         splitter.addWidget(scroll_area)
         splitter.addWidget(self.plot_tabs)
-        splitter.setSizes([1200, 300])
-        splitter.setStretchFactor(0, 0)
+        # 初始 38:62 比例，左右都设 stretchFactor=1 让窗口缩放时同步分摊；
+        # 禁止 collapsible 防止误拖到 0 宽。
+        splitter.setChildrenCollapsible(False)
+        splitter.setSizes([380, 620])
+        splitter.setStretchFactor(0, 1)
         splitter.setStretchFactor(1, 1)
+        # 保存 splitter 引用，便于记住用户调整后的比例（未来扩展）
+        self.main_splitter = splitter
 
         layout.addWidget(splitter)
 
@@ -810,7 +815,7 @@ class MainWindow(QMainWindow):
 
         递归安全：本方法不 emit rayleigh_changed / materials_changed，只原位改 + refresh。
         """
-        from im_app.core.physics import find_intersections, reflect_hugoniot
+        from im_app.core.physics import find_intersections, reflect_hugoniot, reverse_impedance_match
         from scipy.interpolate import interp1d
 
         ix_orphans: set[str] = set()
@@ -862,33 +867,67 @@ class MainWindow(QMainWindow):
                 continue  # 老 workflow 加载的，没有 source 信息，跳过
             recompute_ix(ix)
 
-        # Pass 2: 锚定反射曲线跟随
+        # Pass 2: 锚定反射曲线跟随（两类：Reflect 出来的 anchor ix；Reverse Match 的 source ix）
         for rc in self.hugoniot_plot.reflected_curves:
             anchor_id = rc.get("anchor_intersection_id")
-            if anchor_id is None:
-                continue
-            anchor_ix = next((x for x in self.hugoniot_plot.intersections if x.id == anchor_id), None)
-            if anchor_ix is None or anchor_ix.id in ix_orphans:
-                refl_orphans.add(rc["id"])
-                continue
-            new_center = anchor_ix.up
-            if abs(new_center - rc["center_up"]) <= 1e-9:
-                continue
-            source_mat = (self.hugoniot_plot.materials.get(rc["source_id"])
-                          or getattr(self.material_panel, "_loaded", {}).get(rc["source_id"]))
-            if source_mat is None:
-                refl_orphans.add(rc["id"])
-                continue
-            up_r, p_r = reflect_hugoniot(source_mat.up, source_mat.p, new_center)
-            rc["up"] = up_r
-            rc["p"] = p_r
-            rc["center_up"] = new_center
-            # 同步 refl_list 文本（保留 item 本身不破坏 selection）
-            for i in range(self.intersection_panel.refl_list.count()):
-                item = self.intersection_panel.refl_list.item(i)
-                if item.data(Qt.UserRole) == rc["id"]:
-                    item.setText(f"Reflected {source_mat.name} @ center_up={new_center:.3f}")
-                    break
+            source_ix_id = rc.get("source_ix_id")
+
+            if anchor_id is not None:
+                # 普通反射：以锚 ix 为中心镜像
+                anchor_ix = next((x for x in self.hugoniot_plot.intersections if x.id == anchor_id), None)
+                if anchor_ix is None or anchor_ix.id in ix_orphans:
+                    refl_orphans.add(rc["id"])
+                    continue
+                new_center = anchor_ix.up
+                if abs(new_center - rc["center_up"]) <= 1e-9:
+                    continue
+                source_mat = (self.hugoniot_plot.materials.get(rc["source_id"])
+                              or getattr(self.material_panel, "_loaded", {}).get(rc["source_id"]))
+                if source_mat is None:
+                    refl_orphans.add(rc["id"])
+                    continue
+                up_r, p_r = reflect_hugoniot(source_mat.up, source_mat.p, new_center)
+                rc["up"] = up_r
+                rc["p"] = p_r
+                rc["center_up"] = new_center
+                # 同步 refl_list 文本
+                for i in range(self.intersection_panel.refl_list.count()):
+                    item = self.intersection_panel.refl_list.item(i)
+                    if item.data(Qt.UserRole) == rc["id"]:
+                        item.setText(f"Reflected {source_mat.name} @ center_up={new_center:.3f}")
+                        break
+            elif source_ix_id is not None:
+                # Reverse-match：source ix 移动后，用新 (up, p) 重新求解
+                src_ix = next((x for x in self.hugoniot_plot.intersections if x.id == source_ix_id), None)
+                if src_ix is None or src_ix.id in ix_orphans:
+                    refl_orphans.add(rc["id"])
+                    continue
+                source_mat = (self.hugoniot_plot.materials.get(rc["source_id"])
+                              or getattr(self.material_panel, "_loaded", {}).get(rc["source_id"]))
+                if source_mat is None:
+                    refl_orphans.add(rc["id"])
+                    continue
+                # 用当前 ix 的 (up, p) 作为新 target 重解；若曲线已无解，孤儿化
+                try:
+                    new_results = reverse_impedance_match(
+                        src_ix.up, src_ix.p,
+                        source_mat.up, source_mat.p,
+                    )
+                except Exception:
+                    new_results = []
+                if not new_results:
+                    refl_orphans.add(rc["id"])
+                    continue
+                r0 = new_results[0]
+                rc["up"] = r0["reflected_up"]
+                rc["p"] = r0["reflected_p"]
+                rc["center_up"] = r0["center_up"]
+                # 同步 refl_list 文本
+                for i in range(self.intersection_panel.refl_list.count()):
+                    item = self.intersection_panel.refl_list.item(i)
+                    if item.data(Qt.UserRole) == rc["id"]:
+                        item.setText(f"Reflected {source_mat.name} @ center_up={r0['center_up']:.3f}")
+                        break
 
         # Pass 3: 反射线依赖的 ix（包含 reverse-match 类）
         for ix in self.hugoniot_plot.intersections:
@@ -906,10 +945,11 @@ class MainWindow(QMainWindow):
 
         # Pass 4: 清理孤儿（含级联）
         if ix_orphans:
-            # 锚到孤儿 ix 的反射线也孤儿
+            # 锚 / source 到孤儿 ix 的反射线也孤儿
             for rc in self.hugoniot_plot.reflected_curves:
                 anchor_id = rc.get("anchor_intersection_id")
-                if anchor_id and anchor_id in ix_orphans:
+                source_ix_id = rc.get("source_ix_id")
+                if (anchor_id and anchor_id in ix_orphans) or (source_ix_id and source_ix_id in ix_orphans):
                     refl_orphans.add(rc["id"])
             self.hugoniot_plot.intersections = [
                 ix for ix in self.hugoniot_plot.intersections if ix.id not in ix_orphans
@@ -1260,6 +1300,11 @@ class MainWindow(QMainWindow):
         # Add reflected curve to plot
         self.hugoniot_plot._counter += 1
         rid = f"refl_{self.hugoniot_plot._counter}"
+        # 若 target 来自 reverse_ix_combo 选中的 ix，记下 source_ix_id；
+        # 自适应刷新时若该 ix 移动，会自动重算 reverse-match（re-solve）。
+        # 注意：spinbox 有 decimals=4 截断，无法与 ix 原值严格相等，所以只要 combo
+        # 有选中就追踪；用户若想手动 target，应把 combo 清空（默认无选中）。
+        source_ix_id = self.intersection_panel.reverse_ix_combo.currentData()
         self.hugoniot_plot.reflected_curves.append({
             "id": rid,
             "up": up_r,
@@ -1267,6 +1312,7 @@ class MainWindow(QMainWindow):
             "source_id": hugoniot_id,
             "center_up": center_up,
             "visible": True,
+            "source_ix_id": source_ix_id,
         })
 
         # Add intersection point (where reflected meets original Hugoniot)
@@ -2203,6 +2249,7 @@ class MainWindow(QMainWindow):
                     "source_id": rc["source_id"],
                     "center_up": rc["center_up"],
                     "anchor_intersection_id": rc.get("anchor_intersection_id"),
+                    "source_ix_id": rc.get("source_ix_id"),
                 }
                 for rc in self.hugoniot_plot.reflected_curves
             ],
@@ -2264,20 +2311,28 @@ class MainWindow(QMainWindow):
                     combo.setCurrentIndex(idx)
                 else:
                     combo.setEditText(rl_data["material_id"])
-                self.rayleigh_panel._add_line()
+                # 保留原 rl_id，让 ix.source_curve*_id 仍能解析
+                self.rayleigh_panel._add_line(explicit_id=rl_data.get("id"))
 
             # Restore reflected curves
             for refl_data in wf.get("reflected_curves", []):
                 source_id = refl_data["source_id"]
                 center_up = refl_data["center_up"]
-                refl_id = self.hugoniot_plot.add_reflected(source_id, center_up)
+                # 保留原 refl_id（如 "refl_3"），避免 ix.source_curve*_id 失效
+                refl_id = self.hugoniot_plot.add_reflected(
+                    source_id, center_up, explicit_id=refl_data.get("id")
+                )
                 if refl_id:
                     # 恢复 anchor_intersection_id（若保存在 workflow 中）
                     anchor_id = refl_data.get("anchor_intersection_id")
-                    if anchor_id is not None:
+                    source_ix_id = refl_data.get("source_ix_id")
+                    if anchor_id is not None or source_ix_id is not None:
                         for rc in self.hugoniot_plot.reflected_curves:
                             if rc["id"] == refl_id:
-                                rc["anchor_intersection_id"] = anchor_id
+                                if anchor_id is not None:
+                                    rc["anchor_intersection_id"] = anchor_id
+                                if source_ix_id is not None:
+                                    rc["source_ix_id"] = source_ix_id
                                 break
                     mat = self.hugoniot_plot.materials.get(source_id)
                     name = mat.name if mat else source_id

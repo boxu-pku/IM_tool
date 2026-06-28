@@ -414,13 +414,23 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
         self.selected_intersection_id = ix_id
         self.refresh()
 
-    def add_reflected(self, source_mat_id: str, center_up: float) -> str:
+    def add_reflected(self, source_mat_id: str, center_up: float, explicit_id: str | None = None) -> str:
         mat = self.materials.get(source_mat_id)
         if mat is None:
             return ""
         up_r, p_r = reflect_hugoniot(mat.up, mat.p, center_up)
-        self._counter += 1
-        rid = f"refl_{self._counter}"
+        if explicit_id:
+            # workflow 加载路径：保留原 id，避免 ix.source_curve*_id 失效
+            rid = explicit_id
+            try:
+                n = int(explicit_id.split("_", 1)[1])
+                if n > self._counter:
+                    self._counter = n
+            except (IndexError, ValueError):
+                pass
+        else:
+            self._counter += 1
+            rid = f"refl_{self._counter}"
         self.reflected_curves.append({
             "id": rid,
             "up": up_r,
