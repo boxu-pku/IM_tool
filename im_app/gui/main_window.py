@@ -2489,6 +2489,8 @@ class MainWindow(QMainWindow):
                     "material_id": rl.material_id,
                     "D": rl.D,
                     "rho0": rl.rho0,
+                    "sigma_D": rl.sigma_D,
+                    "sigma_rho0": rl.sigma_rho0,
                 }
                 for rl in self.rayleigh_panel.get_all_rayleigh_lines().values()
             ],
@@ -2566,6 +2568,8 @@ class MainWindow(QMainWindow):
             for rl_data in wf.get("rayleigh_lines", []):
                 self.rayleigh_panel.D_spin.setValue(rl_data["D"])
                 self.rayleigh_panel.rho0_spin.setValue(rl_data["rho0"])
+                self.rayleigh_panel.sigma_D_spin.setValue(rl_data.get("sigma_D", 0.0))
+                self.rayleigh_panel.sigma_rho0_spin.setValue(rl_data.get("sigma_rho0", 0.0))
                 # Set material combo: preset 命中就选中对应项；否则把保存的
                 # material_id（自定义名）还原成 edit text，让 _add_line 把它
                 # 当成 standalone Rayleigh line 处理，而不是错误地继承先前选中

@@ -19,7 +19,7 @@ from im_app.core.physics import RayleighLine, rayleigh_line
 
 
 class RayleighEditDialog(QDialog):
-    """双击 Rayleigh 列表项时弹出的小对话框，编辑 D / ρ₀。"""
+    """双击 Rayleigh 列表项时弹出的小对话框，编辑 D / ρ₀ / 不确定度。"""
 
     def __init__(self, rl: RayleighLine, parent=None):
         super().__init__(parent)
@@ -35,6 +35,14 @@ class RayleighEditDialog(QDialog):
         self.D_spin.setSingleStep(0.1)
         form.addRow("D (shock vel):", self.D_spin)
 
+        self.sigma_D_spin = QDoubleSpinBox()
+        self.sigma_D_spin.setRange(0.0, 50)
+        self.sigma_D_spin.setDecimals(3)
+        self.sigma_D_spin.setValue(rl.sigma_D)
+        self.sigma_D_spin.setSuffix(" km/s")
+        self.sigma_D_spin.setSingleStep(0.01)
+        form.addRow("σ(D):", self.sigma_D_spin)
+
         self.rho0_spin = QDoubleSpinBox()
         self.rho0_spin.setRange(0.01, 100)
         self.rho0_spin.setDecimals(2)
@@ -42,13 +50,22 @@ class RayleighEditDialog(QDialog):
         self.rho0_spin.setSuffix(" g/cm³")
         form.addRow("ρ₀ (density):", self.rho0_spin)
 
+        self.sigma_rho0_spin = QDoubleSpinBox()
+        self.sigma_rho0_spin.setRange(0.0, 50)
+        self.sigma_rho0_spin.setDecimals(3)
+        self.sigma_rho0_spin.setValue(rl.sigma_rho0)
+        self.sigma_rho0_spin.setSuffix(" g/cm³")
+        self.sigma_rho0_spin.setSingleStep(0.01)
+        form.addRow("σ(ρ₀):", self.sigma_rho0_spin)
+
         buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         form.addWidget(buttons)
 
-    def values(self) -> tuple[float, float]:
-        return self.D_spin.value(), self.rho0_spin.value()
+    def values(self) -> tuple[float, float, float, float]:
+        return (self.D_spin.value(), self.sigma_D_spin.value(),
+                self.rho0_spin.value(), self.sigma_rho0_spin.value())
 
 
 class RayleighPanel(QWidget):
@@ -84,12 +101,28 @@ class RayleighPanel(QWidget):
         self.D_spin.setSuffix(" km/s")
         form.addRow("D (shock vel):", self.D_spin)
 
+        self.sigma_D_spin = QDoubleSpinBox()
+        self.sigma_D_spin.setRange(0.0, 50)
+        self.sigma_D_spin.setDecimals(3)
+        self.sigma_D_spin.setValue(0.0)
+        self.sigma_D_spin.setSuffix(" km/s")
+        self.sigma_D_spin.setSingleStep(0.01)
+        form.addRow("σ(D):", self.sigma_D_spin)
+
         self.rho0_spin = QDoubleSpinBox()
         self.rho0_spin.setRange(0.01, 100)
         self.rho0_spin.setDecimals(2)
         self.rho0_spin.setValue(2.65)
         self.rho0_spin.setSuffix(" g/cm³")
         form.addRow("ρ₀ (density):", self.rho0_spin)
+
+        self.sigma_rho0_spin = QDoubleSpinBox()
+        self.sigma_rho0_spin.setRange(0.0, 50)
+        self.sigma_rho0_spin.setDecimals(3)
+        self.sigma_rho0_spin.setValue(0.0)
+        self.sigma_rho0_spin.setSuffix(" g/cm³")
+        self.sigma_rho0_spin.setSingleStep(0.01)
+        form.addRow("σ(ρ₀):", self.sigma_rho0_spin)
 
         vbox.addLayout(form)
 
@@ -168,6 +201,8 @@ class RayleighPanel(QWidget):
 
         D = self.D_spin.value()
         rho0 = self.rho0_spin.value()
+        sigma_D = self.sigma_D_spin.value()
+        sigma_rho0 = self.sigma_rho0_spin.value()
 
         if explicit_id:
             # workflow 加载路径：保留原 id，避免 ix.source_curve*_id 失效
@@ -194,13 +229,18 @@ class RayleighPanel(QWidget):
             material_id=material_id,
             D=D,
             rho0=rho0,
+            sigma_D=sigma_D,
+            sigma_rho0=sigma_rho0,
             up=up,
             p=p,
         )
         self._lines[rl_id] = rl
 
         # Add to list widget - show custom name
-        item = QListWidgetItem(f"{custom_name}: D={D:.2f} km/s, rho0={rho0:.2f}")
+        sigma_str = ""
+        if sigma_D > 0 or sigma_rho0 > 0:
+            sigma_str = f" σ(D)={sigma_D:.3f} σ(ρ₀)={sigma_rho0:.3f}"
+        item = QListWidgetItem(f"{custom_name}: D={D:.2f}{sigma_str}")
         item.setData(Qt.UserRole, rl_id)
         item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
         item.setCheckState(Qt.Checked)
@@ -218,7 +258,7 @@ class RayleighPanel(QWidget):
         self.rayleigh_changed.emit()
 
     def _on_list_selection_changed(self):
-        """选中列表项时把 D / ρ₀ / 名称回填到输入框，方便原位编辑。"""
+        """选中列表项时把 D / ρ₀ / σ / 名称回填到输入框，方便原位编辑。"""
         current = self.line_list.currentItem()
         if current is None:
             return
@@ -229,11 +269,17 @@ class RayleighPanel(QWidget):
 
         # blockSignals 防止 setValue 触发 _on_material_selected 改写 rho0
         self.D_spin.blockSignals(True)
+        self.sigma_D_spin.blockSignals(True)
         self.rho0_spin.blockSignals(True)
+        self.sigma_rho0_spin.blockSignals(True)
         self.D_spin.setValue(rl.D)
+        self.sigma_D_spin.setValue(rl.sigma_D)
         self.rho0_spin.setValue(rl.rho0)
+        self.sigma_rho0_spin.setValue(rl.sigma_rho0)
         self.D_spin.blockSignals(False)
+        self.sigma_D_spin.blockSignals(False)
         self.rho0_spin.blockSignals(False)
+        self.sigma_rho0_spin.blockSignals(False)
 
         # 还原 material 名称：命中预设就选中对应项，否则把保存的 material_id
         # （可能是用户自定义文本）作为 edit text 还原。
@@ -245,7 +291,7 @@ class RayleighPanel(QWidget):
             combo.setEditText(rl.material_id)
 
     def _on_item_double_clicked(self, item):
-        """双击列表项弹编辑对话框，OK 后原位更新 Rayleigh line。
+        """双击列表项弹编辑对话框，OK 后原位更新 Rayleigh line（含不确定度）。
 
         触发 rayleigh_changed → MainWindow._auto_refresh_intersections 自动重算 ix。
         """
@@ -256,19 +302,25 @@ class RayleighPanel(QWidget):
         dlg = RayleighEditDialog(rl, self)
         if dlg.exec_() != QDialog.Accepted:
             return
-        D, rho0 = dlg.values()
-        if abs(D - rl.D) < 1e-9 and abs(rho0 - rl.rho0) < 1e-9:
+        D, sigma_D, rho0, sigma_rho0 = dlg.values()
+        if (abs(D - rl.D) < 1e-9 and abs(sigma_D - rl.sigma_D) < 1e-9
+                and abs(rho0 - rl.rho0) < 1e-9 and abs(sigma_rho0 - rl.sigma_rho0) < 1e-9):
             return  # 没变化，避免无谓的 refresh
 
         rl.D = D
+        rl.sigma_D = sigma_D
         rl.rho0 = rho0
+        rl.sigma_rho0 = sigma_rho0
         rl.up = np.linspace(0, 40, 500)
         rl.p = rayleigh_line(rl.up, rho0, D)
-        item.setText(f"{rl.material_id}: D={D:.2f} km/s, rho0={rho0:.2f}")
+        sigma_str = ""
+        if sigma_D > 0 or sigma_rho0 > 0:
+            sigma_str = f" σ(D)={sigma_D:.3f} σ(ρ₀)={sigma_rho0:.3f}"
+        item.setText(f"{rl.material_id}: D={D:.2f}{sigma_str}")
         self.rayleigh_changed.emit()
 
     def _update_selected(self):
-        """原位修改当前选中 Rayleigh 线的 D / ρ₀；交点会通过自适应刷新跟随。"""
+        """原位修改当前选中 Rayleigh 线的 D / ρ₀ / σ；交点会通过自适应刷新跟随。"""
         current = self.line_list.currentItem()
         if current is None:
             return
@@ -279,6 +331,8 @@ class RayleighPanel(QWidget):
 
         D = self.D_spin.value()
         rho0 = self.rho0_spin.value()
+        sigma_D = self.sigma_D_spin.value()
+        sigma_rho0 = self.sigma_rho0_spin.value()
 
         # 名称可能也被改了，同步更新 material_id（命中预设就关联；否则当自定义文本）
         custom_name = self.custom_name_edit.lineEdit().text().strip()
@@ -288,14 +342,22 @@ class RayleighPanel(QWidget):
             new_material_id = mat_id if mat_id else custom_name
             rl.material_id = new_material_id
             # 列表项展示名也跟着改
-            current.setText(f"{custom_name}: D={D:.2f} km/s, rho0={rho0:.2f}")
+            sigma_str = ""
+            if sigma_D > 0 or sigma_rho0 > 0:
+                sigma_str = f" σ(D)={sigma_D:.3f} σ(ρ₀)={sigma_rho0:.3f}"
+            current.setText(f"{custom_name}: D={D:.2f}{sigma_str}")
         else:
             # 没有名字就保留旧名
-            current.setText(f"{rl.material_id}: D={D:.2f} km/s, rho0={rho0:.2f}")
+            sigma_str = ""
+            if sigma_D > 0 or sigma_rho0 > 0:
+                sigma_str = f" σ(D)={sigma_D:.3f} σ(ρ₀)={sigma_rho0:.3f}"
+            current.setText(f"{rl.material_id}: D={D:.2f}{sigma_str}")
 
         # 原位重算 Rayleigh line
         rl.D = D
+        rl.sigma_D = sigma_D
         rl.rho0 = rho0
+        rl.sigma_rho0 = sigma_rho0
         rl.up = np.linspace(0, 40, 500)
         rl.p = rayleigh_line(rl.up, rho0, D)
 

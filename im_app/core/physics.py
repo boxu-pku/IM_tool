@@ -90,6 +90,10 @@ class RayleighLine:
         Particle velocity x-values (km/s).
     p : ndarray
         Pressure y-values (Mbar), computed as rho0 * up * D * 0.01.
+    sigma_D : float
+        Standard deviation of D (km/s). 0 means no uncertainty.
+    sigma_rho0 : float
+        Standard deviation of rho0 (g/cm^3). 0 means no uncertainty.
     """
     id: str
     material_id: str
@@ -97,6 +101,8 @@ class RayleighLine:
     rho0: float
     up: np.ndarray
     p: np.ndarray
+    sigma_D: float = 0.0
+    sigma_rho0: float = 0.0
 
 
 @dataclass

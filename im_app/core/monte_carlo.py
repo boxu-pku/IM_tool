@@ -35,6 +35,7 @@ from im_app.core.physics import (
     find_intersections,
     reflect_hugoniot,
     reverse_impedance_match,
+    rayleigh_line,
 )
 from scipy.interpolate import interp1d
 
@@ -128,6 +129,7 @@ def _resolve_curve_in_scene(
     rayleigh_lines: dict[str, RayleighLine],
     reflected_curves: list[dict],
     per_sample_reflected: dict[str, tuple[np.ndarray, np.ndarray]],
+    perturbed_rayleigh: dict[str, tuple[np.ndarray, np.ndarray]] | None = None,
 ) -> tuple[np.ndarray | None, np.ndarray | None]:
     """
     在"场景"中解析一条曲线 ID → (up, p)。
@@ -135,9 +137,10 @@ def _resolve_curve_in_scene(
     查找顺序（与 main_window._resolve_curve_data 一致）：
       1. perturbed_materials（本轮已扰动的材料）
       2. original_materials（未被扰动的材料）
-      3. rayleigh_lines（Rayleigh 线，无误差）
-      4. per_sample_reflected（本轮已计算的反射曲线）
-      5. reflected_curves 配置中的原始曲线（作为回退）
+      3. perturbed_rayleigh（本轮扰动的 Rayleigh 线）
+      4. rayleigh_lines（Rayleigh 线原始曲线）
+      5. per_sample_reflected（本轮已计算的反射曲线）
+      6. reflected_curves 配置中的原始曲线（作为回退）
     """
     if curve_id is None:
         return None, None
@@ -151,16 +154,20 @@ def _resolve_curve_in_scene(
         mat = original_materials[curve_id]
         return mat.up, mat.p
 
-    # 3) Rayleigh 线
+    # 3) 本轮扰动的 Rayleigh 线
+    if perturbed_rayleigh and curve_id in perturbed_rayleigh:
+        return perturbed_rayleigh[curve_id]
+
+    # 4) 原始 Rayleigh 线
     if curve_id in rayleigh_lines:
         rl = rayleigh_lines[curve_id]
         return rl.up, rl.p
 
-    # 4) 本轮已计算的反射曲线
+    # 5) 本轮已计算的反射曲线
     if curve_id in per_sample_reflected:
         return per_sample_reflected[curve_id]
 
-    # 5) 反射曲线原始存储（回退）
+    # 6) 反射曲线原始存储（回退）
     for rc in reflected_curves:
         if rc["id"] == curve_id:
             return rc["up"], rc["p"]
@@ -323,6 +330,21 @@ class MonteCarloEngine:
                     # 生成失败 → 使用原始曲线
                     perturbed_materials[mid] = (mat.up.copy(), mat.p.copy())
 
+            # ---- 第 1b 步：生成扰动后的 Rayleigh 线（若有 sigma） ----
+            perturbed_rayleigh: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+            for rl_id, rl in rayleigh_lines.items():
+                sigma_D = getattr(rl, "sigma_D", 0.0) or 0.0
+                sigma_rho0 = getattr(rl, "sigma_rho0", 0.0) or 0.0
+                if sigma_D <= 0 and sigma_rho0 <= 0:
+                    continue
+                D_s = self._rng.normal(rl.D, max(sigma_D, 1e-10))
+                rho0_s = self._rng.normal(rl.rho0, max(sigma_rho0, 1e-10))
+                if D_s <= 0 or rho0_s <= 0:
+                    D_s = rl.D
+                    rho0_s = rl.rho0
+                p_s = rayleigh_line(rl.up, rho0_s, D_s)
+                perturbed_rayleigh[rl_id] = (rl.up.copy(), p_s)
+
             # ---- 第 2 步（Pass 1）：不依赖反射线的交点 ----
             sample_ix_results: dict[str, tuple[float, float] | None] = {}
             for ix in pass1_ix:
@@ -330,10 +352,12 @@ class MonteCarloEngine:
                     up1, p1 = _resolve_curve_in_scene(
                         ix.source_curve1_id, perturbed_materials, materials,
                         rayleigh_lines, reflected_curves, {},
+                        perturbed_rayleigh=perturbed_rayleigh,
                     )
                     up2, p2 = _resolve_curve_in_scene(
                         ix.source_curve2_id, perturbed_materials, materials,
                         rayleigh_lines, reflected_curves, {},
+                        perturbed_rayleigh=perturbed_rayleigh,
                     )
                     if up1 is None or up2 is None:
                         sample_ix_results[ix.id] = None
@@ -411,10 +435,12 @@ class MonteCarloEngine:
                     up1, p1 = _resolve_curve_in_scene(
                         ix.source_curve1_id, perturbed_materials, materials,
                         rayleigh_lines, reflected_curves, sample_reflected,
+                        perturbed_rayleigh=perturbed_rayleigh,
                     )
                     up2, p2 = _resolve_curve_in_scene(
                         ix.source_curve2_id, perturbed_materials, materials,
                         rayleigh_lines, reflected_curves, sample_reflected,
+                        perturbed_rayleigh=perturbed_rayleigh,
                     )
                     if up1 is None or up2 is None:
                         sample_ix_results[ix.id] = None
