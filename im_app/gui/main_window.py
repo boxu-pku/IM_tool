@@ -29,6 +29,7 @@ from im_app.core.physics import (
     MaterialData, RayleighLine,
     rayleigh_line, find_intersections, compression_ratio,
 )
+from im_app.core.monte_carlo import MonteCarloEngine, MonteCarloResult
 from im_app.core.plotter import InteractiveHugoniotPlot, EOSPlot, GenericHugoniotPlot
 from im_app.gui.material_panel import MaterialPanel
 from im_app.gui.rayleigh_panel import RayleighPanel
@@ -1053,7 +1054,84 @@ class MainWindow(QMainWindow):
         self.intersection_panel.update_reflected_curves(self.hugoniot_plot.reflected_curves)
         if hasattr(self, '_refresh_scatter_ix_combo'):
             self._refresh_scatter_ix_combo()
+
+        # 蒙特卡洛误差传播（异步，完成后自动刷新 plot 和表格）
+        self._run_monte_carlo_for_scene()
+
         self._update_status()
+
+    # ------------------------------------------------------------------
+    # 蒙特卡洛误差传播
+    # ------------------------------------------------------------------
+
+    def _scene_has_error_sources(self) -> bool:
+        """检查场景中是否有材料带有 fit_params（误差源）。"""
+        for mat in self.hugoniot_plot.materials.values():
+            if mat.fit_params is not None:
+                return True
+        return False
+
+    def _run_monte_carlo_for_scene(self):
+        """运行蒙特卡洛误差传播，完成后更新交点/反射曲线误差并刷新绘图。"""
+        if not self._scene_has_error_sources():
+            return
+
+        # 保存当前交点 ID 和反射曲线 ID 的对应关系
+        from PyQt5.QtWidgets import QProgressDialog, QApplication
+
+        n_samples = 500
+        dialog = QProgressDialog(
+            "Running Monte Carlo error propagation...", "Cancel",
+            0, n_samples, self,
+        )
+        dialog.setWindowTitle("Monte Carlo")
+        dialog.setMinimumDuration(0)
+
+        engine = MonteCarloEngine()
+        all_rl = {}
+        if hasattr(self, 'rayleigh_panel'):
+            all_rl = self.rayleigh_panel.get_all_rayleigh_lines()
+
+        def _progress(i: int) -> bool:
+            dialog.setValue(i)
+            QApplication.processEvents()
+            return not dialog.wasCanceled()
+
+        result = engine.run(
+            materials=self.hugoniot_plot.materials,
+            intersections=self.hugoniot_plot.intersections,
+            reflected_curves=self.hugoniot_plot.reflected_curves,
+            rayleigh_lines=all_rl,
+            n_samples=n_samples,
+            progress_callback=_progress,
+        )
+
+        dialog.close()
+
+        had_updates = False
+
+        # 将 MC 结果写回交点
+        for ix in self.hugoniot_plot.intersections:
+            stats = result.intersection_stats.get(ix.id)
+            if stats is not None and stats.n_valid >= 10:
+                ix.up_err = stats.up_std
+                ix.p_err = stats.p_std
+                had_updates = True
+
+        # 写回反射曲线
+        for rc in self.hugoniot_plot.reflected_curves:
+            stats = result.reflected_stats.get(rc["id"])
+            if stats is not None and stats.p_err is not None:
+                rc["up_err"] = stats.up_err
+                rc["p_err"] = stats.p_err
+                had_updates = True
+
+        if had_updates:
+            self.hugoniot_plot.refresh()
+            self.intersection_panel.set_intersections(
+                self.hugoniot_plot.intersections,
+                self.hugoniot_plot.materials,
+            )
 
     def _on_intersection_selected(self, ix_id: str):
         for i, ix in enumerate(self.hugoniot_plot.intersections):
@@ -1264,6 +1342,9 @@ class MainWindow(QMainWindow):
 
         # TODO Task 15: Replace with scatter_ix_combo mechanism
         # self._update_eos_inputs_from_intersection(name1, up_val, p_val, compression)
+
+        # 蒙特卡洛误差传播（覆盖解析法给出更准确的误差带）
+        self._run_monte_carlo_for_scene()
 
     def _on_reflect(self, source_mat_id: str, center_up: float):
         refl_id = self.hugoniot_plot.add_reflected(source_mat_id, center_up)
@@ -1523,6 +1604,9 @@ class MainWindow(QMainWindow):
             f"intersection @ ({r['intersection_up']:.3f}, {r['intersection_p']:.3f}){err_str}"
         )
         self._update_status()
+
+        # 蒙特卡洛误差传播（覆盖解析法给出更准确的误差带）
+        self._run_monte_carlo_for_scene()
 
     def _apply_plot_settings(self):
         """Apply plot settings from control panel to the selected plot."""
@@ -2684,6 +2768,8 @@ class MainWindow(QMainWindow):
                 self._update_scatter_list_widget()
             if hasattr(self, '_refresh_all_plots_with_scatter'):
                 self._refresh_all_plots_with_scatter()
+            # 蒙特卡洛误差传播
+            self._run_monte_carlo_for_scene()
             self.status.showMessage(f"Workflow loaded from {path}")
         except Exception as e:
             QMessageBox.critical(self, "Load Error", str(e))
