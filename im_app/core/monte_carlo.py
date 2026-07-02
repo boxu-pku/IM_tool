@@ -213,11 +213,18 @@ def _depends_on_reflected(curve_id: str) -> bool:
     return bool(curve_id) and curve_id.startswith("refl_")
 
 
-def _scene_has_error_sources(materials: dict[str, MaterialData]) -> bool:
-    """检查场景中是否有材料带有 fit_params（误差源）。"""
+def _scene_has_error_sources(
+    materials: dict[str, MaterialData],
+    rayleigh_lines: dict[str, RayleighLine] | None = None,
+) -> bool:
+    """检查场景中是否有误差源（材料 fit_params 或 Rayleigh sigma）。"""
     for mat in materials.values():
         if mat.fit_params is not None:
             return True
+    if rayleigh_lines:
+        for rl in rayleigh_lines.values():
+            if (getattr(rl, 'sigma_D', 0.0) or 0.0) > 0 or (getattr(rl, 'sigma_rho0', 0.0) or 0.0) > 0:
+                return True
     return False
 
 
@@ -277,7 +284,7 @@ class MonteCarloEngine:
         MonteCarloResult
             MC 统计结果。
         """
-        if not _scene_has_error_sources(materials):
+        if not _scene_has_error_sources(materials, rayleigh_lines):
             # 无误差源 → 返回空结果
             return MonteCarloResult(n_total=0)
 

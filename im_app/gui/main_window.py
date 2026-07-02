@@ -1065,9 +1065,14 @@ class MainWindow(QMainWindow):
     # ------------------------------------------------------------------
 
     def _scene_has_error_sources(self) -> bool:
-        """检查场景中是否有材料带有 fit_params（误差源）。"""
+        """检查场景中是否有材料带有 fit_params，或 Rayleigh 线带有不确定度。"""
         for mat in self.hugoniot_plot.materials.values():
             if mat.fit_params is not None:
+                return True
+        # 检查 Rayleigh 线是否有 sigma
+        all_rl = self.rayleigh_panel.get_all_rayleigh_lines()
+        for rl in all_rl.values():
+            if (getattr(rl, 'sigma_D', 0.0) or 0.0) > 0 or (getattr(rl, 'sigma_rho0', 0.0) or 0.0) > 0:
                 return True
         return False
 
