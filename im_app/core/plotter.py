@@ -610,6 +610,24 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
                                  linewidth=linewidth, label=label, alpha=alpha,
                                  picker=10, pickradius=15, zorder=1)
 
+            # 绘制 Rayleigh 线误差带（若 sigma_D 或 sigma_rho0 > 0）
+            try:
+                from im_app.core.physics import rayleigh_p_err
+                rl_p_err = rayleigh_p_err(rl.up, rl.rho0, rl.D,
+                                          getattr(rl, 'sigma_D', 0.0) or 0.0,
+                                          getattr(rl, 'sigma_rho0', 0.0) or 0.0)
+                if rl_p_err is not None:
+                    valid = np.isfinite(rl_p_err) & np.isfinite(rl.up) & np.isfinite(rl.p)
+                    if valid.sum() > 1:
+                        self.ax.fill_between(
+                            rl.up[valid],
+                            rl.p[valid] - rl_p_err[valid],
+                            rl.p[valid] + rl_p_err[valid],
+                            alpha=0.10, color=line_color, zorder=0,
+                        )
+            except Exception:
+                pass
+
             self._artist_map[line] = element_id
             self._artist_zorder[line] = 1
             if element_id not in self._element_meta:

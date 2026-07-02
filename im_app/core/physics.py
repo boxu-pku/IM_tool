@@ -177,6 +177,46 @@ def rayleigh_line(up: np.ndarray, rho0: float, D: float) -> np.ndarray:
     return rho0 * np.asarray(up) * D * 0.01
 
 
+def rayleigh_p_err(
+    up: np.ndarray,
+    rho0: float,
+    D: float,
+    sigma_D: float,
+    sigma_rho0: float,
+) -> np.ndarray | None:
+    """
+    Compute Rayleigh line pressure uncertainty from sigma_D and sigma_rho0.
+
+    P = rho0 * up * D * 0.01
+    sigma_P^2 = (dP/dD)^2 * sigma_D^2 + (dP/drho0)^2 * sigma_rho0^2
+              = (rho0 * up * 0.01)^2 * sigma_D^2 + (up * D * 0.01)^2 * sigma_rho0^2
+
+    Parameters
+    ----------
+    up : ndarray
+        Particle velocity (km/s).
+    rho0 : float
+        Initial density (g/cm^3).
+    D : float
+        Shock velocity (km/s).
+    sigma_D : float
+        Standard deviation of D (km/s).
+    sigma_rho0 : float
+        Standard deviation of rho0 (g/cm^3).
+
+    Returns
+    -------
+    ndarray or None
+        Pressure uncertainty array (Mbar). None if both sigmas are zero.
+    """
+    if sigma_D <= 0 and sigma_rho0 <= 0:
+        return None
+    up_arr = np.asarray(up, dtype=float)
+    term_D = (rho0 * up_arr * 0.01 * sigma_D) ** 2
+    term_rho = (up_arr * D * 0.01 * sigma_rho0) ** 2
+    return np.sqrt(term_D + term_rho)
+
+
 def _ensure_sorted(
     up: np.ndarray, p: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray]:
