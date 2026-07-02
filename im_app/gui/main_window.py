@@ -547,7 +547,21 @@ class MainWindow(QMainWindow):
             # 显式重画，防止 draw_idle 在某些场景下被吞掉
             plot.update_plot()
 
-        # P-CR 图 (EOSPlot) 使用 self.hugoniot_plot.materials，不需要单独处理
+        # P-CR 图 (EOSPlot) —— 需要 compression+p 的曲线（可能没有 up 数据）
+        # 合并 hugoniot_plot 中的标准曲线 + 选中参考曲线中有 compression+p 的
+        eos_materials = dict(self.hugoniot_plot.materials)
+        for mid, mat in curves.items():
+            if mid not in eos_materials:
+                if (mat.compression is not None and len(mat.compression) > 0
+                        and mat.p is not None and len(mat.p) > 0):
+                    eos_materials[mid] = mat
+        eos_settings = self._plot_settings["P-CR"]
+        self.eos_plot.update_plot(
+            materials=eos_materials,
+            scatter_points=self._scatter_points,
+            xlim=eos_settings["xlim"],
+            ylim=eos_settings["ylim"],
+        )
 
         self._update_status()
 
@@ -673,7 +687,14 @@ class MainWindow(QMainWindow):
         # If currently on P-CR tab (index 1), update reference curves
         current_index = self.plot_tabs.currentIndex()
         if current_index == 1:
-            materials_for_eos = self.hugoniot_plot.materials  # Always show materials
+            # 合并 hugoniot_plot 标准曲线 + 选中参考曲线中有 compression+p 的
+            materials_for_eos = dict(self.hugoniot_plot.materials)
+            ref_curves = self.reference_curve_panel.get_selected_curves()
+            for mid, mat in ref_curves.items():
+                if mid not in materials_for_eos:
+                    if (mat.compression is not None and len(mat.compression) > 0
+                            and mat.p is not None and len(mat.p) > 0):
+                        materials_for_eos[mid] = mat
             eos_settings = self._plot_settings["P-CR"]
             self.eos_plot.update_plot(
                 materials=materials_for_eos,
@@ -1769,7 +1790,14 @@ class MainWindow(QMainWindow):
             self.hugoniot_plot.set_linewidth(settings.get("linewidth", 1.2))
             self.hugoniot_plot.refresh()
         elif index == 1:  # P-CR Diagram
-            materials = self.hugoniot_plot.materials  # Always show materials
+            # 合并 hugoniot_plot 标准曲线 + 选中参考曲线中有 compression+p 的
+            materials = dict(self.hugoniot_plot.materials)
+            ref_curves = self.reference_curve_panel.get_selected_curves()
+            for mid, mat in ref_curves.items():
+                if mid not in materials:
+                    if (mat.compression is not None and len(mat.compression) > 0
+                            and mat.p is not None and len(mat.p) > 0):
+                        materials[mid] = mat
             self.eos_plot.update_plot(
                 materials=materials,
                 scatter_points=self._scatter_points,
