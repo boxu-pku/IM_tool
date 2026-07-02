@@ -1079,7 +1079,16 @@ class MainWindow(QMainWindow):
     def _run_monte_carlo_for_scene(self):
         """运行蒙特卡洛误差传播，完成后更新交点/反射曲线误差并刷新绘图。"""
         if not self._scene_has_error_sources():
+            self.status.showMessage("MC skipped: no error sources (materials with fit_params or Rayleigh sigma)")
             return
+
+        # 统计误差源数量
+        n_mat_err = sum(1 for m in self.hugoniot_plot.materials.values() if m.fit_params is not None)
+        rl_dict = self.rayleigh_panel.get_all_rayleigh_lines()
+        n_rl_sigma = sum(1 for r in rl_dict.values() if (getattr(r, 'sigma_D', 0.0) or 0.0) > 0 or (getattr(r, 'sigma_rho0', 0.0) or 0.0) > 0)
+        self.status.showMessage(
+            f"MC: starting ({n_mat_err} materials, {n_rl_sigma} Rayleigh lines with sigma)..."
+        )
 
         # 保存当前交点 ID 和反射曲线 ID 的对应关系
         from PyQt5.QtWidgets import QProgressDialog, QApplication
@@ -1116,20 +1125,29 @@ class MainWindow(QMainWindow):
         had_updates = False
 
         # 将 MC 结果写回交点
+        n_ix_updated = 0
         for ix in self.hugoniot_plot.intersections:
             stats = result.intersection_stats.get(ix.id)
             if stats is not None and stats.n_valid >= 10:
                 ix.up_err = stats.up_std
                 ix.p_err = stats.p_std
+                n_ix_updated += 1
                 had_updates = True
 
         # 写回反射曲线
+        n_rc_updated = 0
         for rc in self.hugoniot_plot.reflected_curves:
             stats = result.reflected_stats.get(rc["id"])
             if stats is not None and stats.p_err is not None:
                 rc["up_err"] = stats.up_err
                 rc["p_err"] = stats.p_err
+                n_rc_updated += 1
                 had_updates = True
+
+        self.status.showMessage(
+            f"MC: {result.n_total} samples, "
+            f"{n_ix_updated} intersections, {n_rc_updated} reflected curves updated"
+        )
 
         if had_updates:
             self.hugoniot_plot.refresh()
