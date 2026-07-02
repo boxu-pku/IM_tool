@@ -544,6 +544,9 @@ class MainWindow(QMainWindow):
                     if x_exists and y_exists:
                         plot.add_material(mat)
 
+            # 显式重画，防止 draw_idle 在某些场景下被吞掉
+            plot.update_plot()
+
         # P-CR 图 (EOSPlot) 使用 self.hugoniot_plot.materials，不需要单独处理
 
         self._update_status()
@@ -653,7 +656,9 @@ class MainWindow(QMainWindow):
                 if mid not in plot.materials:
                     plot.add_material(mat)
                 else:
+                    # 数据可能更新过，强制重画避免缓存导致的视觉不同步
                     plot.materials[mid] = mat
+                    plot.update_plot()
 
         # Update reverse match Hugoniot combo
         self.intersection_panel._materials = materials

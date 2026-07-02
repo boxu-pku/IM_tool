@@ -1,33 +1,34 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with code in this repository.
 
 ## Project Overview
 
 Scientific analysis tool for **Impedance Matching** in shock physics (HEDP). Computes pressure and compression ratios in multi-layer targets from measured shock velocities using Hugoniot equations of state. Comments and markdown are written in Chinese throughout.
 
-The GUI presents **8 plot tabs** (P-Up, P-CR, Us-Up, P-T, rho-Up, T-Up, E-Up, P-Us) with click-to-select elements, right-click context menus for per-element style editing, reverse impedance matching, and JSON workflow save/load.
+The GUI presents **8 plot tabs** (P-Up, P-CR, Us-Up, P-T, rho-Up, T-Up, E-Up, P-Us) with click-to-select elements, right-click context menus for per-element style editing, scatter points, reverse impedance matching, and JSON workflow save/load.
 
 ## Running the Application
 
 **GUI Application** (primary workflow):
 ```bash
-cd D:/My_app/IM_tool
 python -m im_app.main        # primary entry point
 python run_app.py            # alternative launcher (sets PYTHONPATH)
+python run_app.bat           # Windows batch launcher (pauses on exit)
 ```
 
 Dependencies: `pip install -r requirements.txt` (PyQt5, numpy, pandas, matplotlib, scipy, xlrd, openpyxl)
 
-**Legacy notebooks** (preserved under `reference/`):
-- `reference/Impedance_matching.ipynb` — SESAME EOS tables
-- `reference/Impedance_matching_zhangHugoniot.ipynb` — Celliers 2005 / Hamel 2012 analytical fits
+**Packaged release**:
+```bash
+python scripts/package_release.py    # builds dist/im-tool-v*.zip
+```
 
 **Scripts**:
 ```bash
-python scripts/convert_to_standard.py    # converts raw data to standard library format
-python scripts/convert_csv_to_txt.py     # converts legacy .csv to .txt format
-python scripts/validate_hugoniot.py      # CLI entry to Hugoniot file validation
+python scripts/convert_to_standard.py    # raw data → standard library format
+python scripts/convert_csv_to_txt.py     # legacy .csv → .txt format
+python scripts/validate_hugoniot.py      # CLI Hugoniot file validation
 ```
 
 ## Architecture
@@ -36,23 +37,24 @@ python scripts/validate_hugoniot.py      # CLI entry to Hugoniot file validation
 
 ```
 im_app/
-├── main.py                          # Entry point (window maximized)
+├── main.py                          # Entry point (Fusion style, window maximized)
 ├── core/
 │   ├── data_loader.py                # Standard format loader (auto-detects .csv/.txt/.hug)
-│   ├── data_converter.py             # Raw → standard format converter; read/write standard .txt
+│   ├── data_converter.py             # Raw → standard format converter; read/write .txt
 │   ├── physics.py                    # MaterialData, RayleighLine, Intersection + math
 │   ├── reference_curve.py            # Reference curve CSV loader + variable mapping
-│   ├── element_style.py              # ElementStyle + style editor dialogs (color/linewidth/marker)
-│   ├── plot_style.py                 # Physical Review Letters matplotlib style
-│   └── plotter.py                    # DragZoomMixin + InteractiveHugoniotPlot, EOSPlot, GenericHugoniotPlot
+│   ├── element_style.py              # ElementStyle + style editor dialogs (color/linewidth/marker/scatter)
+│   ├── plot_style.py                 # PRL matplotlib style (font size constants exposed)
+│   └── plotter.py                    # DragZoomMixin + ElementInteractionMixin + 3 plot classes
 ├── gui/
-│   ├── main_window.py                # Main window (QSplitter, ~1700 lines, orchestrates everything)
-│   ├── material_panel.py             # Material checkbox selection + add-material menu
-│   ├── material_wizard.py            # Multi-step wizard to add a new material from raw file
-│   ├── validation_dialog.py          # File-validation dialog (uses tools/validate_hugoniot)
-│   ├── ideal_plasma_dialog.py        # Generate ideal-γ-law plasma Hugoniot analytically
-│   ├── rayleigh_panel.py             # Rayleigh line creation/management
-│   ├── intersection_panel.py         # Intersection table + reflection + reverse match controls
+│   ├── main_window.py                # Main window (~2500 lines, orchestrates everything)
+│   ├── material_panel.py             # Material checkbox selection + refresh/validate buttons
+│   ├── material_wizard.py            # Multi-step wizard to add material from raw file
+│   ├── validation_dialog.py          # File-validation dialog (background thread)
+│   ├── ideal_plasma_dialog.py        # Generate ideal-γ-law plasma Hugoniot
+│   ├── rayleigh_panel.py             # Rayleigh line creation/management + edit dialog
+│   ├── intersection_panel.py         # Intersection table + reflection + reverse match + auto-update
+│   ├── scatter_panel                 # [embedded in main_window] Scatter points from intersection or manual
 │   ├── reference_curve_panel.py      # Reference curve selection checkboxes
 │   ├── reference_curve_dialog.py     # Create new reference curve
 │   └── reference_curve_manager.py    # Manage (list/edit/delete) saved reference curves
@@ -62,28 +64,47 @@ im_app/
 │   ├── metadata.json                 # Material index (10 materials)
 │   ├── materials/*.{txt,csv,hug}     # Standardized Hugoniot data
 │   ├── reference_curves/*.csv        # Reference curves (e.g., CH_sesame7592.csv)
+│   ├── validators/                   # (empty, reserved)
 │   ├── FORMAT_SPECIFICATION.md
 │   ├── README.md
 │   └── USER_GUIDE.md
 └── workflows/                        # Saved analysis states (.json)
 ```
 
-**Legacy / unused GUI files** (still present but **not imported anywhere**; their imports reference symbols that no longer exist — `HugoniotRayleighPlot`, `ImpedanceResult`):
-- `gui/param_panel.py`
-- `gui/plot_panel.py`
-- `gui/result_panel.py`
+### Outside `im_app/`
 
-These can be deleted in a cleanup pass; do not assume they are wired into the app.
+```
+_root/
+├── pyproject.toml                    # Setuptools packaging (v1.0.0, Python >=3.9)
+├── MANIFEST.in
+├── requirements.txt
+├── run_app.py / run_app.bat
+├── scripts/
+│   ├── convert_to_standard.py
+│   ├── convert_csv_to_txt.py
+│   ├── validate_hugoniot.py
+│   └── package_release.py            # Build distribution zip
+├── docs/
+│   ├── ideal_plasma_hugoniot_theory.md
+│   └── validate_tool.md
+├── _archive/                         # Moved legacy files (not git-tracked)
+│   ├── legacy_notebooks/reference/   # Original Impedance_matching.ipynb etc.
+│   ├── tests/
+│   ├── notes/
+│   └── adhoc/
+├── dist/                             # Built distribution packages (.whl, .tar.gz, .zip)
+└── _test_visibility.py               # Offscreen legend/material visibility test
+```
 
 ### Standard Hugoniot Data Formats
 
 `data_loader.load_standard_hugoniot_auto()` dispatches by file extension:
 
 - **`.csv`** — original tab-separated format with 7 `#`-comment header lines (Material, Reference, rho0, Source, Date, Notes, Columns). Columns: `Up(km/s)`, `Us(km/s)`, `P(Mbar)`, `rho(g/cm3)`, `compression`, optional `T(eV)`, `E(MJ/g)`, `source`.
-- **`.txt`** — same logical format as `.csv` but parsed by `data_converter.read_standard_txt()`. This is the **current default** for new materials (see `metadata.json`).
-- **`.hug`** — FEOS binary-ish text format. First line is a comment header; subsequent lines are space-separated scientific notation in column order: `rho, T, P, E, Us, Up`. Units: rho (g/cm³), T (eV), P (Mbar), E (erg/g → divide by 1e10 for MJ/g), Us/Up (km/s). Compression is derived as `rho / rho[0]`.
+- **`.txt`** — same logical format as `.csv` but parsed by `data_converter.read_standard_txt()`. This is the **current default** for new materials.
+- **`.hug`** — FEOS binary-ish text format. First line comment header; subsequent lines space-separated scientific notation: `rho, T, P, E, Us, Up`. Units: rho (g/cm³), T (eV), P (Mbar), E (erg/g → divide by 1e10 for MJ/g), Us/Up (km/s). Compression derived as `rho / rho[0]`.
 
-**Reference curves** (`reference_curves/*.csv`): a simpler 3-row CSV — row 1 column names (must match `Up`, `Us`, `P`, `rho`, `compression`, `T`, `E`), row 2 units, row 3+ data. Loaded by `reference_curve.load_reference_curve()`.
+**Reference curves** (`reference_curves/*.csv`): 3-row CSV — row 1 column names (must match `Up`, `Us`, `P`, `rho`, `compression`, `T`, `E`), row 2 units, row 3+ data. Loaded by `reference_curve.load_reference_curve()`.
 
 ### Material Library (metadata.json)
 
@@ -93,18 +114,19 @@ These can be deleted in a cleanup pass; do not assume they are wired into the ap
 - `BN_LEA` — Boron Nitride (LEA SESAME)
 - `Al_Celliers2005` — Aluminum (Celliers et al. 2005 analytical fit)
 - `Quartz_Hamel2012` — Alpha Quartz (Hamel et al. 2012 analytical fit)
-- `Al_FEOS` — Aluminum FEOS table (`.hug` format)
+- `Al_FEOS` — Aluminum FEOS table (`.hug`)
 - `CH_foam_ideal_plasma` — CH foam via ideal-γ-law generator
 
 ### Core Data Flow
 
-1. **Material selection** → checkboxes load from standard library via `data_loader.py`. IDs starting with `ref_` are reference curves and are excluded from material-only operations.
-2. **Rayleigh lines** → user inputs D, rho0; computed as `P = rho0 * up * D * 0.01` (Mbar).
+1. **Material selection** → checkboxes load from standard library via `data_loader.py`. IDs starting with `ref_` are reference curves, excluded from material-only operations.
+2. **Rayleigh lines** → user inputs D (km/s), rho0 (g/cm³); computed as `P = rho0 * up * D * 0.01` (Mbar). Double-click a Rayleigh line to edit parameters in `RayleighEditDialog`.
 3. **Find intersections** → `physics.find_intersections()` via sign-change detection on a fine common grid; first intersection near zero is ignored by default.
 4. **Select intersection** → click on plot (zorder-priority pick) or table row.
-5. **Reflect Hugoniot** → choose curve + intersection center; `up_r = 2*center - up`.
-6. **Reverse impedance match** → given a known (up, p) target, scan reflection centers and solve `P(2*center - target_up) = target_p` with `brentq` (`physics.reverse_impedance_match`).
-7. **Compression ratio** → `D / (D - up)`, or interpolated from the material's `compression` column when available.
+5. **Reflect Hugoniot** → choose curve + intersection center; reflected up `up_r = 2*center - up`.
+6. **Reverse impedance match** → given known (up, p) target, scan reflection centers, solve `P(2*center - target_up) = target_p` with `brentq` (`physics.reverse_impedance_match`).
+7. **Compression ratio** → `D / (D - up)`, or interpolated from material's `compression` column.
+8. **Scatter points** → create from selected intersection or manual X/Y entry; editable style via right-click.
 
 ### Plot Tabs and Variable Mapping
 
@@ -121,7 +143,9 @@ Eight tabs in `plot_tabs` (QTabWidget), each backed by a `FigureCanvas` subclass
 | E-Up Diagram | `GenericHugoniotPlot("E","Up")` | E | Up |
 | P-Us Diagram | `GenericHugoniotPlot("P","Us")` | P | Us |
 
-Only `InteractiveHugoniotPlot` supports intersections / Rayleigh lines / reflected curves / click-selection. The generic plots display material Hugoniots only. Generic plots support an "Inverse Axes" toggle that recreates the plot with swapped X/Y.
+- `InteractiveHugoniotPlot` (P-Up) supports intersections / Rayleigh lines / reflected curves / click-selection.
+- All other plots (`EOSPlot`, `GenericHugoniotPlot`) display material Hugoniots and support **inverse axes** toggle + right-click style editing.
+- Generic plots support an **"Inverse Axes"** toggle that recreates the plot with swapped X/Y.
 
 ### Interactive Element Model
 
@@ -130,33 +154,80 @@ Every drawable element has an `element_id` of the form `{prefix}_{data_id}`:
 - `rl_{rayleigh_id}` — Rayleigh line
 - `refl_{reflected_id}` — reflected Hugoniot
 - `ix_{intersection_id}` — intersection point
+- `sc_{scatter_id}` — scatter point
 
-`InteractiveHugoniotPlot` maintains `_artist_map` (Artist → element_id), `_element_zorder` (for pick priority; intersections have zorder 10–15 to win over lines at zorder 1), and `_element_meta` (element_id → `{type, style, data_id}`). Right-click opens a `QMenu` with **Edit Style...**, **Change Color** (submenu), and **Delete**.
+**Artist registration system** (shared via `ElementInteractionMixin`):
+- `_artist_map` — `artist` → `element_id`
+- `_element_meta` — `element_id` → `{type, style, data_id}`
+- `_element_zorder` — `element_id` → zorder (intersections zorder 10–15 > lines at 1)
+- `_selected_element_id` — currently selected element
 
-`MainWindow._on_element_deleted` routes deletion back to the appropriate panel (material panel checkbox, rayleigh panel, intersection table, reflected list).
+`InteractiveHugoniotPlot` also inherits `_material_color_map` for persisting material colors across refresh cycles.
+
+**Right-click context menu** (all plots):
+- **Edit Style...** — opens `StyleEditorDialog` (color, alpha, linewidth, linestyle, marker)
+- **Change Color** — submenu with quick color choices (`QuickColorDialog`)
+- **Delete** — removes element (routed via `MainWindow._on_element_deleted`)
+
+**Selection visual feedback**: selected lines are drawn at 1.5× their base linewidth.
 
 ### Interactive Plot Navigation (drag-zoom + 'a' reset)
 
-All 8 plot tabs inherit `DragZoomMixin` (defined in `core/plotter.py`, pure-Python mixin — host classes own the `zoom_applied(float, float, float, float)` and `reset_view()` pyqtSignals; the mixin calls `self.zoom_applied.emit(...)` / `self.reset_view.emit()`):
+All 8 plot tabs inherit `DragZoomMixin` (in `core/plotter.py`):
 
-- **Drag-to-zoom**: left-click and drag a rectangle > 5 px (display pixels). A red translucent rubber-band `Rectangle` patch is drawn during drag; on release the plot's xlim/ylim are set to the dragged region and `zoom_applied(xmin, xmax, ymin, ymax)` is emitted. Drags ≤ 5 px fall through to click handling.
-- **'a' key reset**: when the canvas has keyboard focus (click the plot first), pressing `a` emits `reset_view()`, which restores the plot's hardcoded default range from `PLOT_DEFAULTS` in `main_window.py`. `setup_drag_zoom()` calls `self.setFocusPolicy(Qt.StrongFocus)` so the canvas can actually receive key events (default is `Qt.NoFocus`).
-- **State sync**: `MainWindow._on_plot_zoom_applied` updates `_plot_settings[key]`, applies limits to the plot instance (note: `EOSPlot` uses `update_plot()` instead of `set_xlim/set_ylim` because it doesn't define those methods), and syncs the 4 spinboxes in the Plot Settings panel when the current tab matches. State persists across tab switches and is saved in workflow JSON via the existing `_save_workflow` path.
+- **Drag-to-zoom**: left-click drag rectangle > 5 px (display pixels). Red translucent rubber-band drawn during drag; on release sets xlim/ylim and emits `zoom_applied(xmin, xmax, ymin, ymax)`. Drags ≤ 5 px fall through to click handling.
+- **'a' key reset**: press `a` (canvas must have focus → click plot first) emits `reset_view()`, restoring hardcoded default range from `PLOT_DEFAULTS` in `main_window.py`.
+- **State sync**: `MainWindow._on_plot_zoom_applied` updates `_plot_settings[key]`, applies limits, syncs spinboxes. State persists across tab switches and is saved in workflow JSON.
 
-`InteractiveHugoniotPlot` overrides `_handle_click_release(event)` (renamed from `_on_click`) to do element selection on left-click and context menu on right-click. Selection fires on **release** rather than press so the 5 px drag-vs-click threshold can be evaluated first.
+**Click handling**: `InteractiveHugoniotPlot._handle_click_release(event)` — left-click selects, right-click shows context menu. Selection fires on **release** (not press) so the 5 px drag-vs-click threshold works.
+
+### Scatter Points System
+
+Embedded in `main_window.py` (no separate panel file):
+- "From Intersection" combo + Add button — creates scatter point from currently selected intersection
+- "Manual" entry with X/Y `QDoubleSpinBox` + Add button
+- `QListWidget` listing all scatter points with Delete Selected / Clear All buttons
+
+Scatter points use a **dual-artist trick**: invisible large-pick-radius marker for hit detection + visible styled marker. Stored in `_scatter_points` dict. Right-click → Edit Style supports marker shape, size, edge color, edge width.
+
+### Auto-Refresh
+
+- Rayleigh panel changes emit signals → `MainWindow` auto-refreshes all intersections
+- `intersection_panel.py` has an **Auto-update checkbox** — when checked, intersection computation runs automatically whenever curves change
+- Legend properly shows/hides on tab switch
 
 ### Plot Settings
 
-Per-plot settings stored in `MainWindow._plot_settings` dict keyed by short name (`P-Up`, `P-CR`, `Us-Up`, `P-T`, `rho-Up`, `T-Up`, `E-Up`, `P-Us`). Each entry holds `xlim`, `ylim`, `show_legend`. `P-Up` additionally holds `linestyle` and `linewidth`. The plot-settings control panel at the bottom of the left pane edits whichever plot is currently selected in the combo (synced with the active tab). Module-level `PLOT_DEFAULTS` dict holds the hardcoded initial ranges (one per plot key) used by the 'a' key reset.
+Per-plot settings in `MainWindow._plot_settings` dict keyed by short name (`P-Up`, `P-CR`, etc.). Each entry holds `xlim`, `ylim`, `show_legend`, `inverse` flag. `P-Up` additionally holds `linestyle` and `linewidth`. Module-level `PLOT_DEFAULTS` dict holds hardcoded initial ranges for 'a' key reset.
+
+Plot-settings control panel at bottom of left pane syncs with active tab via combo box.
 
 ### Plot Style
 
-All plots use Physical Review Letters (PRL) style: serif fonts, inward ticks, colorblind-friendly palette, 300 DPI export. Configured in `core/plot_style.py` via `apply_prl_style()` and `save_prl_figure()`.
+All plots use PRL style (Physical Review Letters). Configured in `core/plot_style.py`:
+
+**Module constants** (exposed for consistency):
+- `LEGEND_FONTSIZE = 14`
+- `BASE_FONTSIZE = 18`
+- `TICK_LABELSIZE = 16`
+- `AXES_LABELSIZE = 20`
+- `AXES_TITLESIZE = 20`
+
+Lines: serif fonts, inward ticks, colorblind-friendly palette (`PRL_COLORS`), axes linewidth 1.2, tick width 1.2, line linewidth 1.5, marker size 6. Export via `save_prl_figure()` at 300 DPI.
 
 ### Conventions
 
 - **Units**: density (g/cm³), velocity (km/s), pressure (Mbar; 1 Mbar = 100 GPa), temperature (eV), energy (MJ/g).
-- **Column names**: use full names with units in parentheses, e.g. `Up(km/s)`, `P(Mbar)`.
-- **Material IDs**: `{Name}_{Source}` format, e.g. `Al_3717_sesame`, `Quartz_Hamel2012`. Reference curves use `ref_` prefix when added to plots.
+- **Column names**: full names with units in parentheses, e.g. `Up(km/s)`, `P(Mbar)`.
+- **Material IDs**: `{Name}_{Source}` format. Reference curves use `ref_` prefix when added to plots.
 - **Chinese comments**: code comments and dialog strings are predominantly Chinese; module docstrings are bilingual.
-- **No build system or test suite** — validate by running the GUI and comparing with notebook results.
+- **No formal test suite** — validate by running the GUI. `_test_visibility.py` at project root provides offscreen legend/material visibility checks.
+
+## Packaging
+
+```bash
+python -m build              # builds .whl + .tar.gz into dist/
+python scripts/package_release.py    # builds im-tool-v*.zip for end users
+```
+
+`pyproject.toml` specifies project metadata (version 1.0.0, Python >=3.9). `MANIFEST.in` includes standard_library/ and workflows/ in the sdist.

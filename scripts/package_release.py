@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-IM Tool 发布包打包脚本。
+IM Tool release packaging script.
 
-将项目打包为一个面向最终用户的 zip 压缩包，包含：
-- im_app/（应用代码 + 标准材料库）
-- scripts/、docs/、README.md、requirements.txt、run_app.py、run_app.bat、pyproject.toml
-- 自动生成的 快速开始.md
+Packages the project into an end-user zip archive containing:
+- im_app/ (application code + standard material library)
+- scripts/, docs/, README.md, README_EN.md, requirements.txt,
+  run_app.py, run_app.bat, pyproject.toml
+- Auto-generated quickstart guides (CN: 快速开始.md, EN: QUICKSTART_EN.md)
 
-排除：__pycache__、.claude、dist、egg-info、tests、reference（legacy notebooks）、
-      CLAUDE.md、new_demand.md、verify_fixes.py、test_simple.py 等。
+Excludes: __pycache__, .claude, dist, egg-info, tests, _archive/,
+          CLAUDE.md, etc.
 
-用法：
+Usage:
     python scripts/package_release.py [--version 1.1.0]
 """
 from __future__ import annotations
@@ -28,6 +29,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 # 需要复制的顶层文件
 TOP_FILES = [
     "README.md",
+    "README_EN.md",
     "requirements.txt",
     "run_app.py",
     "run_app.bat",
@@ -195,6 +197,104 @@ python run_app.py
     return dst
 
 
+def write_quickstart_en(stage_root: Path, version: str) -> Path:
+    """Write QUICKSTART_EN.md for English-speaking users."""
+    content = f"""# IM Tool v{version} Quick Start
+
+This package is a release build of **IM Tool (Impedance Matching Analysis Tool)**
+with the full material library included. Unpack and run — here is the shortest
+path to your first analysis.
+
+---
+
+## 1. Requirements
+
+- **Python 3.9+** (3.10 / 3.11 recommended)
+- OS: Windows / macOS / Linux
+- A clean virtual environment is recommended to avoid dependency conflicts.
+
+## 2. Installation
+
+### Windows
+
+After extracting the archive, **double-click `run_app.bat`** (dependencies must
+be installed first).
+
+Or manually:
+
+```bat
+:: In the extracted directory, open cmd
+python -m venv .venv
+.venv\\Scripts\\activate
+pip install -r requirements.txt
+run_app.bat
+```
+
+### macOS / Linux
+
+```bash
+cd /path/to/im-tool-v{version}
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python run_app.py
+```
+
+## 3. Verify Installation
+
+When the application starts, a maximized window appears. The **Material Library**
+panel on the left has several materials pre-checked (Al, Quartz, etc.), and the
+P-Up plot on the right automatically draws the corresponding Hugoniot curves.
+If you see curves, everything works.
+
+## 4. Built-in Material Library
+
+Materials are stored in `im_app/standard_library/materials/` and indexed via
+`im_app/standard_library/metadata.json`. Currently 10 materials:
+
+- Aluminum (SESAME 3717 / 3720, Celliers 2005, FEOS)
+- Alpha Quartz (SESAME 7360 / 7385, Hamel 2012)
+- Boron Nitride (LEA SESAME)
+- CH foam (ideal plasma analytic model)
+
+Reference curves live in `im_app/standard_library/reference_curves/`.
+
+## 5. Adding Your Own Material
+
+- **In-GUI**: Click the **Add New Material** button in the left panel and
+  follow the wizard to import a raw data file.
+- **Manual**: Place a standard-format `.txt` file in
+  `im_app/standard_library/materials/` and register it in `metadata.json`.
+  See `im_app/standard_library/FORMAT_SPECIFICATION_EN.md` for the format
+  specification.
+
+## 6. Troubleshooting
+
+| Symptom | Solution |
+|---------|----------|
+| `ModuleNotFoundError: No module named 'PyQt5'` | Dependencies not installed — `pip install -r requirements.txt` |
+| White screen on startup | Graphics driver issue — try `QT_OPENGL=software python run_app.py` |
+| Want to reset the plot view | Click the plot to give it focus, then press the `a` key |
+
+## 7. Full Documentation
+
+English documentation included in this package:
+
+- **`README_EN.md`** — Full feature overview and user guide
+- **`im_app/standard_library/FORMAT_SPECIFICATION_EN.md`** — Data format spec
+- **`im_app/standard_library/USER_GUIDE_EN.md`** — How to add new Hugoniot data
+- **`docs/ideal_plasma_hugoniot_theory_EN.md`** — Ideal plasma Hugoniot theory
+- **`docs/validate_tool_EN.md`** — Data validation tool guide
+
+---
+
+For questions, contact the author (see `README_EN.md` for details).
+"""
+    dst = stage_root / "QUICKSTART_EN.md"
+    dst.write_text(content, encoding="utf-8")
+    return dst
+
+
 def make_zip(stage_root: Path, zip_path: Path) -> None:
     """把暂存目录打包成 zip，保留目录结构。"""
     zip_path.parent.mkdir(parents=True, exist_ok=True)
@@ -243,6 +343,8 @@ def main() -> int:
 
     print(f"==> 生成 快速开始.md ...")
     write_quickstart(stage_root, version)
+    print(f"==> 生成 QUICKSTART_EN.md ...")
+    write_quickstart_en(stage_root, version)
 
     print(f"==> 统计文件数...")
     total_files = sum(1 for _ in stage_root.rglob("*") if _.is_file())

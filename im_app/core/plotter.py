@@ -713,6 +713,10 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
 
         self.draw_idle()
 
+    def update_plot(self):
+        """update_plot 接口，等同 refresh()，用于外部统一调用。"""
+        self.refresh()
+
     # ------------------------------------------------------------------
     # Click handler
     # ------------------------------------------------------------------
