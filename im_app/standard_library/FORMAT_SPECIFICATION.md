@@ -65,6 +65,43 @@ Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm³)	compression	T(eV)	E(MJ/g)	source
 | `E(MJ/g)` | MJ/g | ✗ | 比内能（可选） |
 | `source` | - | ✗ | 数据来源标识（可选） |
 
+### 误差元数据（可选）
+
+对于基于分析拟合的 Hugoniot 曲线，可以在元数据头部声明拟合参数的不确定度，用于误差传播计算。
+
+| 行号 | 格式 | 说明 |
+|------|------|------|
+| 7a | `# Error Model: <类型>` | 误差模型类型，当前支持 `linear` 和 `piecewise_quadratic` |
+| 7b | `# Error Formula: <公式>` | 拟合公式的数学表达式（可读性说明） |
+| 7c | `# Error Params: <参数列表>` | 参数名=值 sigma_参数名=不确定度 键值对 |
+
+**linear 模型（单段线性拟合）**：
+```
+Us = a0 + a1*(up - beta)
+参数: a0, sigma_a0, a1, sigma_a1, beta
+```
+示例：
+```
+# Error Model: linear
+# Error Formula: Us = a0 + a1*(up - beta)
+# Error Params: a0=17.992 sigma_a0=0.078, a1=1.167 sigma_a1=0.026, beta=9.838
+```
+
+**piecewise_quadratic 模型（分段二次拟合）**：
+```
+Up < break_up:  Us = a + b*Up + c*Up^2
+Up >= break_up: Us = (a - c*break_up^2) + b*Up + 2c*break_up*Up
+参数: a, sigma_a, b, sigma_b, c, sigma_c, break_up
+```
+示例：
+```
+# Error Model: piecewise_quadratic
+# Error Formula: Us = a + b*Up + c*Up^2 (Up<15), Us = (a-c*225) + b*Up + 30*c*Up (Up>=15)
+# Error Params: a=2.4 sigma_a=0.1, b=1.68 sigma_b=0.02, c=-0.0155 sigma_c=0.001, break_up=15
+```
+
+无误差元数据的材料默认视为无不确定度，不影响现有功能。
+
 ### CSV 格式技术要求
 
 | 项目 | 要求 | 说明 |
@@ -219,6 +256,7 @@ python -m im_app.core.data_converter validate <文件路径>
 
 | 版本 | 日期 | 变更 |
 |------|------|------|
+| 1.1 | 2026-07-02 | 新增误差元数据字段（Error Model / Error Formula / Error Params），支持 Hugoniot 不确定度声明 |
 | 1.0 | 2026-05-30 | 初始版本 |
 
 ---

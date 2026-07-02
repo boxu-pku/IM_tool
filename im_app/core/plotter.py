@@ -355,6 +355,7 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
         self.xlim = (0, 30)
         self.ylim = (0, 30)
         self.show_legend = True
+        self.show_ix_errorbars = True    # 交点误差棒开关
         self.linewidth = 1.2
         self.linestyle = "-"
 
@@ -420,6 +421,15 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
         if mat is None:
             return ""
         up_r, p_r = reflect_hugoniot(mat.up, mat.p, center_up)
+
+        # 计算反射曲线的误差带
+        up_r_err = None
+        p_r_err = None
+        if hasattr(mat, "p_err") and mat.p_err is not None:
+            from im_app.core.error_propagation import reflect_error_propagation
+            center_up_err = 0.0  # 默认无中心误差；由调用方通过 anchor_ix_id 传递时更新
+            up_r_err, p_r_err = reflect_error_propagation(mat.p_err, center_up_err)
+
         if explicit_id:
             # workflow 加载路径：保留原 id，避免 ix.source_curve*_id 失效
             rid = explicit_id
@@ -439,6 +449,8 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
             "source_id": source_mat_id,
             "center_up": center_up,
             "visible": True,
+            "up_err": up_r_err,
+            "p_err": p_r_err,
         })
         self.refresh()
         return rid
@@ -539,6 +551,19 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
             line, = self.ax.plot(mat.up, mat.p, color=line_color, linewidth=linewidth,
                                  linestyle=linestyle, label=label, alpha=alpha,
                                  picker=10, pickradius=15, zorder=1)
+
+            # 绘制 Hugoniot 误差带（如果材料有 p_err）
+            if hasattr(mat, "p_err") and mat.p_err is not None and len(mat.p_err) > 0:
+                valid = np.isfinite(mat.p_err) & np.isfinite(mat.up) & np.isfinite(mat.p)
+                if valid.sum() > 1:
+                    self.ax.fill_between(
+                        mat.up[valid],
+                        mat.p[valid] - mat.p_err[valid],
+                        mat.p[valid] + mat.p_err[valid],
+                        alpha=0.12,
+                        color=line_color,
+                        zorder=0,
+                    )
 
             # Store mapping
             self._artist_map[line] = element_id
@@ -683,6 +708,23 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
                                  label=legend_label,
                                  zorder=15, alpha=alpha)  # Highest zorder
             self._artist_zorder[line] = 15
+
+            # 绘制交点 errorbar（如果有误差数据且开关打开）
+            if (self.show_ix_errorbars
+                    and getattr(ix, 'up_err', None) is not None
+                    and getattr(ix, 'p_err', None) is not None
+                    and np.isfinite(ix.up_err) and np.isfinite(ix.p_err)
+                    and ix.up_err > 0 and ix.p_err > 0):
+                self.ax.errorbar(
+                    ix.up, ix.p,
+                    xerr=ix.up_err, yerr=ix.p_err,
+                    fmt='none',
+                    ecolor=face_color,
+                    capsize=3,
+                    capthick=1.2,
+                    alpha=0.7,
+                    zorder=14,  # 在可见标记之下但高于不可见点击区域
+                )
 
             self._artist_map[line] = element_id
             if element_id not in self._element_meta:
@@ -966,6 +1008,19 @@ class EOSPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
                                      linewidth=lw, linestyle=ls,
                                      label=label, alpha=style_dict.get("alpha") or 0.6,
                                      picker=10, pickradius=15, zorder=1)
+
+                # 绘制误差带（P-CR 图纵轴为 P）
+                if hasattr(mat, "p_err") and mat.p_err is not None and len(mat.p_err) > 0:
+                    valid = (np.isfinite(mat.p_err) & np.isfinite(mat.compression)
+                             & np.isfinite(mat.p))
+                    if valid.sum() > 1:
+                        self.ax.fill_between(
+                            mat.compression[valid],
+                            mat.p[valid] - mat.p_err[valid],
+                            mat.p[valid] + mat.p_err[valid],
+                            alpha=0.12, color=line_color, zorder=0,
+                        )
+
                 # 注册到交互模型（Edit Style / Change Color 可用）
                 self._register_artist(
                     line, element_id, TYPE_MATERIAL, style_dict,
@@ -1220,6 +1275,20 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
             line, = self.ax.plot(x_data, y_data, color=line_color, linewidth=lw,
                                 linestyle=ls, label=label,
                                 picker=10, pickradius=15, zorder=1)
+
+            # 绘制误差带（仅当 y 轴变量为 P 时，p_err 才有意义）
+            if self.y_var == "P" and hasattr(mat, "p_err") and mat.p_err is not None:
+                # 使用与 x_data/y_data 相同的有效掩码
+                valid_mask2 = ~(np.isnan(x_data) | np.isnan(y_data) | np.isnan(mat.p_err[:len(x_data)]))
+                if valid_mask2.sum() > 1:
+                    xe = x_data[valid_mask2]
+                    ye = y_data[valid_mask2]
+                    ee = mat.p_err[:len(x_data)][valid_mask2]
+                    self.ax.fill_between(
+                        xe, ye - ee, ye + ee,
+                        alpha=0.12, color=line_color, zorder=0,
+                    )
+
             # 注册到交互模型（Edit Style / Change Color 可用）
             self._register_artist(
                 line, element_id, TYPE_MATERIAL, style_dict,

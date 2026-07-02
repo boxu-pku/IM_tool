@@ -4,6 +4,9 @@
 # Data Source: Analytical fit: Us = 17.992 + 1.167*(up - 9.838)
 # Date Created: 2026-06-14
 # Notes: Aluminum Hugoniot from Celliers et al. 2005 linear Us-Up fit
+# Error Model: linear
+# Error Formula: Us = a0 + a1*(up - beta)
+# Error Params: a0=17.992 sigma_a0=0.078, a1=1.167 sigma_a1=0.026, beta=9.838
 # Columns: Up(km/s), Us(km/s), P(Mbar), rho(g/cm3), compression, T(eV), E(MJ/g), source
 Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
 0.0	6.5110540000000015	0.0	2.7	1.0			

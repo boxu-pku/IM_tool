@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import pyqtSignal, Qt
 
-from im_app.core.data_loader import list_available_materials, load_material_by_id
+from im_app.core.data_loader import list_available_materials, load_material_by_id, compute_material_error_bands
 from im_app.core.physics import MaterialData
 
 import numpy as np
@@ -142,7 +142,7 @@ class MaterialPanel(QWidget):
             self._loaded[mat_id] = self._in_memory_materials[mat_id]
             return
         try:
-            df = load_material_by_id(self.lib_dir, mat_id)
+            df, fit_params = load_material_by_id(self.lib_dir, mat_id)
         except Exception:
             return
         entries = list_available_materials(self.lib_dir)
@@ -164,7 +164,10 @@ class MaterialPanel(QWidget):
             rho=df["rho(g/cm3)"].values if "rho(g/cm3)" in df.columns else None,
             temperature=df["T(eV)"].values if "T(eV)" in df.columns else None,
             energy=df["E(MJ/g)"].values if "E(MJ/g)" in df.columns else None,
+            fit_params=fit_params,
         )
+        # 计算误差带（如果有拟合参数元数据）
+        mat = compute_material_error_bands(mat)
         self._loaded[mat_id] = mat
 
     def _select_all(self):

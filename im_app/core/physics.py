@@ -65,6 +65,11 @@ class MaterialData:
     temperature: Optional[np.ndarray] = None
     energy: Optional[np.ndarray] = None
 
+    # 误差传播相关
+    p_err: Optional[np.ndarray] = None    # P 的 ±σ 数组（与 up 同长）
+    us_err: Optional[np.ndarray] = None   # Us 的 ±σ 数组（可选）
+    fit_params: Optional[dict] = None     # 拟合参数 + 不确定度元数据
+
 
 @dataclass
 class RayleighLine:
@@ -127,6 +132,11 @@ class Intersection:
     type: str
     material_id: Optional[str] = None
     compression_ratio: Optional[float] = None
+
+    # 误差传播相关
+    up_err: Optional[float] = None       # Up 的 ±σ (km/s)
+    p_err: Optional[float] = None        # P 的 ±σ (Mbar)
+    compression_err: Optional[float] = None  # 压缩比的 ±σ
     # 自适应刷新用的源曲线数据 ID（display name 在 curve1_id/curve2_id）。
     # 老 workflow JSON 加载时为 None，这些 ix 不参与自动刷新，需手动重 Find。
     source_curve1_id: Optional[str] = None

@@ -4,6 +4,9 @@
 # Data Source: Analytical fit: Us = 2.4 + 1.68*up - 0.0155*up^2
 # Date Created: 2026-06-14
 # Notes: Quartz Hugoniot from Hamel et al. 2012 quadratic Us-Up fit (regenerated with uniform spacing)
+# Error Model: piecewise_quadratic
+# Error Formula: Us = a + b*Up + c*Up^2 (Up<15), Us = (a-c*225) + b*Up + 30*c*Up (Up>=15)
+# Error Params: a=2.4 sigma_a=0.1, b=1.68 sigma_b=0.02, c=-0.0155 sigma_c=0.001, break_up=15
 # Columns: Up(km/s), Us(km/s), P(Mbar), rho(g/cm3), compression, T(eV), E(MJ/g), source
 Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
 0.1	2.567845	0.00680479	2.757381127	1.04052118			

@@ -582,6 +582,7 @@ class MainWindow(QMainWindow):
         self.intersection_panel.reverse_match_requested.connect(self._on_reverse_match)
         self.intersection_panel.remove_reflected.connect(self._on_remove_reflected)
         self.intersection_panel.remove_intersection.connect(self._on_remove_intersection)
+        self.intersection_panel.show_errorbars_changed.connect(self._on_ix_errorbars_toggled)
 
         self.act_find_ix.triggered.connect(self._find_intersections)
         self.act_save_plot.triggered.connect(self._export_plot)
@@ -746,28 +747,34 @@ class MainWindow(QMainWindow):
             self._auto_refresh_intersections()
 
     def _resolve_curve_data(self, curve_id):
-        """根据数据 ID 找 (up, p) 数组。
+        """根据数据 ID 找 (up, p, p_err) 数组。
 
-        顺序：可见 material → 已加载但隐藏的 material → 全部 Rayleigh（含未显示）→ 反射曲线。
-        找不到返回 (None, None)。
+        返回 (up, p, p_err) 三元组，p_err 可为 None（无误差时）。
+        找不到返回 (None, None, None)。
         """
         if curve_id is None:
-            return None, None
+            return None, None, None
+        # 1) 可见 material（包含 p_err）
         if curve_id in self.hugoniot_plot.materials:
             mat = self.hugoniot_plot.materials[curve_id]
-            return mat.up, mat.p
+            p_err = getattr(mat, "p_err", None)
+            return mat.up, mat.p, p_err
+        # 2) 已加载但隐藏的 material
         loaded = getattr(self.material_panel, "_loaded", {})
         if curve_id in loaded:
             mat = loaded[curve_id]
-            return mat.up, mat.p
+            p_err = getattr(mat, "p_err", None)
+            return mat.up, mat.p, p_err
+        # 3) Rayleigh 线（无误差）
         all_rl = self.rayleigh_panel.get_all_rayleigh_lines()
         if curve_id in all_rl:
             rl = all_rl[curve_id]
-            return rl.up, rl.p
+            return rl.up, rl.p, None
+        # 4) 反射曲线（携带 p_err）
         for rc in self.hugoniot_plot.reflected_curves:
             if rc["id"] == curve_id:
-                return rc["up"], rc["p"]
-        return None, None
+                return rc["up"], rc["p"], rc.get("p_err")
+        return None, None, None
 
     def _compute_compression_for_ix(self, ix, up_val):
         """根据 ix 的 source_curve IDs 与当前曲线数据，计算 up_val 处的 compression_ratio。
@@ -833,8 +840,8 @@ class MainWindow(QMainWindow):
             return False
 
         def recompute_ix(ix) -> bool:
-            up1, p1 = self._resolve_curve_data(ix.source_curve1_id)
-            up2, p2 = self._resolve_curve_data(ix.source_curve2_id)
+            up1, p1, err1 = self._resolve_curve_data(ix.source_curve1_id)
+            up2, p2, err2 = self._resolve_curve_data(ix.source_curve2_id)
             if up1 is None or up2 is None:
                 ix_orphans.add(ix.id)
                 return False
@@ -862,6 +869,22 @@ class MainWindow(QMainWindow):
             ix.up = up_val
             ix.p = p_val
             ix.compression_ratio = self._compute_compression_for_ix(ix, up_val)
+
+            # ---- 新增：计算交点误差 ----
+            try:
+                from im_app.core.error_propagation import intersection_error_propagation
+                err_result = intersection_error_propagation(
+                    up_val, p_val,
+                    up1, p1, err1,
+                    up2, p2, err2,
+                )
+                if err_result["method"] != "singular":
+                    ix.up_err = err_result["up_err"]
+                    ix.p_err = err_result["p_err"]
+            except Exception:
+                pass  # 静默降级
+            # -------------------------
+
             return True
 
         # Pass 1: Hugoniot × Rayleigh 类交点
@@ -895,6 +918,14 @@ class MainWindow(QMainWindow):
                 rc["up"] = up_r
                 rc["p"] = p_r
                 rc["center_up"] = new_center
+                # 重算反射曲线误差
+                if getattr(source_mat, "p_err", None) is not None:
+                    from im_app.core.error_propagation import reflect_error_propagation
+                    _up_re, _p_re = reflect_error_propagation(
+                        source_mat.p_err, getattr(anchor_ix, "up_err", 0.0) or 0.0,
+                    )
+                    rc["up_err"] = _up_re
+                    rc["p_err"] = _p_re
                 # 同步 refl_list 文本
                 for i in range(self.intersection_panel.refl_list.count()):
                     item = self.intersection_panel.refl_list.item(i)
@@ -927,6 +958,14 @@ class MainWindow(QMainWindow):
                 rc["up"] = r0["reflected_up"]
                 rc["p"] = r0["reflected_p"]
                 rc["center_up"] = r0["center_up"]
+                # 重算反射曲线误差
+                if getattr(source_mat, "p_err", None) is not None:
+                    from im_app.core.error_propagation import reflect_error_propagation
+                    _up_re, _p_re = reflect_error_propagation(
+                        source_mat.p_err, getattr(src_ix, "up_err", 0.0) or 0.0,
+                    )
+                    rc["up_err"] = _up_re
+                    rc["p_err"] = _p_re
                 # 同步 refl_list 文本
                 for i in range(self.intersection_panel.refl_list.count()):
                     item = self.intersection_panel.refl_list.item(i)
@@ -1004,11 +1043,21 @@ class MainWindow(QMainWindow):
                 # cr = f"{ix.compression_ratio:.3f}" if hasattr(ix, 'compression_ratio') and ix.compression_ratio else "-"
                 # self._update_eos_inputs_from_intersection(ix.curve1_id, ix.up, ix.p, cr)
 
-                cr_info = f", selected: Up={ix.up:.4f}, P={ix.p:.4f}"
+                err_str = ""
+                if getattr(ix, 'up_err', None) is not None and getattr(ix, 'p_err', None) is not None:
+                    if np.isfinite(ix.up_err) and np.isfinite(ix.p_err):
+                        err_str = f" ±({ix.up_err:.4f}, {ix.p_err:.4f})"
+                cr_info = f", selected: Up={ix.up:.4f}{err_str}, P={ix.p:.4f}"
                 self.status.showMessage(f"Intersection {ix_id}{cr_info}")
                 break
         else:
             self.status.showMessage(f"Intersection {ix_id}")
+
+    def _on_ix_errorbars_toggled(self, checked: bool):
+        """交点误差棒显隐切换。"""
+        self.hugoniot_plot.show_ix_errorbars = checked
+        self.hugoniot_plot.refresh()
+        self.status.showMessage(f"Intersection error bars {'on' if checked else 'off'}")
 
     def _find_intersections(self):
         """Find intersection between the two curves selected in the panel."""
@@ -1117,6 +1166,43 @@ class MainWindow(QMainWindow):
         elif mat2 is not None:
             primary_mat_id = curve2_id
 
+        # 计算交点误差（若曲线有误差带）
+        up_err = None
+        p_err = None
+        try:
+            from im_app.core.error_propagation import intersection_error_propagation
+
+            # 获取两曲线的 p_err
+            curve1_err = None
+            curve2_err = None
+            if mat1 is not None and hasattr(mat1, "p_err") and mat1.p_err is not None:
+                curve1_err = mat1.p_err
+            if mat2 is not None and hasattr(mat2, "p_err") and mat2.p_err is not None:
+                curve2_err = mat2.p_err
+            # 从 reflected_curves 也可能有误差
+            if curve1_err is None:
+                for rc in self.hugoniot_plot.reflected_curves:
+                    if rc["id"] == curve1_id and rc.get("p_err") is not None:
+                        curve1_err = rc["p_err"]
+                        break
+            if curve2_err is None:
+                for rc in self.hugoniot_plot.reflected_curves:
+                    if rc["id"] == curve2_id and rc.get("p_err") is not None:
+                        curve2_err = rc["p_err"]
+                        break
+
+            if curve1_err is not None or curve2_err is not None:
+                err_result = intersection_error_propagation(
+                    up_val, p_val,
+                    up1, p1, curve1_err,
+                    up2, p2, curve2_err,
+                )
+                if err_result["method"] != "singular":
+                    up_err = err_result["up_err"]
+                    p_err = err_result["p_err"]
+        except Exception:
+            pass  # 静默降级：误差计算失败时不阻断主流程
+
         ix = Intersection(
             id=f"ix_specific_{len(self.hugoniot_plot.intersections)}",
             curve1_id=name1,
@@ -1129,6 +1215,8 @@ class MainWindow(QMainWindow):
             source_curve1_id=curve1_id,
             source_curve2_id=curve2_id,
             ignore_first_at_creation=True,
+            up_err=up_err,
+            p_err=p_err,
         )
 
         # Add to plot
@@ -1141,7 +1229,12 @@ class MainWindow(QMainWindow):
             self.hugoniot_plot.materials,
         )
 
-        self.status.showMessage(f"Found intersection: {name1} x {name2} @ ({up_val:.3f}, {p_val:.3f}) CR={compression}")
+        err_str = ""
+        if up_err is not None and p_err is not None:
+            err_str = f" ± ({up_err:.4f}, {p_err:.4f})"
+        self.status.showMessage(
+            f"Found intersection: {name1} x {name2} @ ({up_val:.3f}, {p_val:.3f}){err_str} CR={compression}"
+        )
         self._update_status()
 
         # Refresh scatter intersection dropdown
@@ -1279,6 +1372,11 @@ class MainWindow(QMainWindow):
     def _on_reverse_match(self, target_up: float, target_p: float, hugoniot_id: str):
         """Reverse impedance match: find reflected Hugoniot through a known point."""
         from im_app.core.physics import reverse_impedance_match, Intersection
+        from im_app.core.error_propagation import (
+            intersection_error_propagation,
+            reflect_error_propagation,
+            reverse_match_error_propagation,
+        )
 
         mat = self.hugoniot_plot.materials.get(hugoniot_id)
         if mat is None:
@@ -1302,13 +1400,45 @@ class MainWindow(QMainWindow):
         up_r = r["reflected_up"]
         p_r = r["reflected_p"]
 
+        # ---- 误差计算 ----
+        # 1) 反射中心误差
+        sigma_target_up = 0.0  # target spinbox 无误差输入，后续可加
+        sigma_target_p = 0.0
+        rm_err = reverse_match_error_propagation(
+            target_up, target_p, sigma_target_up, sigma_target_p,
+            mat.up, mat.p, getattr(mat, "p_err", None),
+            center_up,
+        )
+        center_up_err = rm_err.get("center_up_err", 0.0)
+
+        # 2) 反射曲线误差
+        up_r_err = None
+        p_r_err = None
+        if getattr(mat, "p_err", None) is not None:
+            _up_r_err, _p_r_err = reflect_error_propagation(mat.p_err, center_up_err)
+            up_r_err = _up_r_err
+            p_r_err = _p_r_err
+
+        # 3) 交点误差（反射曲线 × 原 Hugoniot）
+        ix_up_err = None
+        ix_p_err = None
+        if p_r_err is not None:
+            try:
+                ix_err = intersection_error_propagation(
+                    r["intersection_up"], r["intersection_p"],
+                    up_r, p_r, p_r_err,
+                    mat.up, mat.p, getattr(mat, "p_err", None),
+                )
+                if ix_err["method"] != "singular":
+                    ix_up_err = ix_err["up_err"]
+                    ix_p_err = ix_err["p_err"]
+            except Exception:
+                pass
+        # ---------------------
+
         # Add reflected curve to plot
         self.hugoniot_plot._counter += 1
         rid = f"refl_{self.hugoniot_plot._counter}"
-        # 若 target 来自 reverse_ix_combo 选中的 ix，记下 source_ix_id；
-        # 自适应刷新时若该 ix 移动，会自动重算 reverse-match（re-solve）。
-        # 注意：spinbox 有 decimals=4 截断，无法与 ix 原值严格相等，所以只要 combo
-        # 有选中就追踪；用户若想手动 target，应把 combo 清空（默认无选中）。
         source_ix_id = self.intersection_panel.reverse_ix_combo.currentData()
         self.hugoniot_plot.reflected_curves.append({
             "id": rid,
@@ -1318,6 +1448,8 @@ class MainWindow(QMainWindow):
             "center_up": center_up,
             "visible": True,
             "source_ix_id": source_ix_id,
+            "up_err": up_r_err,
+            "p_err": p_r_err,
         })
 
         # Add intersection point (where reflected meets original Hugoniot)
@@ -1329,10 +1461,12 @@ class MainWindow(QMainWindow):
             p=r["intersection_p"],
             type="reverse-match",
             material_id=hugoniot_id,
-            compression_ratio=None,  # Will be set below if available
+            compression_ratio=None,
             source_curve1_id=hugoniot_id,
             source_curve2_id=rid,
             ignore_first_at_creation=True,
+            up_err=ix_up_err,
+            p_err=ix_p_err,
         )
 
         # Calculate compression ratio from Hugoniot table
@@ -1360,9 +1494,12 @@ class MainWindow(QMainWindow):
         if hasattr(self, '_refresh_scatter_ix_combo'):
             self._refresh_scatter_ix_combo()
 
+        err_str = ""
+        if ix_up_err is not None and ix_p_err is not None and np.isfinite(ix_up_err) and np.isfinite(ix_p_err):
+            err_str = f" ±({ix_up_err:.4f}, {ix_p_err:.4f})"
         self.status.showMessage(
             f"Reverse match: {mat.name} reflected @ center_up={center_up:.3f}, "
-            f"intersection @ ({r['intersection_up']:.3f}, {r['intersection_p']:.3f})"
+            f"intersection @ ({r['intersection_up']:.3f}, {r['intersection_p']:.3f}){err_str}"
         )
         self._update_status()
 
@@ -2361,6 +2498,28 @@ class MainWindow(QMainWindow):
                     ignore_first_at_creation=ix_data.get("ignore_first_at_creation", True),
                 )
                 self.hugoniot_plot.intersections.append(ix)
+
+            # ---- 为加载的交点补算误差（原位更新，不改变位置） ----
+            for ix in self.hugoniot_plot.intersections:
+                if ix.source_curve1_id is None and ix.source_curve2_id is None:
+                    continue  # 无 source 信息，无法计算
+                try:
+                    up1, p1, err1 = self._resolve_curve_data(ix.source_curve1_id)
+                    up2, p2, err2 = self._resolve_curve_data(ix.source_curve2_id)
+                    if up1 is None or up2 is None:
+                        continue
+                    from im_app.core.error_propagation import intersection_error_propagation
+                    e_result = intersection_error_propagation(
+                        ix.up, ix.p,
+                        up1, p1, err1,
+                        up2, p2, err2,
+                    )
+                    if e_result["method"] != "singular":
+                        ix.up_err = e_result["up_err"]
+                        ix.p_err = e_result["p_err"]
+                except Exception:
+                    pass
+            # ----------------------------------------------------
 
             # Update intersection panel
             self.intersection_panel.set_intersections(

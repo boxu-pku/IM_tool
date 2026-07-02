@@ -135,7 +135,7 @@ def list_available_materials(lib_dir: str) -> list[dict[str, Any]]:
     return meta.get("materials", [])
 
 
-def load_material_by_id(lib_dir: str, material_id: str) -> pd.DataFrame:
+def load_material_by_id(lib_dir: str, material_id: str) -> tuple[pd.DataFrame, dict | None]:
     """
     Load a specific material's Hugoniot data by its ID.
 
@@ -151,8 +151,8 @@ def load_material_by_id(lib_dir: str, material_id: str) -> pd.DataFrame:
 
     Returns
     -------
-    pd.DataFrame
-        Loaded Hugoniot data.
+    tuple[pd.DataFrame, dict | None]
+        (DataFrame, fit_params) — fit_params 为误差元数据解析结果。
 
     Raises
     ------
@@ -172,7 +172,9 @@ def load_material_by_id(lib_dir: str, material_id: str) -> pd.DataFrame:
     )
 
 
-def load_standard_hugoniot_auto(filepath: str) -> pd.DataFrame:
+def load_standard_hugoniot_auto(
+    filepath: str,
+) -> tuple[pd.DataFrame, dict | None]:
     """
     自动检测格式（CSV 或 TXT）并加载标准 Hugoniot 数据文件。
 
@@ -187,34 +189,161 @@ def load_standard_hugoniot_auto(filepath: str) -> pd.DataFrame:
 
     Returns
     -------
-    pd.DataFrame
-        Loaded Hugoniot data.
-
-    Raises
-    ------
-    ValueError
-        If file extension is not supported or required columns are missing.
-    FileNotFoundError
-        If file does not exist.
+    tuple[pd.DataFrame, dict | None]
+        (DataFrame, fit_params) — fit_params 为误差元数据解析结果，无误差时返回 None。
     """
     if not os.path.isfile(filepath):
         raise FileNotFoundError(f"Data file not found: {filepath}")
+
+    # 解析误差元数据（在所有格式加载前，先读取头部行）
+    header_lines = _read_header_lines(filepath)
+    fit_params = _parse_error_metadata(header_lines)
 
     _, ext = os.path.splitext(filepath)
     ext = ext.lower()
 
     if ext == ".csv":
-        return load_standard_hugoniot(filepath)
+        return load_standard_hugoniot(filepath), fit_params
     elif ext == ".txt":
         from im_app.core.data_converter import read_standard_txt
-        return read_standard_txt(filepath)
+        return read_standard_txt(filepath), fit_params
     elif ext == ".hug":
-        return load_feos_hug(filepath)
+        return load_feos_hug(filepath), fit_params
     else:
         raise ValueError(
             f"Unsupported file extension: {ext}. "
             f"Supported formats: .csv, .txt, .hug"
         )
+
+
+def _read_header_lines(filepath: str, n_lines: int = 15) -> list[str]:
+    """
+    读取文件头部若干行（用于提取误差元数据）。
+    在 pd.read_csv(comment="#") 跳过的行中提取 # Error 行。
+    """
+    lines = []
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            for _ in range(n_lines):
+                line = f.readline()
+                if not line:
+                    break
+                lines.append(line.rstrip("\n\r"))
+    except Exception:
+        pass
+    return lines
+
+
+def _parse_error_metadata(header_lines: list[str]) -> dict | None:
+    """
+    从文件头部行中解析误差元数据。
+
+    Returns
+    -------
+    dict or None
+        {"model": str, "params": {...}} or None if no error metadata found.
+    """
+    fit_params = {}
+    model = None
+    for line in header_lines:
+        stripped = line.lstrip("#").strip()
+        if stripped.startswith("Error Model:"):
+            model = stripped[len("Error Model:"):].strip()
+        elif stripped.startswith("Error Formula:"):
+            fit_params["formula"] = stripped[len("Error Formula:"):].strip()
+        elif stripped.startswith("Error Params:"):
+            raw = stripped[len("Error Params:"):].strip()
+            # 解析 key=value 对
+            tokens = raw.replace(",", " ").split()
+            for token in tokens:
+                if "=" in token:
+                    k, v = token.split("=", 1)
+                    try:
+                        fit_params[k] = float(v)
+                    except ValueError:
+                        fit_params[k] = v
+
+    if model is None:
+        return None
+
+    fit_params["model"] = model
+    return fit_params
+
+
+def compute_material_error_bands(mat: MaterialData) -> MaterialData:
+    """
+    根据 MaterialData.fit_params 计算 p_err 和 us_err 误差带。
+
+    支持的模型:
+    - "linear"    : Us = a0 + a1*(up - beta)
+    - "piecewise_quadratic" : Us = a + b*Up + c*Up^2 (Up<break_up)
+                              Us = (a - c*break_up^2) + b*Up + 2c*break_up*Up (Up>=break_up)
+
+    Parameters
+    ----------
+    mat : MaterialData
+        需包含 fit_params 属性。
+
+    Returns
+    -------
+    MaterialData
+        填充了 p_err 和 us_err 的同一对象（原位修改并返回）。
+    """
+    if mat.fit_params is None:
+        return mat
+
+    fp = mat.fit_params
+    model = fp.get("model", "")
+
+    if model == "linear":
+        # Us = a0 + a1*(up - beta)
+        a0 = fp.get("a0", 0)
+        a1 = fp.get("a1", 0)
+        beta = fp.get("beta", 0)
+        sigma_a0 = fp.get("sigma_a0", 0)
+        sigma_a1 = fp.get("sigma_a1", 0)
+
+        # Us 的不确定度: σ_Us² = σ_a₀² + (up - β)² · σ_a₁²
+        us_err = np.sqrt(sigma_a0**2 + (mat.up - beta)**2 * sigma_a1**2)
+
+        # P 的不确定度: σ_P² = (ρ₀ · up · 0.01)² · σ_Us²
+        p_err = (mat.rho0 * mat.up * 0.01) * us_err
+
+        mat.us_err = us_err
+        mat.p_err = p_err
+
+    elif model == "piecewise_quadratic":
+        # Us = a + b*Up + c*Up^2 (Up < break_up)
+        # Us = (a - c*break_up^2) + b*Up + 2c*break_up*Up (Up >= break_up)
+        a = fp.get("a", 0)
+        b = fp.get("b", 0)
+        c = fp.get("c", 0)
+        sigma_a = fp.get("sigma_a", 0)
+        sigma_b = fp.get("sigma_b", 0)
+        sigma_c = fp.get("sigma_c", 0)
+        break_up = fp.get("break_up", float("inf"))
+
+        # 计算偏导数 ∂Us/∂a, ∂Us/∂b, ∂Us/∂c
+        dUs_da = np.ones_like(mat.up)
+        dUs_db = mat.up.copy()
+        dUs_dc = np.where(mat.up < break_up,
+                          mat.up**2,
+                          2 * break_up * mat.up - break_up**2)
+
+        # σ_Us² = (∂Us/∂a)²·σ_a² + (∂Us/∂b)²·σ_b² + (∂Us/∂c)²·σ_c²
+        us_err = np.sqrt(
+            dUs_da**2 * sigma_a**2 +
+            dUs_db**2 * sigma_b**2 +
+            dUs_dc**2 * sigma_c**2
+        )
+
+        # σ_P² = (ρ₀ · up · 0.01)² · σ_Us²
+        p_err = (mat.rho0 * mat.up * 0.01) * us_err
+
+        mat.us_err = us_err
+        mat.p_err = p_err
+
+    return mat
 
 
 def load_feos_hug(filepath: str) -> pd.DataFrame:

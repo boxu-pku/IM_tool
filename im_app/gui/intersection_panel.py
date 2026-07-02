@@ -15,6 +15,8 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import pyqtSignal, Qt
 
+import numpy as np
+
 from im_app.core.physics import Intersection, RayleighLine
 from im_app.core.data_loader import list_available_materials, load_material_by_id
 from im_app.core.physics import MaterialData
@@ -28,6 +30,7 @@ class IntersectionPanel(QWidget):
     reverse_match_requested = pyqtSignal(float, float, str)  # (target_up, target_p, hugoniot_id)
     remove_reflected = pyqtSignal(str)  # (reflected_curve_id)
     remove_intersection = pyqtSignal(str)  # (intersection_id)
+    show_errorbars_changed = pyqtSignal(bool)  # 交点误差棒显隐切换
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -89,8 +92,16 @@ class IntersectionPanel(QWidget):
         ix_grp = QGroupBox("Intersections")
         ix_layout = QVBoxLayout(ix_grp)
 
-        self.ix_table = QTableWidget(0, 6)
-        self.ix_table.setHorizontalHeaderLabels(["ID", "Curve 1", "Curve 2", "Up (km/s)", "P (Mbar)", "CR"])
+        # 交点误差棒显隐开关
+        self.show_errbar_check = QCheckBox("Show error bars on intersections")
+        self.show_errbar_check.setChecked(True)
+        self.show_errbar_check.toggled.connect(self._on_show_errorbars_toggled)
+        ix_layout.addWidget(self.show_errbar_check)
+
+        self.ix_table = QTableWidget(0, 8)
+        self.ix_table.setHorizontalHeaderLabels(
+            ["ID", "Curve 1", "Curve 2", "Up (km/s)", "P (Mbar)", "CR", "Up err (km/s)", "P err (Mbar)"]
+        )
         self.ix_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ix_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.ix_table.setEditTriggers(QTableWidget.NoEditTriggers)
@@ -191,6 +202,15 @@ class IntersectionPanel(QWidget):
             if getattr(ix, 'compression_ratio', None) is not None:
                 cr_str = f"{ix.compression_ratio:.3f}"
             self.ix_table.setItem(row, 5, QTableWidgetItem(cr_str))
+            # 误差列
+            up_err_str = "—"
+            p_err_str = "—"
+            if getattr(ix, 'up_err', None) is not None and np.isfinite(ix.up_err):
+                up_err_str = f"{ix.up_err:.4f}"
+            if getattr(ix, 'p_err', None) is not None and np.isfinite(ix.p_err):
+                p_err_str = f"{ix.p_err:.4f}"
+            self.ix_table.setItem(row, 6, QTableWidgetItem(up_err_str))
+            self.ix_table.setItem(row, 7, QTableWidgetItem(p_err_str))
 
         # Update curve selection combos
         self._update_curve_combos()
@@ -368,6 +388,9 @@ class IntersectionPanel(QWidget):
             keys_to_remove = [k for k, v in self._reflected_entries.items() if v == refl_id]
             for k in keys_to_remove:
                 del self._reflected_entries[k]
+
+    def _on_show_errorbars_toggled(self, checked: bool):
+        self.show_errorbars_changed.emit(checked)
 
     def _on_delete_intersection(self):
         """Delete selected intersection."""
