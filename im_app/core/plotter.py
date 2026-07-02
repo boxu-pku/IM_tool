@@ -745,13 +745,17 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
 
         # Render scatter points (interactive on P-Up)
         if self._scatter_points:
-            render_scatter_points(
-                self.ax, self._scatter_points,
-                x_var="Up", y_var="P", tab_key="P-Up",
-                artist_map=self._artist_map,
-                element_meta=self._element_meta,
-                element_zorder=self._artist_zorder,
-            )
+            # 跳过来自交点的 scatter 点 —— 交点标记已单独绘制，避免重叠
+            pup_points = [p for p in self._scatter_points
+                          if p.get("source") != "intersection"]
+            if pup_points:
+                render_scatter_points(
+                    self.ax, pup_points,
+                    x_var="Up", y_var="P", tab_key="P-Up",
+                    artist_map=self._artist_map,
+                    element_meta=self._element_meta,
+                    element_zorder=self._artist_zorder,
+                )
 
         self.draw_idle()
 
