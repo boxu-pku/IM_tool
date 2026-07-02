@@ -2264,8 +2264,19 @@ class MainWindow(QMainWindow):
         ]
         for plot, key in PLOT_KWARGS:
             settings = self._plot_settings[key]
+            if plot is self.eos_plot:
+                # EOSPlot 需要合并 compression+p 的参考曲线
+                plot_mats = dict(mats) if mats else {}
+                ref_curves = self.reference_curve_panel.get_selected_curves()
+                for mid, mat in ref_curves.items():
+                    if mid not in plot_mats:
+                        if (mat.compression is not None and len(mat.compression) > 0
+                                and mat.p is not None and len(mat.p) > 0):
+                            plot_mats[mid] = mat
+            else:
+                plot_mats = mats
             plot.update_plot(
-                materials=mats,
+                materials=plot_mats,
                 scatter_points=sp,
                 xlim=settings["xlim"], ylim=settings["ylim"],
             )
