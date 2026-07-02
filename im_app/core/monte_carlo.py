@@ -286,7 +286,19 @@ class MonteCarloEngine:
         """
         if not _scene_has_error_sources(materials, rayleigh_lines):
             # 无误差源 → 返回空结果
+            print("[MC DEBUG] engine: _scene_has_error_sources returned False")
             return MonteCarloResult(n_total=0)
+
+        print(f"[MC DEBUG] engine: starting {n_samples} samples, "
+              f"{len(materials)} materials, {len(rayleigh_lines)} rayleigh lines, "
+              f"{len(intersections)} intersections, {len(reflected_curves)} reflected curves")
+
+        # 打印 Rayleigh 线的不确定度状态
+        for rl_id, rl in rayleigh_lines.items():
+            sd = getattr(rl, 'sigma_D', 0.0) or 0.0
+            sr = getattr(rl, 'sigma_rho0', 0.0) or 0.0
+            if sd > 0 or sr > 0:
+                print(f"[MC DEBUG]   Rayleigh {rl_id}: sigma_D={sd}, sigma_rho0={sr}")
 
         # 预分类：找出哪些交点/反射曲线依赖反射线
         # 不依赖反射线的交点（Pass 1）
@@ -344,6 +356,8 @@ class MonteCarloEngine:
                 sigma_rho0 = getattr(rl, "sigma_rho0", 0.0) or 0.0
                 if sigma_D <= 0 and sigma_rho0 <= 0:
                     continue
+                if i == 0:
+                    print(f"[MC DEBUG] Rayleigh {rl_id}: sigma_D={sigma_D}, sigma_rho0={sigma_rho0}")
                 D_s = self._rng.normal(rl.D, max(sigma_D, 1e-10))
                 rho0_s = self._rng.normal(rl.rho0, max(sigma_rho0, 1e-10))
                 if D_s <= 0 or rho0_s <= 0:
@@ -496,6 +510,9 @@ class MonteCarloEngine:
                 p_std=float(np.std(p_vals, ddof=1)),
                 n_valid=len(samples),
             )
+
+        print(f"[MC DEBUG] engine done: {len(result.intersection_stats)} intersection stats, "
+              f"{len(result.reflected_stats)} reflected stats")
 
         for rc in reflected_curves:
             rc_id = rc["id"]

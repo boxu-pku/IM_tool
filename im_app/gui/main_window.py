@@ -1079,6 +1079,7 @@ class MainWindow(QMainWindow):
     def _run_monte_carlo_for_scene(self):
         """运行蒙特卡洛误差传播，完成后更新交点/反射曲线误差并刷新绘图。"""
         if not self._scene_has_error_sources():
+            print("[MC DEBUG] _scene_has_error_sources() returned False — skipping")
             self.status.showMessage("MC skipped: no error sources (materials with fit_params or Rayleigh sigma)")
             return
 
@@ -1086,9 +1087,9 @@ class MainWindow(QMainWindow):
         n_mat_err = sum(1 for m in self.hugoniot_plot.materials.values() if m.fit_params is not None)
         rl_dict = self.rayleigh_panel.get_all_rayleigh_lines()
         n_rl_sigma = sum(1 for r in rl_dict.values() if (getattr(r, 'sigma_D', 0.0) or 0.0) > 0 or (getattr(r, 'sigma_rho0', 0.0) or 0.0) > 0)
-        self.status.showMessage(
-            f"MC: starting ({n_mat_err} materials, {n_rl_sigma} Rayleigh lines with sigma)..."
-        )
+        msg = f"MC: starting ({n_mat_err} materials, {n_rl_sigma} Rayleigh lines with sigma)..."
+        print(f"[MC DEBUG] {msg}")
+        self.status.showMessage(msg)
 
         # 保存当前交点 ID 和反射曲线 ID 的对应关系
         from PyQt5.QtWidgets import QProgressDialog, QApplication
