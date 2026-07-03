@@ -309,6 +309,12 @@ class MonteCarloEngine:
         pass3_ix = [ix for ix in intersections if _depends_on_reflected(ix.source_curve1_id)
                      or _depends_on_reflected(ix.source_curve2_id)]
 
+        print(f"[MC DEBUG] Classification: {len(pass1_ix)} pass1, {len(pass3_ix)} pass3")
+        for ix in pass1_ix:
+            print(f"[MC DEBUG]   Pass1 {ix.id}: src1={ix.source_curve1_id}, src2={ix.source_curve2_id}")
+        for ix in pass3_ix:
+            print(f"[MC DEBUG]   Pass3 {ix.id}: src1={ix.source_curve1_id}, src2={ix.source_curve2_id}")
+
         # 找出有 fit_params 的误差源材料 ID
         error_source_ids = {
             mid for mid, mat in materials.items()
@@ -381,6 +387,8 @@ class MonteCarloEngine:
                         perturbed_rayleigh=perturbed_rayleigh,
                     )
                     if up1 is None or up2 is None:
+                        if i == 0:
+                            print(f"[MC DEBUG]   sample 0, {ix.id}: up1={up1 is not None}, up2={up2 is not None}")
                         sample_ix_results[ix.id] = None
                         continue
 
@@ -389,6 +397,8 @@ class MonteCarloEngine:
                         ignore_first=ix.ignore_first_at_creation,
                     )
                     if len(ints) == 0:
+                        if i == 0:
+                            print(f"[MC DEBUG]   sample 0, {ix.id}: find_intersections returned empty (up1 range=[{up1[0]:.2f},{up1[-1]:.2f}], up2 range=[{up2[0]:.2f},{up2[-1]:.2f}])")
                         sample_ix_results[ix.id] = None
                         continue
 
