@@ -2242,6 +2242,33 @@ class MainWindow(QMainWindow):
         if t_interpolated:
             label += " [T interp]"
 
+        # ---- 误差数据 ----
+        err_data = {}
+        # 从交点直接获取的误差
+        up_err = getattr(ix, 'up_err', None)
+        p_err = getattr(ix, 'p_err', None)
+        comp_err = getattr(ix, 'compression_err', None)
+        rho_err = getattr(ix, 'rho_err', None)
+        if up_err is not None and np.isfinite(up_err):
+            err_data["Up_err"] = float(up_err)
+        if p_err is not None and np.isfinite(p_err):
+            err_data["P_err"] = float(p_err)
+        if comp_err is not None and np.isfinite(comp_err):
+            err_data["compression_err"] = float(comp_err)
+        if rho_err is not None and np.isfinite(rho_err):
+            err_data["rho_err"] = float(rho_err)
+        # Us_err 从 RH 关系通过误差传播公式计算
+        us = state.get("Us")
+        if us is not None and up_err is not None and p_err is not None and rho0:
+            if np.isfinite(up_err) and np.isfinite(p_err) and rho0 > 0:
+                Us_err = np.sqrt(
+                    (100.0 / (rho0 * ix.up)) ** 2 * p_err ** 2 +
+                    (100.0 * ix.p / (rho0 * ix.up ** 2)) ** 2 * up_err ** 2
+                )
+                if np.isfinite(Us_err):
+                    err_data["Us_err"] = float(Us_err)
+        # ---------------------
+
         return {
             "id":         self._next_scatter_id(),
             "label":      label,
@@ -2250,6 +2277,7 @@ class MainWindow(QMainWindow):
             "target_tab": None,
             "style":      {**DEFAULT_SCATTER_STYLE, "color": self._next_scatter_color()},
             **state,
+            **err_data,
         }
 
     def _add_intersection_scatter_point(self):

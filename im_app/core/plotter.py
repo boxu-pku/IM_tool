@@ -763,12 +763,8 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
 
         # Render scatter points (interactive on P-Up)
         if self._scatter_points:
-            # 跳过来自交点的 scatter 点 —— 交点标记已单独绘制，避免重叠
-            pup_points = [p for p in self._scatter_points
-                          if p.get("source") != "intersection"]
-            if pup_points:
-                render_scatter_points(
-                    self.ax, pup_points,
+            render_scatter_points(
+                self.ax, self._scatter_points,
                     x_var="Up", y_var="P", tab_key="P-Up",
                     artist_map=self._artist_map,
                     element_meta=self._element_meta,
@@ -1393,6 +1389,16 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
     def set_linestyle(self, style: str):
         self.linestyle = style
         self.update_plot()
+
+
+# 各 tab 上 scatter 点的误差键映射
+_SCATTER_ERR_KEYS = {
+    "P-Up":   ("Up_err", "P_err"),
+    "P-CR":   ("compression_err", "P_err"),
+    "Us-Up":  ("Us_err", "Up_err"),
+    "rho-Up": ("rho_err", "Up_err"),
+    "P-Us":   ("P_err", "Us_err"),
+}
 
 
 def render_scatter_points(
