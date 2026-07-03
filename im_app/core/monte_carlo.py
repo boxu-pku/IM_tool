@@ -176,58 +176,48 @@ def _resolve_curve_in_scene(
 
 
 def _compute_cr_and_rho(
-    ix_id: str,
     up_val: float,
+    p_val: float,
     source_curve1_id: str | None,
     source_curve2_id: str | None,
-    perturbed_materials: dict[str, tuple[np.ndarray, np.ndarray]],
     original_materials: dict[str, MaterialData],
     rayleigh_lines: dict[str, RayleighLine],
-    perturbed_rayleigh: dict[str, tuple[np.ndarray, np.ndarray]] | None = None,
 ) -> tuple[float | None, float | None]:
     """
-    为交点计算压缩比 CR 和密度 rho = rho0 * CR。
+    从 Rankine-Hugoniot 关系计算压缩比 CR 和密度 rho。
 
-    CR 优先级：Rayleigh 线 D/(D-up) > Hugoniot 材料的 compression 列插值。
-    rho0 来源：Rayleigh 线的 rho0 > Hugoniot 材料的 rho0。
+    强冲击近似下（P₀≈0, E₀≈0）：
+      质量守恒:  Us/(Us-Up) = CR
+      动量守恒:  P = rho0 * Up * Us * 0.01  →  Us = P / (rho0 * Up * 0.01)
+      代入:      CR = P / (P - rho0 * Up^2 * 0.01)
+
+    rho0 来源：Rayleigh 线 > Hugoniot 材料。
     """
-    from scipy.interpolate import interp1d as _interp1d
-
-    cr = None
-    rho_val = None
-    rl_D = None
+    # 确定 ρ₀
     rho0_val = None
-
     for src_id in (source_curve1_id, source_curve2_id):
         if src_id is None:
             continue
         if src_id in rayleigh_lines:
             rl = rayleigh_lines[src_id]
-            rl_D = rl.D
             if rho0_val is None:
                 rho0_val = rl.rho0
             continue
-        # Hugoniot 材料：获取 rho0 和 compression 数据
         if src_id in original_materials:
             omat = original_materials[src_id]
             if rho0_val is None:
                 rho0_val = omat.rho0
-            if omat.compression is not None and len(omat.compression) > 0:
-                try:
-                    cr_interp = _interp1d(omat.up, omat.compression, bounds_error=False, fill_value=np.nan)
-                    cr_val = float(cr_interp(up_val))
-                    if np.isfinite(cr_val):
-                        cr = cr_val
-                except Exception:
-                    pass
 
-    # Rayleigh 线 D/(D-up) 优先（如有）
-    if rl_D is not None and (rl_D - up_val) > 0:
-        cr = float(rl_D / (rl_D - up_val))
+    if rho0_val is None or rho0_val <= 0:
+        return None, None
 
-    if cr is not None and rho0_val is not None:
-        rho_val = rho0_val * cr
+    # 从 RH 关系计算 CR
+    denom = p_val - rho0_val * up_val * up_val * 0.01
+    if denom <= 0:
+        return None, None
 
+    cr = p_val / denom
+    rho_val = rho0_val * cr
     return cr, rho_val
 
 
@@ -469,10 +459,9 @@ class MonteCarloEngine:
                     )
                     p_val = float(interp(up_val))
                     cr_val, rho_val = _compute_cr_and_rho(
-                        ix.id, up_val,
+                        up_val, p_val,
                         ix.source_curve1_id, ix.source_curve2_id,
-                        perturbed_materials, materials,
-                        rayleigh_lines, perturbed_rayleigh,
+                        materials, rayleigh_lines,
                     )
                     sample_ix_results[ix.id] = (up_val, p_val, cr_val, rho_val)
                 except Exception as e:
@@ -564,10 +553,9 @@ class MonteCarloEngine:
                     )
                     p_val = float(interp(up_val))
                     cr_val, rho_val = _compute_cr_and_rho(
-                        ix.id, up_val,
+                        up_val, p_val,
                         ix.source_curve1_id, ix.source_curve2_id,
-                        perturbed_materials, materials,
-                        rayleigh_lines, perturbed_rayleigh,
+                        materials, rayleigh_lines,
                     )
                     sample_ix_results[ix.id] = (up_val, p_val, cr_val, rho_val)
                 except Exception as e:
