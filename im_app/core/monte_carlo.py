@@ -507,6 +507,12 @@ class MonteCarloEngine:
                         traceback.print_exc()
                     sample_ix_results[ix.id] = None
 
+            # ---- 第 4.5 步：本轮调试 ----
+            if i == 0:
+                n_found = sum(1 for v in sample_ix_results.values() if v is not None)
+                print("[MC DEBUG] Sample 0: %d/%d intersections found, %d reflected" %
+                      (n_found, len(sample_ix_results), len(sample_reflected)))
+
             # ---- 第 5 步：收集本轮结果 ----
             for ix_id, result in sample_ix_results.items():
                 if result is not None:
