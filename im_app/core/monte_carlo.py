@@ -411,7 +411,11 @@ class MonteCarloEngine:
                     )
                     p_val = float(interp(up_val))
                     sample_ix_results[ix.id] = (up_val, p_val)
-                except Exception:
+                except Exception as e:
+                    if i == 0:
+                        import traceback
+                        print("[MC DEBUG] Pass 1 error for %s (sample 0): %s" % (ix.id, e))
+                        traceback.print_exc()
                     sample_ix_results[ix.id] = None
 
             # ---- 第 3 步（Pass 2）：反射曲线 ----
@@ -457,8 +461,11 @@ class MonteCarloEngine:
 
                         sample_reflected[rc["id"]] = (up_r, p_r)
                         rc_center_samples[rc["id"]].append(center_up)
-                except Exception:
-                    pass
+                except Exception as e:
+                    if i == 0:
+                        import traceback
+                        print("[MC DEBUG] Pass 2 error for rc %s (sample 0): %s" % (rc.get('id','?'), e))
+                        traceback.print_exc()
 
             # ---- 第 4 步（Pass 3）：依赖反射线的交点 ----
             for ix in pass3_ix:
@@ -493,7 +500,11 @@ class MonteCarloEngine:
                     )
                     p_val = float(interp(up_val))
                     sample_ix_results[ix.id] = (up_val, p_val)
-                except Exception:
+                except Exception as e:
+                    if i == 0:
+                        import traceback
+                        print("[MC DEBUG] Pass 3 error for %s (sample 0): %s" % (ix.id, e))
+                        traceback.print_exc()
                     sample_ix_results[ix.id] = None
 
             # ---- 第 5 步：收集本轮结果 ----
