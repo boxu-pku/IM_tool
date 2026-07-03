@@ -143,6 +143,7 @@ class Intersection:
     up_err: Optional[float] = None       # Up 的 ±σ (km/s)
     p_err: Optional[float] = None        # P 的 ±σ (Mbar)
     compression_err: Optional[float] = None  # 压缩比的 ±σ
+    rho_err: Optional[float] = None          # 密度的 ±σ (g/cm³)
     # 自适应刷新用的源曲线数据 ID（display name 在 curve1_id/curve2_id）。
     # 老 workflow JSON 加载时为 None，这些 ix 不参与自动刷新，需手动重 Find。
     source_curve1_id: Optional[str] = None

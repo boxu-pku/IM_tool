@@ -175,7 +175,7 @@ def _resolve_curve_in_scene(
     return None, None
 
 
-def _compute_cr_for_intersection(
+def _compute_cr_and_rho(
     ix_id: str,
     up_val: float,
     source_curve1_id: str | None,
@@ -184,45 +184,34 @@ def _compute_cr_for_intersection(
     original_materials: dict[str, MaterialData],
     rayleigh_lines: dict[str, RayleighLine],
     perturbed_rayleigh: dict[str, tuple[np.ndarray, np.ndarray]] | None = None,
-) -> float | None:
+) -> tuple[float | None, float | None]:
     """
-    为交点计算压缩比 CR。
+    为交点计算压缩比 CR 和密度 rho = rho0 * CR。
 
-    优先级：Rayleigh 线 D/(D-up) > Hugoniot 材料的 compression 列插值。
+    CR 优先级：Rayleigh 线 D/(D-up) > Hugoniot 材料的 compression 列插值。
+    rho0 来源：Rayleigh 线的 rho0 > Hugoniot 材料的 rho0。
     """
     from scipy.interpolate import interp1d as _interp1d
 
     cr = None
+    rho_val = None
     rl_D = None
+    rho0_val = None
 
     for src_id in (source_curve1_id, source_curve2_id):
         if src_id is None:
             continue
-        # Rayleigh 线（优先检查扰动版本）
-        if perturbed_rayleigh and src_id in perturbed_rayleigh:
-            # 需要从原始 RayleighLine 获取 D 和 sigma 来重算
-            pass  # 下面处理
         if src_id in rayleigh_lines:
             rl = rayleigh_lines[src_id]
-            # 如果有扰动，D 已经被采样了，用原始 D 做近似（扰动很小）
             rl_D = rl.D
+            if rho0_val is None:
+                rho0_val = rl.rho0
             continue
-        # Hugoniot 材料的 compression 列
-        if src_id in perturbed_materials:
-            pu, pp = perturbed_materials[src_id]
-            # 从原始材料获取 compression 数据（compression 不受 Hugoniot 参数扰动影响）
-            if src_id in original_materials:
-                omat = original_materials[src_id]
-                if omat.compression is not None and len(omat.compression) > 0:
-                    try:
-                        cr_interp = _interp1d(omat.up, omat.compression, bounds_error=False, fill_value=np.nan)
-                        cr_val = float(cr_interp(up_val))
-                        if np.isfinite(cr_val):
-                            cr = cr_val
-                    except Exception:
-                        pass
-        elif src_id in original_materials:
+        # Hugoniot 材料：获取 rho0 和 compression 数据
+        if src_id in original_materials:
             omat = original_materials[src_id]
+            if rho0_val is None:
+                rho0_val = omat.rho0
             if omat.compression is not None and len(omat.compression) > 0:
                 try:
                     cr_interp = _interp1d(omat.up, omat.compression, bounds_error=False, fill_value=np.nan)
@@ -236,7 +225,10 @@ def _compute_cr_for_intersection(
     if rl_D is not None and (rl_D - up_val) > 0:
         cr = float(rl_D / (rl_D - up_val))
 
-    return cr
+    if cr is not None and rho0_val is not None:
+        rho_val = rho0_val * cr
+
+    return cr, rho_val
 
 
 # ---------------------------------------------------------------------------
@@ -251,6 +243,7 @@ class IntersectionStats:
     p_mean: float = 0.0
     p_std: float = 0.0
     compression_std: float | None = None
+    rho_std: float | None = None
     n_valid: int = 0
 
 
@@ -388,7 +381,7 @@ class MonteCarloEngine:
 
         # 准备存储每轮结果
         # ix_samples[ix_id] = list of (up, p)
-        ix_samples: dict[str, list[tuple[float, float, float | None]]] = {
+        ix_samples: dict[str, list[tuple[float, float, float | None, float | None]]] = {
             ix.id: [] for ix in intersections
         }
         # rc_p_samples[rc_id] = list of p_arrays
@@ -475,13 +468,13 @@ class MonteCarloEngine:
                         bounds_error=False, fill_value="extrapolate",
                     )
                     p_val = float(interp(up_val))
-                    cr_val = _compute_cr_for_intersection(
+                    cr_val, rho_val = _compute_cr_and_rho(
                         ix.id, up_val,
                         ix.source_curve1_id, ix.source_curve2_id,
                         perturbed_materials, materials,
                         rayleigh_lines, perturbed_rayleigh,
                     )
-                    sample_ix_results[ix.id] = (up_val, p_val, cr_val)
+                    sample_ix_results[ix.id] = (up_val, p_val, cr_val, rho_val)
                 except Exception as e:
                     if i == 0:
                         import traceback
@@ -570,13 +563,13 @@ class MonteCarloEngine:
                         bounds_error=False, fill_value="extrapolate",
                     )
                     p_val = float(interp(up_val))
-                    cr_val = _compute_cr_for_intersection(
+                    cr_val, rho_val = _compute_cr_and_rho(
                         ix.id, up_val,
                         ix.source_curve1_id, ix.source_curve2_id,
                         perturbed_materials, materials,
                         rayleigh_lines, perturbed_rayleigh,
                     )
-                    sample_ix_results[ix.id] = (up_val, p_val, cr_val)
+                    sample_ix_results[ix.id] = (up_val, p_val, cr_val, rho_val)
                 except Exception as e:
                     if i == 0:
                         import traceback
@@ -608,13 +601,16 @@ class MonteCarloEngine:
             up_vals = np.array([s[0] for s in samples])
             p_vals = np.array([s[1] for s in samples])
             cr_vals = np.array([s[2] for s in samples if s[2] is not None])
+            rho_vals = np.array([s[3] for s in samples if s[3] is not None])
             cr_std = float(np.std(cr_vals, ddof=1)) if len(cr_vals) >= 10 else None
+            rho_std = float(np.std(rho_vals, ddof=1)) if len(rho_vals) >= 10 else None
             result.intersection_stats[ix.id] = IntersectionStats(
                 up_mean=float(np.mean(up_vals)),
                 up_std=float(np.std(up_vals, ddof=1)),
                 p_mean=float(np.mean(p_vals)),
                 p_std=float(np.std(p_vals, ddof=1)),
                 compression_std=cr_std,
+                rho_std=rho_std,
                 n_valid=len(samples),
             )
 

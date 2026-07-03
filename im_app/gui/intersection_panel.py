@@ -98,9 +98,10 @@ class IntersectionPanel(QWidget):
         self.show_errbar_check.toggled.connect(self._on_show_errorbars_toggled)
         ix_layout.addWidget(self.show_errbar_check)
 
-        self.ix_table = QTableWidget(0, 9)
+        self.ix_table = QTableWidget(0, 10)
         self.ix_table.setHorizontalHeaderLabels(
-            ["ID", "Curve 1", "Curve 2", "Up (km/s)", "P (Mbar)", "CR", "Up err (km/s)", "P err (Mbar)", "CR err"]
+            ["ID", "Curve 1", "Curve 2", "Up (km/s)", "P (Mbar)", "CR",
+             "Up err (km/s)", "P err (Mbar)", "CR err", "Rho err (g/cm3)"]
         )
         self.ix_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ix_table.setSelectionBehavior(QTableWidget.SelectRows)
@@ -216,6 +217,11 @@ class IntersectionPanel(QWidget):
             if getattr(ix, 'compression_err', None) is not None and np.isfinite(ix.compression_err):
                 cr_err_str = f"{ix.compression_err:.4f}"
             self.ix_table.setItem(row, 8, QTableWidgetItem(cr_err_str))
+            # Rho 误差列
+            rho_err_str = "—"
+            if getattr(ix, 'rho_err', None) is not None and np.isfinite(ix.rho_err):
+                rho_err_str = f"{ix.rho_err:.4f}"
+            self.ix_table.setItem(row, 9, QTableWidgetItem(rho_err_str))
 
         # Update curve selection combos
         self._update_curve_combos()

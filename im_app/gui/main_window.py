@@ -1133,6 +1133,7 @@ class MainWindow(QMainWindow):
                 ix.up_err = stats.up_std
                 ix.p_err = stats.p_std
                 ix.compression_err = stats.compression_std
+                ix.rho_err = stats.rho_std
                 n_ix_updated += 1
                 had_updates = True
 
@@ -1170,11 +1171,14 @@ class MainWindow(QMainWindow):
                 err_str = ""
                 if getattr(ix, 'up_err', None) is not None and getattr(ix, 'p_err', None) is not None:
                     if np.isfinite(ix.up_err) and np.isfinite(ix.p_err):
-                        err_str = f" ±({ix.up_err:.4f}, {ix.p_err:.4f})"
+                        err_str = f" \u00b1({ix.up_err:.4f}, {ix.p_err:.4f})"
                 cr_err_str = ""
                 if getattr(ix, 'compression_err', None) is not None and np.isfinite(ix.compression_err):
-                    cr_err_str = f" CR±{ix.compression_err:.4f}"
-                cr_info = f", selected: Up={ix.up:.4f}{err_str}, P={ix.p:.4f}{cr_err_str}"
+                    cr_err_str = f" CR\u00b1{ix.compression_err:.4f}"
+                rho_err_str = ""
+                if getattr(ix, 'rho_err', None) is not None and np.isfinite(ix.rho_err):
+                    rho_err_str = f" \u03c1\u00b1{ix.rho_err:.4f}"
+                cr_info = f", selected: Up={ix.up:.4f}{err_str}, P={ix.p:.4f}{cr_err_str}{rho_err_str}"
                 self.status.showMessage(f"Intersection {ix_id}{cr_info}")
                 break
         else:
