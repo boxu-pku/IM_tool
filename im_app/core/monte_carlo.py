@@ -338,8 +338,8 @@ class MonteCarloEngine:
         for i in range(n_samples):
             if progress_callback is not None:
                 try:
-                    cancel = progress_callback(i)
-                    if cancel:
+                    should_continue = progress_callback(i)
+                    if not should_continue:
                         break
                 except Exception:
                     pass
