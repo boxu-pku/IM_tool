@@ -32,7 +32,6 @@ TOP_FILES = [
     "README_EN.md",
     "requirements.txt",
     "run_app.py",
-    "run_app.bat",
     "pyproject.toml",
 ]
 
