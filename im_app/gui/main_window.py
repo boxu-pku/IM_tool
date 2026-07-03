@@ -2287,10 +2287,15 @@ class MainWindow(QMainWindow):
             self.status.showMessage("No intersection selected")
             return
 
-        # 去重：按 source=intersection + label
+        # 去重：已存在的交点 scatter 点只更新误差数据（不改变位置/样式）
         for existing in self._scatter_points:
             if existing.get("source") == "intersection" and existing.get("label", "").startswith(ix_id):
-                self.status.showMessage(f"Scatter point for {ix_id} already exists")
+                # 只更新误差键，保留原有位置和样式
+                for k in ("Up_err", "P_err", "compression_err", "rho_err", "Us_err"):
+                    if k in point:
+                        existing[k] = point[k]
+                self._refresh_all_plots_with_scatter()
+                self.status.showMessage(f"Updated errors for scatter {ix_id}")
                 return
 
         point = self._intersection_to_scatter_point(ix_id)
