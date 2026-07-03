@@ -1438,6 +1438,7 @@ def render_scatter_points(
     """
     has_drawn = False
 
+    print(f'[SCATTER DBG] render_scatter_points called: tab_key={tab_key}, n_points={len(points or [])}')
     for point in points or []:
         # scope 过滤
         if point.get("scope") == "local" and point.get("target_tab") != tab_key:
@@ -1501,6 +1502,28 @@ def render_scatter_points(
                     "data_id": point["id"],
                     "style": s,
                 }
+
+        # ── 误差棒 ─────────────────────────────────────────────
+        # 从 _SCATTER_ERR_KEYS 查找当前 tab 的 x/y 误差键
+        err_keys = _SCATTER_ERR_KEYS.get(tab_key)
+        if err_keys:
+            x_err_key, y_err_key = err_keys
+            x_err = point.get(x_err_key)
+            y_err = point.get(y_err_key)
+            x_err_val = abs(x_err) if (x_err is not None and np.isfinite(x_err) and x_err > 0) else None
+            y_err_val = abs(y_err) if (y_err is not None and np.isfinite(y_err) and y_err > 0) else None
+            if x_err_val is not None or y_err_val is not None:
+                ecolor = s.get("markeredgecolor", "black")
+                ax.errorbar(
+                    [x_val], [y_val],
+                    xerr=x_err_val, yerr=y_err_val,
+                    fmt='none',
+                    ecolor=ecolor,
+                    capsize=2,
+                    capthick=1,
+                    alpha=min(alpha, 0.7),
+                    zorder=SCATTER_ZORDER + 0.3,
+                )
 
         has_drawn = True
 

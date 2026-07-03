@@ -408,13 +408,13 @@ class MainWindow(QMainWindow):
         self.hugoniot_plot = InteractiveHugoniotPlot()
         self.eos_plot = EOSPlot()
 
-        # Create generic plots
-        self.us_up_plot = GenericHugoniotPlot("Us", "Up")
-        self.p_t_plot = GenericHugoniotPlot("P", "T")
-        self.rho_up_plot = GenericHugoniotPlot("rho", "Up")
-        self.t_up_plot = GenericHugoniotPlot("T", "Up")
-        self.e_up_plot = GenericHugoniotPlot("E", "Up")
-        self.p_us_plot = GenericHugoniotPlot("P", "Us")
+        # Create generic plots with tab_key for scatter error bars
+        self.us_up_plot = GenericHugoniotPlot("Us", "Up", tab_key="Us-Up")
+        self.p_t_plot = GenericHugoniotPlot("P", "T", tab_key="P-T")
+        self.rho_up_plot = GenericHugoniotPlot("rho", "Up", tab_key="rho-Up")
+        self.t_up_plot = GenericHugoniotPlot("T", "Up", tab_key="T-Up")
+        self.e_up_plot = GenericHugoniotPlot("E", "Up", tab_key="E-Up")
+        self.p_us_plot = GenericHugoniotPlot("P", "Us", tab_key="P-Us")
 
         # Add tabs
         self.plot_tabs.addTab(self.hugoniot_plot, "P-Up Diagram")
@@ -1153,7 +1153,43 @@ class MainWindow(QMainWindow):
         )
 
         if had_updates:
-            self.hugoniot_plot.refresh()
+            # 更新已有的 scatter 点（从交点重新读取误差数据）
+            for sp in self._scatter_points:
+                if sp.get("source") == "intersection":
+                    label = sp.get("label", "")
+                    # 从 label 中解析 ix_id（label 格式: "ix_id (material_name)"）
+                    ix_id = label.split(" (")[0] if " (" in label else label
+                    ix = next((x for x in self.hugoniot_plot.intersections if x.id == ix_id), None)
+                    if ix is not None:
+                        up_err = getattr(ix, 'up_err', None)
+                        p_err = getattr(ix, 'p_err', None)
+                        comp_err = getattr(ix, 'compression_err', None)
+                        rho_err = getattr(ix, 'rho_err', None)
+                        if up_err is not None and np.isfinite(up_err):
+                            sp["Up_err"] = float(up_err)
+                        if p_err is not None and np.isfinite(p_err):
+                            sp["P_err"] = float(p_err)
+                        if comp_err is not None and np.isfinite(comp_err):
+                            sp["compression_err"] = float(comp_err)
+                        if rho_err is not None and np.isfinite(rho_err):
+                            sp["rho_err"] = float(rho_err)
+                        # 更新 Us_err
+                        us = sp.get("Us")
+                        rho0 = None
+                        if ix.material_id:
+                            mat = self._lookup_material(ix.material_id)
+                            if mat:
+                                rho0 = getattr(mat, "rho0", None)
+                        if us is not None and up_err is not None and p_err is not None and rho0:
+                            if np.isfinite(up_err) and np.isfinite(p_err) and rho0 > 0:
+                                us_err = np.sqrt(
+                                    (100.0 / (rho0 * ix.up)) ** 2 * p_err ** 2 +
+                                    (100.0 * ix.p / (rho0 * ix.up ** 2)) ** 2 * up_err ** 2
+                                )
+                                if np.isfinite(us_err):
+                                    sp["Us_err"] = float(us_err)
+
+            self._refresh_all_plots_with_scatter()
             self.intersection_panel.set_intersections(
                 self.hugoniot_plot.intersections,
                 self.hugoniot_plot.materials,
@@ -2287,6 +2323,11 @@ class MainWindow(QMainWindow):
             self.status.showMessage("No intersection selected")
             return
 
+        point = self._intersection_to_scatter_point(ix_id)
+        if point is None:
+            self.status.showMessage(f"Intersection {ix_id} not found")
+            return
+
         # 去重：已存在的交点 scatter 点只更新误差数据（不改变位置/样式）
         for existing in self._scatter_points:
             if existing.get("source") == "intersection" and existing.get("label", "").startswith(ix_id):
@@ -2297,11 +2338,6 @@ class MainWindow(QMainWindow):
                 self._refresh_all_plots_with_scatter()
                 self.status.showMessage(f"Updated errors for scatter {ix_id}")
                 return
-
-        point = self._intersection_to_scatter_point(ix_id)
-        if point is None:
-            self.status.showMessage(f"Intersection {ix_id} not found")
-            return
 
         self._scatter_points.append(point)
         if hasattr(self, '_update_scatter_list_widget'):
@@ -2394,6 +2430,7 @@ class MainWindow(QMainWindow):
 
     def _refresh_all_plots_with_scatter(self):
         """Refresh 全部 8 个 plot（Task 15 完整实现）。"""
+        print('[MAIN DBG] _refresh_all_plots_with_scatter: %d scatter points' % len(self._scatter_points))
         sp = self._scatter_points
         mats = self.hugoniot_plot.materials or None
 
