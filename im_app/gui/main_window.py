@@ -1730,8 +1730,14 @@ class MainWindow(QMainWindow):
             self.hugoniot_plot.set_linewidth(linewidth)
 
         elif target == "P-CR Diagram":
-            # Apply to EOS plot
-            materials = self.hugoniot_plot.materials  # Always show materials
+            # Apply to EOS plot — merge reference curves
+            materials = dict(self.hugoniot_plot.materials) if self.hugoniot_plot.materials else {}
+            ref_curves = self.reference_curve_panel.get_selected_curves()
+            for mid, mat in ref_curves.items():
+                if mid not in materials:
+                    if (mat.compression is not None and len(mat.compression) > 0
+                            and mat.p is not None and len(mat.p) > 0):
+                        materials[mid] = mat
             self.eos_plot.update_plot(
                 materials=materials,
                 scatter_points=self._scatter_points,
@@ -2476,7 +2482,18 @@ class MainWindow(QMainWindow):
         self.hugoniot_plot.set_scatter_points(sp)
         self.hugoniot_plot.refresh()
 
-        # 其他 7 个 plot
+        # 其他 plot：合并参考曲线到各图
+        # 每个图需要的变量对（用于过滤参考曲线）
+        _PLOT_DATA_KEYS = {
+            "P-CR":  ("compression", "p"),
+            "P-rho": ("rho", "p"),
+            "Us-Up": ("us", "up"),
+            "P-T":   ("p", "temperature"),
+            "rho-Up":("rho", "up"),
+            "T-Up":  ("temperature", "up"),
+            "E-Up":  ("energy", "up"),
+            "P-Us":  ("p", "us"),
+        }
         PLOT_KWARGS = [
             (self.eos_plot,      "P-CR"),
             (self.p_rho_plot,    "P-rho"),
@@ -2487,19 +2504,19 @@ class MainWindow(QMainWindow):
             (self.e_up_plot,     "E-Up"),
             (self.p_us_plot,     "P-Us"),
         ]
+        ref_curves = self.reference_curve_panel.get_selected_curves()
         for plot, key in PLOT_KWARGS:
             settings = self._plot_settings[key]
-            if plot is self.eos_plot:
-                # EOSPlot 需要合并 compression+p 的参考曲线
-                plot_mats = dict(mats) if mats else {}
-                ref_curves = self.reference_curve_panel.get_selected_curves()
-                for mid, mat in ref_curves.items():
-                    if mid not in plot_mats:
-                        if (mat.compression is not None and len(mat.compression) > 0
-                                and mat.p is not None and len(mat.p) > 0):
-                            plot_mats[mid] = mat
-            else:
-                plot_mats = mats
+            # 合并 hugoniot_plot 标准曲线 + 选中的参考曲线（按各图需要的变量过滤）
+            plot_mats = dict(mats) if mats else {}
+            x_key, y_key = _PLOT_DATA_KEYS.get(key, (None, None))
+            for mid, mat in ref_curves.items():
+                if mid not in plot_mats:
+                    x_data = getattr(mat, x_key, None) if x_key else None
+                    y_data = getattr(mat, y_key, None) if y_key else None
+                    if (x_data is not None and len(x_data) > 0
+                            and y_data is not None and len(y_data) > 0):
+                        plot_mats[mid] = mat
             plot.update_plot(
                 materials=plot_mats,
                 scatter_points=sp,

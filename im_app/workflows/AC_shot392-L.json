@@ -1,0 +1,198 @@
+{
+    "version": "1.0",
+    "created": "2026-07-10T17:00:26.551507",
+    "materials": [
+        {
+            "id": "C_diam_rho3.157",
+            "visible": true
+        },
+        {
+            "id": "Quartz_Hamel2012",
+            "visible": true
+        },
+        {
+            "id": "Al_Celliers2005",
+            "visible": true
+        }
+    ],
+    "rayleigh_lines": [
+        {
+            "id": "rl_1",
+            "material_id": "C_diam_rho3.157",
+            "D": 22.1,
+            "rho0": 3.157,
+            "sigma_D": 0.0,
+            "sigma_rho0": 0.0
+        },
+        {
+            "id": "rl_2",
+            "material_id": "Quartz_Hamel2012",
+            "D": 20.38,
+            "rho0": 2.65,
+            "sigma_D": 0.0,
+            "sigma_rho0": 0.0
+        }
+    ],
+    "intersections": [
+        {
+            "id": "ix_specific_0",
+            "curve1_id": "Alpha Quartz",
+            "curve2_id": "Rayleigh Quartz_Hamel2012",
+            "up": 12.039603846573893,
+            "p": 6.502228849419163,
+            "type": "custom",
+            "material_id": "Quartz_Hamel2012",
+            "compression_ratio": 2.443568067544217,
+            "source_curve1_id": "Quartz_Hamel2012",
+            "source_curve2_id": "rl_2",
+            "ignore_first_at_creation": true
+        },
+        {
+            "id": "ix_rev_1",
+            "curve1_id": "Aluminum",
+            "curve2_id": "Reflected Aluminum",
+            "up": 11.941762752769467,
+            "p": 6.5927528466077385,
+            "type": "reverse-match",
+            "material_id": "Al_Celliers2005",
+            "compression_ratio": 2.404030519144591,
+            "source_curve1_id": "Al_Celliers2005",
+            "source_curve2_id": "refl_1",
+            "ignore_first_at_creation": true
+        },
+        {
+            "id": "ix_specific_2",
+            "curve1_id": "Reflected Al_Celliers2005",
+            "curve2_id": "Rayleigh C_diam_rho3.157",
+            "up": 10.893612183757826,
+            "p": 7.600440539771286,
+            "type": "custom",
+            "material_id": null,
+            "compression_ratio": 1.9720895227246176,
+            "source_curve1_id": "refl_1",
+            "source_curve2_id": "rl_1",
+            "ignore_first_at_creation": true
+        }
+    ],
+    "reflected_curves": [
+        {
+            "id": "refl_1",
+            "source_id": "Al_Celliers2005",
+            "center_up": 11.941762752769467,
+            "anchor_intersection_id": null,
+            "source_ix_id": "ix_specific_0"
+        }
+    ],
+    "plot_settings": {
+        "p_up": {
+            "xlim": [
+                5.845875381220402,
+                15.486102501797628
+            ],
+            "ylim": [
+                2.2968686926936153,
+                10.001153336024448
+            ],
+            "show_legend": true,
+            "linewidth": 1.2,
+            "linestyle": "-"
+        },
+        "p_cr": {
+            "xlim": [
+                1,
+                5
+            ],
+            "ylim": [
+                0,
+                10
+            ],
+            "show_legend": true,
+            "inverse": false
+        },
+        "p_rho": {
+            "xlim": [
+                2,
+                20
+            ],
+            "ylim": [
+                0,
+                30
+            ],
+            "show_legend": true,
+            "inverse": false
+        },
+        "us_up": {
+            "xlim": [
+                0,
+                30
+            ],
+            "ylim": [
+                0,
+                30
+            ],
+            "show_legend": true,
+            "inverse": false
+        },
+        "p_t": {
+            "xlim": [
+                0,
+                30
+            ],
+            "ylim": [
+                0,
+                10
+            ],
+            "show_legend": true,
+            "inverse": false
+        },
+        "rho_up": {
+            "xlim": [
+                2,
+                20
+            ],
+            "ylim": [
+                0,
+                30
+            ],
+            "show_legend": true,
+            "inverse": false
+        },
+        "t_up": {
+            "xlim": [
+                0,
+                10
+            ],
+            "ylim": [
+                0,
+                30
+            ],
+            "show_legend": true,
+            "inverse": false
+        },
+        "e_up": {
+            "xlim": [
+                0,
+                20
+            ],
+            "ylim": [
+                0,
+                30
+            ],
+            "show_legend": true,
+            "inverse": false
+        },
+        "p_us": {
+            "xlim": [
+                0,
+                30
+            ],
+            "ylim": [
+                0,
+                30
+            ],
+            "show_legend": true,
+            "inverse": false
+        }
+    },
+    "scatter_points": []
+}
