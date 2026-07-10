@@ -40,6 +40,7 @@ from im_app.gui.reference_curve_panel import ReferenceCurvePanel
 PLOT_DEFAULTS = {
     "P-Up":   ((0, 30), (0, 30)),
     "P-CR":   ((1, 5),  (0, 10)),
+    "P-rho":  ((2, 20), (0, 30)),
     "Us-Up":  ((0, 30), (0, 30)),
     "P-T":    ((0, 30), (0, 10)),
     "rho-Up": ((2, 20), (0, 30)),
@@ -52,6 +53,7 @@ PLOT_DEFAULTS = {
 TAB_XY_MAP = {
     "P-Up":   ("Up", "P"),
     "P-CR":   ("compression", "P"),
+    "P-rho":  ("rho", "P"),
     "Us-Up":  ("Us", "Up"),
     "P-T":    ("P", "T"),
     "rho-Up": ("rho", "Up"),
@@ -96,6 +98,7 @@ class MainWindow(QMainWindow):
         self.target_plot_combo.addItems([
             "P-Up Diagram",
             "P-CR Diagram",
+            "P-rho Diagram",
             "Us-Up Diagram",
             "P-T Diagram",
             "rho-Up Diagram",
@@ -205,6 +208,12 @@ class MainWindow(QMainWindow):
                 "show_legend": True,
                 "inverse": False,
             },
+            "P-rho": {
+                "xlim": (2, 20),
+                "ylim": (0, 30),
+                "show_legend": True,
+                "inverse": False,
+            },
             "Us-Up": {
                 "xlim": (0, 30),
                 "ylim": (0, 30),
@@ -245,6 +254,7 @@ class MainWindow(QMainWindow):
 
         # Store original plot configurations for inverse functionality
         self._original_plot_configs = {
+            "P-rho Diagram": ("rho", "P"),
             "Us-Up Diagram": ("Us", "Up"),
             "P-T Diagram": ("P", "T"),
             "rho-Up Diagram": ("rho", "Up"),
@@ -255,6 +265,7 @@ class MainWindow(QMainWindow):
 
         # Track current inverse state for each generic plot
         self._plot_inverse_state = {
+            "P-rho": False,
             "Us-Up": False,
             "P-T": False,
             "rho-Up": False,
@@ -409,6 +420,7 @@ class MainWindow(QMainWindow):
         self.eos_plot = EOSPlot()
 
         # Create generic plots with tab_key for scatter error bars
+        self.p_rho_plot = GenericHugoniotPlot("rho", "P", tab_key="P-rho")
         self.us_up_plot = GenericHugoniotPlot("Us", "Up", tab_key="Us-Up")
         self.p_t_plot = GenericHugoniotPlot("P", "T", tab_key="P-T")
         self.rho_up_plot = GenericHugoniotPlot("rho", "Up", tab_key="rho-Up")
@@ -419,6 +431,7 @@ class MainWindow(QMainWindow):
         # Add tabs
         self.plot_tabs.addTab(self.hugoniot_plot, "P-Up Diagram")
         self.plot_tabs.addTab(self.eos_plot, "P-CR Diagram")
+        self.plot_tabs.addTab(self.p_rho_plot, "P-rho Diagram")
         self.plot_tabs.addTab(self.us_up_plot, "Us-Up Diagram")
         self.plot_tabs.addTab(self.p_t_plot, "P-T Diagram")
         self.plot_tabs.addTab(self.rho_up_plot, "rho-Up Diagram")
@@ -514,6 +527,7 @@ class MainWindow(QMainWindow):
             # 图表对象: (需要的X变量字段名, 需要的Y变量字段名)
             self.hugoniot_plot: ("up", "p"),
             self.p_t_plot: ("p", "temperature"),
+            self.p_rho_plot: ("rho", "p"),
             self.us_up_plot: ("us", "up"),
             self.rho_up_plot: ("rho", "up"),
             self.t_up_plot: ("temperature", "up"),
@@ -585,7 +599,7 @@ class MainWindow(QMainWindow):
         self.hugoniot_plot.style_changed.connect(self._on_element_style_changed)
 
         # 其他 7 个 plot 也连接元素交互信号（EOS / Generic）
-        for plot in [self.eos_plot, self.us_up_plot, self.p_t_plot,
+        for plot in [self.eos_plot, self.p_rho_plot, self.us_up_plot, self.p_t_plot,
                      self.rho_up_plot, self.t_up_plot, self.e_up_plot,
                      self.p_us_plot]:
             plot.element_selected.connect(self._on_element_selected)
@@ -608,6 +622,7 @@ class MainWindow(QMainWindow):
         plot_key_pairs = [
             (self.hugoniot_plot, "P-Up"),
             (self.eos_plot,      "P-CR"),
+            (self.p_rho_plot,    "P-rho"),
             (self.us_up_plot,    "Us-Up"),
             (self.p_t_plot,      "P-T"),
             (self.rho_up_plot,   "rho-Up"),
@@ -660,7 +675,7 @@ class MainWindow(QMainWindow):
 
         # Sync to all generic plots (同样排除参考曲线)
         generic_plots = [
-            self.us_up_plot, self.p_t_plot, self.rho_up_plot,
+            self.p_rho_plot, self.us_up_plot, self.p_t_plot, self.rho_up_plot,
             self.t_up_plot, self.e_up_plot, self.p_us_plot
         ]
         for plot in generic_plots:
@@ -1079,7 +1094,6 @@ class MainWindow(QMainWindow):
     def _run_monte_carlo_for_scene(self):
         """运行蒙特卡洛误差传播，完成后更新交点/反射曲线误差并刷新绘图。"""
         if not self._scene_has_error_sources():
-            print("[MC DEBUG] _scene_has_error_sources() returned False — skipping")
             self.status.showMessage("MC skipped: no error sources (materials with fit_params or Rayleigh sigma)")
             return
 
@@ -1088,7 +1102,6 @@ class MainWindow(QMainWindow):
         rl_dict = self.rayleigh_panel.get_all_rayleigh_lines()
         n_rl_sigma = sum(1 for r in rl_dict.values() if (getattr(r, 'sigma_D', 0.0) or 0.0) > 0 or (getattr(r, 'sigma_rho0', 0.0) or 0.0) > 0)
         msg = f"MC: starting ({n_mat_err} materials, {n_rl_sigma} Rayleigh lines with sigma)..."
-        print(f"[MC DEBUG] {msg}")
         self.status.showMessage(msg)
 
         # 保存当前交点 ID 和反射曲线 ID 的对应关系
@@ -1726,6 +1739,11 @@ class MainWindow(QMainWindow):
                 ylim=(ymin, ymax),
             )
 
+        elif target == "P-rho Diagram":
+            self.p_rho_plot.set_xlim(xmin, xmax)
+            self.p_rho_plot.set_ylim(ymin, ymax)
+            self.p_rho_plot.set_legend_visible(show_legend)
+
         elif target == "Us-Up Diagram":
             self.us_up_plot.set_xlim(xmin, xmax)
             self.us_up_plot.set_ylim(ymin, ymax)
@@ -1781,6 +1799,15 @@ class MainWindow(QMainWindow):
             self.ymin_spin.setSuffix(" Mbar")
             self.ymax_spin.setSuffix(" Mbar")
             self.axis_info_label.setText("Axes: Compression Ratio vs P (Mbar)")
+        elif target == "P-rho Diagram":
+            settings_key = "P-rho"
+            self.xmin_spin.setRange(0, 100)
+            self.xmax_spin.setRange(0, 100)
+            self.xmin_spin.setSuffix(" g/cm^3")  # X = rho
+            self.xmax_spin.setSuffix(" g/cm^3")
+            self.ymin_spin.setSuffix(" Mbar")  # Y = P
+            self.ymax_spin.setSuffix(" Mbar")
+            self.axis_info_label.setText("Axes: rho (g/cm^3) vs P (Mbar)")
         elif target == "Us-Up Diagram":
             settings_key = "Us-Up"
             self.xmin_spin.setRange(0, 100)
@@ -1864,7 +1891,7 @@ class MainWindow(QMainWindow):
     def _sync_plot_settings_to_ui(self):
         """当前 tab 的 plot settings 同步到 spinbox。"""
         tab_idx = self.plot_tabs.currentIndex()
-        tab_keys = ["P-Up", "P-CR", "Us-Up", "P-T", "rho-Up", "T-Up", "E-Up", "P-Us"]
+        tab_keys = ["P-Up", "P-CR", "P-rho", "Us-Up", "P-T", "rho-Up", "T-Up", "E-Up", "P-Us"]
         if not (0 <= tab_idx < len(tab_keys)):
             return
         key = tab_keys[tab_idx]
@@ -1915,6 +1942,7 @@ class MainWindow(QMainWindow):
         tab_names = [
             "P-Up Diagram",
             "P-CR Diagram",
+            "P-rho Diagram",
             "Us-Up Diagram",
             "P-T Diagram",
             "rho-Up Diagram",
@@ -1922,7 +1950,7 @@ class MainWindow(QMainWindow):
             "E-Up Diagram",
             "P-Us Diagram",
         ]
-        settings_keys = ["P-Up", "P-CR", "Us-Up", "P-T", "rho-Up", "T-Up", "E-Up", "P-Us"]
+        settings_keys = ["P-Up", "P-CR", "P-rho", "Us-Up", "P-T", "rho-Up", "T-Up", "E-Up", "P-Us"]
 
         if index >= len(tab_names):
             return
@@ -1956,33 +1984,37 @@ class MainWindow(QMainWindow):
                 xlim=settings["xlim"],
                 ylim=settings["ylim"],
             )
-        elif index == 2:  # Us-Up Diagram
+        elif index == 2:  # P-rho Diagram
+            self.p_rho_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
+            self.p_rho_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
+            self.p_rho_plot.set_legend_visible(settings["show_legend"])
+        elif index == 3:  # Us-Up Diagram
             self.us_up_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
             self.us_up_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
             self.us_up_plot.set_legend_visible(settings["show_legend"])
-        elif index == 3:  # P-T Diagram
+        elif index == 4:  # P-T Diagram
             self.p_t_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
             self.p_t_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
             self.p_t_plot.set_legend_visible(settings["show_legend"])
-        elif index == 4:  # rho-Up Diagram
+        elif index == 5:  # rho-Up Diagram
             self.rho_up_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
             self.rho_up_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
             self.rho_up_plot.set_legend_visible(settings["show_legend"])
-        elif index == 5:  # T-Up Diagram
+        elif index == 6:  # T-Up Diagram
             self.t_up_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
             self.t_up_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
             self.t_up_plot.set_legend_visible(settings["show_legend"])
-        elif index == 6:  # E-Up Diagram
+        elif index == 7:  # E-Up Diagram
             self.e_up_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
             self.e_up_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
             self.e_up_plot.set_legend_visible(settings["show_legend"])
-        elif index == 7:  # P-Us Diagram
+        elif index == 8:  # P-Us Diagram
             self.p_us_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
             self.p_us_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
             self.p_us_plot.set_legend_visible(settings["show_legend"])
 
         # 同步手动输入区
-        tab_keys = ["P-Up", "P-CR", "Us-Up", "P-T", "rho-Up", "T-Up", "E-Up", "P-Us"]
+        tab_keys = ["P-Up", "P-CR", "P-rho", "Us-Up", "P-T", "rho-Up", "T-Up", "E-Up", "P-Us"]
         if 0 <= index < len(tab_keys):
             self._refresh_manual_input_for_tab(tab_keys[index])
 
@@ -2012,6 +2044,10 @@ class MainWindow(QMainWindow):
             elif target == "P-CR Diagram":
                 if mat.compression is not None:
                     x_data_all.extend(mat.compression)
+                y_data_all.extend(mat.p)
+            elif target == "P-rho Diagram":
+                if mat.rho is not None:
+                    x_data_all.extend(mat.rho)
                 y_data_all.extend(mat.p)
             elif target == "Us-Up Diagram":
                 if mat.us is not None:
@@ -2086,6 +2122,7 @@ class MainWindow(QMainWindow):
 
         # Map target to settings key and plot instance
         plot_map = {
+            "P-rho Diagram": ("P-rho", self.p_rho_plot),
             "Us-Up Diagram": ("Us-Up", self.us_up_plot),
             "P-T Diagram": ("P-T", self.p_t_plot),
             "rho-Up Diagram": ("rho-Up", self.rho_up_plot),
@@ -2138,7 +2175,9 @@ class MainWindow(QMainWindow):
         self.plot_tabs.insertTab(tab_index, new_plot, target)
 
         # Update reference
-        if settings_key == "Us-Up":
+        if settings_key == "P-rho":
+            self.p_rho_plot = new_plot
+        elif settings_key == "Us-Up":
             self.us_up_plot = new_plot
         elif settings_key == "P-T":
             self.p_t_plot = new_plot
@@ -2350,7 +2389,7 @@ class MainWindow(QMainWindow):
         from im_app.core.element_style import DEFAULT_SCATTER_STYLE
 
         tab_idx = self.plot_tabs.currentIndex()
-        tab_keys = ["P-Up", "P-CR", "Us-Up", "P-T", "rho-Up", "T-Up", "E-Up", "P-Us"]
+        tab_keys = ["P-Up", "P-CR", "P-rho", "Us-Up", "P-T", "rho-Up", "T-Up", "E-Up", "P-Us"]
         tab_key = tab_keys[tab_idx] if 0 <= tab_idx < len(tab_keys) else "P-Up"
 
         x_var, y_var = self._get_xy_vars_for_tab(tab_key)
@@ -2429,8 +2468,7 @@ class MainWindow(QMainWindow):
             self._refresh_all_plots_with_scatter()
 
     def _refresh_all_plots_with_scatter(self):
-        """Refresh 全部 8 个 plot（Task 15 完整实现）。"""
-        print('[MAIN DBG] _refresh_all_plots_with_scatter: %d scatter points' % len(self._scatter_points))
+        """Refresh 全部 9 个 plot（含 P-rho）。"""
         sp = self._scatter_points
         mats = self.hugoniot_plot.materials or None
 
@@ -2441,6 +2479,7 @@ class MainWindow(QMainWindow):
         # 其他 7 个 plot
         PLOT_KWARGS = [
             (self.eos_plot,      "P-CR"),
+            (self.p_rho_plot,    "P-rho"),
             (self.us_up_plot,    "Us-Up"),
             (self.p_t_plot,      "P-T"),
             (self.rho_up_plot,   "rho-Up"),
@@ -2498,6 +2537,7 @@ class MainWindow(QMainWindow):
         return {
             "P-Up":   self.hugoniot_plot,
             "P-CR":   self.eos_plot,
+            "P-rho":  self.p_rho_plot,
             "Us-Up":  self.us_up_plot,
             "P-T":    self.p_t_plot,
             "rho-Up": self.rho_up_plot,
@@ -2563,6 +2603,7 @@ class MainWindow(QMainWindow):
         from im_app.core.plot_style import save_prl_figure
         save_prl_figure(self.hugoniot_plot.fig, os.path.join(dir_path, "p_up_diagram.png"))
         save_prl_figure(self.eos_plot.fig, os.path.join(dir_path, "p_cr_diagram.png"))
+        save_prl_figure(self.p_rho_plot.fig, os.path.join(dir_path, "p_rho_diagram.png"))
         save_prl_figure(self.us_up_plot.fig, os.path.join(dir_path, "us_up_diagram.png"))
         save_prl_figure(self.p_t_plot.fig, os.path.join(dir_path, "p_t_diagram.png"))
         save_prl_figure(self.rho_up_plot.fig, os.path.join(dir_path, "rho_up_diagram.png"))
@@ -2631,6 +2672,7 @@ class MainWindow(QMainWindow):
                     "linestyle": self.hugoniot_plot.linestyle,
                 },
                 "p_cr": self._plot_settings["P-CR"],
+                "p_rho": self._plot_settings["P-rho"],
                 "us_up": self._plot_settings["Us-Up"],
                 "p_t": self._plot_settings["P-T"],
                 "rho_up": self._plot_settings["rho-Up"],
@@ -2787,6 +2829,8 @@ class MainWindow(QMainWindow):
                 elif "eos" in ps:
                     # 旧格式迁移：eos -> p_cr
                     self._plot_settings["P-CR"] = ps["eos"]
+                if "p_rho" in ps:
+                    self._plot_settings["P-rho"] = ps["p_rho"]
                 if "us_up" in ps:
                     self._plot_settings["Us-Up"] = ps["us_up"]
                 if "p_t" in ps:

@@ -1395,6 +1395,7 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
 _SCATTER_ERR_KEYS = {
     "P-Up":   ("Up_err", "P_err"),
     "P-CR":   ("compression_err", "P_err"),
+    "P-rho":  ("rho_err", "P_err"),
     "Us-Up":  ("Us_err", "Up_err"),
     "rho-Up": ("rho_err", "Up_err"),
     "P-Us":   ("P_err", "Us_err"),
@@ -1438,7 +1439,6 @@ def render_scatter_points(
     """
     has_drawn = False
 
-    print(f'[SCATTER DBG] render_scatter_points called: tab_key={tab_key}, n_points={len(points or [])}')
     for point in points or []:
         # scope 过滤
         if point.get("scope") == "local" and point.get("target_tab") != tab_key:

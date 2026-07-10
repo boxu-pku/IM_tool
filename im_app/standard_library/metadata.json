@@ -189,6 +189,27 @@
                 3.99850075,
                 3.99850075
             ]
+        },
+        {
+            "id": "C_diam_rho3.157",
+            "name": "C_diam_rho3.157",
+            "source": "FEOS",
+            "rho0": 3.157,
+            "file": "materials/C_diam_rho3.157.hug",
+            "tags": [],
+            "points": 153,
+            "up_range": [
+                0.0,
+                3929.562
+            ],
+            "p_range": [
+                0.000321283,
+                650176.1
+            ],
+            "compression_range": [
+                1.0,
+                4.236731073804244
+            ]
         }
     ]
 }

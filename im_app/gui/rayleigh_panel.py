@@ -45,14 +45,14 @@ class RayleighEditDialog(QDialog):
 
         self.rho0_spin = QDoubleSpinBox()
         self.rho0_spin.setRange(0.01, 100)
-        self.rho0_spin.setDecimals(2)
+        self.rho0_spin.setDecimals(4)
         self.rho0_spin.setValue(rl.rho0)
         self.rho0_spin.setSuffix(" g/cm³")
         form.addRow("ρ₀ (density):", self.rho0_spin)
 
         self.sigma_rho0_spin = QDoubleSpinBox()
         self.sigma_rho0_spin.setRange(0.0, 50)
-        self.sigma_rho0_spin.setDecimals(3)
+        self.sigma_rho0_spin.setDecimals(4)
         self.sigma_rho0_spin.setValue(rl.sigma_rho0)
         self.sigma_rho0_spin.setSuffix(" g/cm³")
         self.sigma_rho0_spin.setSingleStep(0.01)
@@ -95,7 +95,7 @@ class RayleighPanel(QWidget):
 
         self.D_spin = QDoubleSpinBox()
         self.D_spin.setRange(0.01, 200)
-        self.D_spin.setDecimals(3)
+        self.D_spin.setDecimals(4)
         self.D_spin.setValue(8.0)
         self.D_spin.setSingleStep(0.1)
         self.D_spin.setSuffix(" km/s")
@@ -103,7 +103,7 @@ class RayleighPanel(QWidget):
 
         self.sigma_D_spin = QDoubleSpinBox()
         self.sigma_D_spin.setRange(0.0, 50)
-        self.sigma_D_spin.setDecimals(3)
+        self.sigma_D_spin.setDecimals(4)
         self.sigma_D_spin.setValue(0.0)
         self.sigma_D_spin.setSuffix(" km/s")
         self.sigma_D_spin.setSingleStep(0.01)
@@ -111,7 +111,7 @@ class RayleighPanel(QWidget):
 
         self.rho0_spin = QDoubleSpinBox()
         self.rho0_spin.setRange(0.01, 100)
-        self.rho0_spin.setDecimals(2)
+        self.rho0_spin.setDecimals(4)
         self.rho0_spin.setValue(2.65)
         self.rho0_spin.setSuffix(" g/cm³")
         form.addRow("ρ₀ (density):", self.rho0_spin)
