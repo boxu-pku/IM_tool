@@ -41,6 +41,9 @@ _archive/
 # Claude Code 本地设置（per-user，不应共享）
 .claude/settings.local.json
 
+# ZCode 编辑器本地会话数据（per-user，不应共享）
+.zcode/
+
 # ---- IDE / editors ----
 .idea/
 .vscode/
