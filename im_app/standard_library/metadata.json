@@ -210,6 +210,27 @@
                 1.0,
                 4.236731073804244
             ]
+        },
+        {
+            "id": "Quartz_FEOS",
+            "name": "Quartz_FEOS",
+            "source": "FEOS",
+            "rho0": 2.65,
+            "file": "materials/Quartz_FEOS.hug",
+            "tags": [],
+            "points": 182,
+            "up_range": [
+                0.0,
+                3842.882
+            ],
+            "p_range": [
+                0.0002927072,
+                521706.0
+            ],
+            "compression_range": [
+                1.0,
+                4.5716226415094345
+            ]
         }
     ]
 }
