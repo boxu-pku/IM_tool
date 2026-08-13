@@ -22,6 +22,7 @@ from im_app.core.plot_style import (
     LABEL_UP, LABEL_P, LABEL_COMP, LABEL_US, LABEL_RHO, LABEL_T, LABEL_E,
     apply_prl_style, save_prl_figure,
     LEGEND_FONTSIZE,
+    pressure_label, pressure_factor,
 )
 from im_app.core.element_style import (
     ElementStyle, TYPE_MATERIAL, TYPE_RAYLEIGH, TYPE_REFLECTED, TYPE_INTERSECTION,
@@ -39,6 +40,25 @@ from im_app.core.physics import (
     MaterialData, RayleighLine, Intersection,
     rayleigh_line, find_intersections, reflect_hugoniot,
 )
+
+
+def _mask_nonpositive(*arrs) -> np.ndarray:
+    """返回所有非 None 数组都 >0 的布尔 mask（用于 log 模式过滤 ≤0 点）。
+
+    None 参数跳过（用于「该轴不是 log」的情形）。非 finite 视为无效。
+    输入长度必须一致；返回值长度等于任一非 None 数组长度。
+    无任何数组时返回空。
+    """
+    real = [np.asarray(a) for a in arrs if a is not None]
+    if not real:
+        return np.array([], dtype=bool)
+    n = real[0].size
+    mask = np.ones(n, dtype=bool)
+    for a in real:
+        if a.size != n:
+            return np.array([], dtype=bool)
+        mask &= np.isfinite(a) & (a > 0)
+    return mask
 
 
 class DragZoomMixin:
@@ -358,6 +378,10 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
         self.show_ix_errorbars = True    # 交点误差棒开关
         self.linewidth = 1.2
         self.linestyle = "-"
+        # Pressure 单位（"Mbar" / "GPa"）与轴 log 模式（P-Up 的 X=Up, Y=P）
+        self.p_unit = "Mbar"
+        self.x_log = False
+        self.y_log = False
 
         self._counter = 0
         self._material_color_map: dict[str, str] = {}  # mat_id -> color, persistent
@@ -483,6 +507,19 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
         self.linestyle = style
         self.refresh()
 
+    def set_p_unit(self, unit: str):
+        """切换 Pressure 显示单位（Mbar / GPa）。"""
+        self.p_unit = unit or "Mbar"
+        self.refresh()
+
+    def set_xscale(self, log: bool):
+        self.x_log = bool(log)
+        self.refresh()
+
+    def set_yscale(self, log: bool):
+        self.y_log = bool(log)
+        self.refresh()
+
     def set_scatter_points(self, points):
         """注入 scatter 点列表（refresh 时读取）。"""
         self._scatter_points = points or []
@@ -548,18 +585,38 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
                 if source and source not in label.lower():
                     label = f"{mat.name} ({source})"
 
-            line, = self.ax.plot(mat.up, mat.p, color=line_color, linewidth=linewidth,
+            # P 单位转换（内部 Mbar → 渲染 GPa 时 ×100）
+            pf = pressure_factor(self.p_unit)
+            up_arr = np.asarray(mat.up)
+            p_arr = np.asarray(mat.p) * pf
+            # log 模式过滤 ≤0 点（X=Up, Y=P）
+            if self.x_log or self.y_log:
+                vmask = _mask_nonpositive(up_arr if self.x_log else None,
+                                          p_arr if self.y_log else None)
+                if vmask.size:
+                    up_arr = up_arr[vmask]
+                    p_arr = p_arr[vmask]
+
+            line, = self.ax.plot(up_arr, p_arr, color=line_color, linewidth=linewidth,
                                  linestyle=linestyle, label=label, alpha=alpha,
                                  picker=10, pickradius=15, zorder=1)
 
             # 绘制 Hugoniot 误差带（如果材料有 p_err）
             if hasattr(mat, "p_err") and mat.p_err is not None and len(mat.p_err) > 0:
-                valid = np.isfinite(mat.p_err) & np.isfinite(mat.up) & np.isfinite(mat.p)
+                p_err_arr = np.asarray(mat.p_err) * pf
+                valid = np.isfinite(p_err_arr) & np.isfinite(up_arr) & np.isfinite(p_arr)
+                if self.x_log or self.y_log:
+                    pos = _mask_nonpositive(up_arr if self.x_log else None,
+                                            p_arr if self.y_log else None,
+                                            (p_arr - p_err_arr) if self.y_log else None,
+                                            (p_arr + p_err_arr) if self.y_log else None)
+                    if pos.size == len(valid):
+                        valid &= pos
                 if valid.sum() > 1:
                     self.ax.fill_between(
-                        mat.up[valid],
-                        mat.p[valid] - mat.p_err[valid],
-                        mat.p[valid] + mat.p_err[valid],
+                        up_arr[valid],
+                        p_arr[valid] - p_err_arr[valid],
+                        p_arr[valid] + p_err_arr[valid],
                         alpha=0.12,
                         color=line_color,
                         zorder=0,
@@ -606,7 +663,18 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
             if is_selected:
                 linewidth *= 1.5
 
-            line, = self.ax.plot(rl.up, rl.p, linestyle=linestyle, color=line_color,
+            # P 单位转换 + log 过滤
+            pf = pressure_factor(self.p_unit)
+            rl_up = np.asarray(rl.up)
+            rl_p = np.asarray(rl.p) * pf
+            if self.x_log or self.y_log:
+                vmask = _mask_nonpositive(rl_up if self.x_log else None,
+                                          rl_p if self.y_log else None)
+                if vmask.size and vmask.size == rl_up.size:
+                    rl_up = rl_up[vmask]
+                    rl_p = rl_p[vmask]
+
+            line, = self.ax.plot(rl_up, rl_p, linestyle=linestyle, color=line_color,
                                  linewidth=linewidth, label=label, alpha=alpha,
                                  picker=10, pickradius=15, zorder=1)
 
@@ -617,12 +685,15 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
                                           getattr(rl, 'sigma_D', 0.0) or 0.0,
                                           getattr(rl, 'sigma_rho0', 0.0) or 0.0)
                 if rl_p_err is not None:
-                    valid = np.isfinite(rl_p_err) & np.isfinite(rl.up) & np.isfinite(rl.p)
+                    rl_p_err = np.asarray(rl_p_err) * pf
+                    valid = np.isfinite(rl_p_err) & np.isfinite(rl_up) & np.isfinite(rl_p)
+                    if self.y_log and valid.size == rl_p.size:
+                        valid &= (rl_p - rl_p_err) > 0
                     if valid.sum() > 1:
                         self.ax.fill_between(
-                            rl.up[valid],
-                            rl.p[valid] - rl_p_err[valid],
-                            rl.p[valid] + rl_p_err[valid],
+                            rl_up[valid],
+                            rl_p[valid] - rl_p_err[valid],
+                            rl_p[valid] + rl_p_err[valid],
                             alpha=0.10, color=line_color, zorder=0,
                         )
             except Exception:
@@ -669,7 +740,18 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
             order = np.argsort(rc["up"])
             label = f"{source_name} reflected Hugoniot"
 
-            line, = self.ax.plot(rc["up"][order], rc["p"][order], linestyle=linestyle,
+            # P 单位转换 + log 过滤（反射线可能含负 up）
+            pf = pressure_factor(self.p_unit)
+            refl_up = np.asarray(rc["up"])[order]
+            refl_p = np.asarray(rc["p"])[order] * pf
+            if self.x_log or self.y_log:
+                vmask = _mask_nonpositive(refl_up if self.x_log else None,
+                                          refl_p if self.y_log else None)
+                if vmask.size and vmask.size == refl_up.size:
+                    refl_up = refl_up[vmask]
+                    refl_p = refl_p[vmask]
+
+            line, = self.ax.plot(refl_up, refl_p, linestyle=linestyle,
                                  linewidth=linewidth, color=line_color, label=label,
                                  alpha=alpha, picker=10, pickradius=15, zorder=1)
 
@@ -702,39 +784,52 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
             edge_width = 2.0 if (is_ix_selected or is_element_selected) else 1.0
             alpha = style.get("alpha", 1.0)
 
+            # P 单位转换
+            pf = pressure_factor(self.p_unit)
+            ix_p = ix.p * pf
+            p_unit_str = "GPa" if pf > 1 else "Mbar"
+
             # Build legend label with units
-            label_parts = [f"Up={ix.up:.2f} km/s", f"P={ix.p:.3f} Mbar"]
+            label_parts = [f"Up={ix.up:.2f} km/s", f"P={ix_p:.3f} {p_unit_str}"]
             if hasattr(ix, 'compression_ratio') and ix.compression_ratio:
                 label_parts.append(f"CR={ix.compression_ratio:.2f}")
             legend_label = ", ".join(label_parts)
 
-            # Plot a large invisible point for easy picking, then the visible point
-            # Invisible large point (click target) - higher zorder than lines
-            target, = self.ax.plot(ix.up, ix.p, 'o', markersize=30,
-                                   alpha=0,  # Invisible
-                                   picker=10, pickradius=20,
-                                   zorder=10)  # Higher than lines (zorder=1)
-            self._artist_map[target] = element_id
-            self._artist_zorder[target] = 10
+            # log 模式下若 up 或 p ≤0 则跳过该交点（log 无法绘制）
+            skip_ix = (self.x_log and ix.up <= 0) or (self.y_log and ix_p <= 0)
 
-            # Visible point (actual marker) - even higher zorder
-            line, = self.ax.plot(ix.up, ix.p, marker, markersize=marker_size,
-                                 markerfacecolor=face_color,
-                                 markeredgecolor=edge_color,
-                                 markeredgewidth=edge_width,
-                                 linestyle='None',
-                                 label=legend_label,
-                                 zorder=15, alpha=alpha)  # Highest zorder
-            self._artist_zorder[line] = 15
+            if not skip_ix:
+                # Plot a large invisible point for easy picking, then the visible point
+                # Invisible large point (click target) - higher zorder than lines
+                target, = self.ax.plot(ix.up, ix_p, 'o', markersize=30,
+                                       alpha=0,  # Invisible
+                                       picker=10, pickradius=20,
+                                       zorder=10)  # Higher than lines (zorder=1)
+                self._artist_map[target] = element_id
+                self._artist_zorder[target] = 10
+
+                # Visible point (actual marker) - even higher zorder
+                line, = self.ax.plot(ix.up, ix_p, marker, markersize=marker_size,
+                                     markerfacecolor=face_color,
+                                     markeredgecolor=edge_color,
+                                     markeredgewidth=edge_width,
+                                     linestyle='None',
+                                     label=legend_label,
+                                     zorder=15, alpha=alpha)  # Highest zorder
+                self._artist_zorder[line] = 15
+                self._artist_map[line] = element_id
+            else:
+                line = None
 
             # 绘制交点 errorbar（如果有误差数据且开关打开）
-            if (self.show_ix_errorbars
+            if (line is not None
+                    and self.show_ix_errorbars
                     and getattr(ix, 'up_err', None) is not None
                     and getattr(ix, 'p_err', None) is not None
                     and np.isfinite(ix.up_err) and np.isfinite(ix.p_err)
                     and ix.up_err > 0 and ix.p_err > 0):
                 self.ax.errorbar(
-                    ix.up, ix.p,
+                    ix.up, ix_p,
                     xerr=ix.up_err, yerr=ix.p_err,
                     fmt='none',
                     ecolor=face_color,
@@ -744,7 +839,8 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
                     zorder=14,  # 在可见标记之下但高于不可见点击区域
                 )
 
-            self._artist_map[line] = element_id
+            if line is not None:
+                self._artist_map[line] = element_id
             if element_id not in self._element_meta:
                 self._element_meta[element_id] = {
                     "type": TYPE_INTERSECTION,
@@ -755,8 +851,10 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
                 }
 
         apply_prl_style(self.fig, self.ax,
-                         xlabel=LABEL_UP, ylabel=LABEL_P,
-                         xlim=xlim or self.xlim, ylim=ylim or self.ylim)
+                         xlabel=LABEL_UP, ylabel=pressure_label(self.p_unit),
+                         xlim=xlim or self.xlim, ylim=ylim or self.ylim,
+                         xscale="log" if self.x_log else "linear",
+                         yscale="log" if self.y_log else "linear")
 
         if (self.materials or self.rayleigh_lines or self.intersections) and (show_legend if show_legend is not None else self.show_legend):
             self.ax.legend(loc="best", fontsize=LEGEND_FONTSIZE)
@@ -769,6 +867,8 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
                     artist_map=self._artist_map,
                     element_meta=self._element_meta,
                     element_zorder=self._artist_zorder,
+                    p_unit=self.p_unit,
+                    x_log=self.x_log, y_log=self.y_log,
                 )
 
         self.draw_idle()
@@ -952,10 +1052,27 @@ class EOSPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
         self._last_xlim = (1, 5)
         self._last_ylim = (0, 10)
 
+        # Pressure 单位与轴 log 模式（X=compression, Y=P）
+        self.p_unit = "Mbar"
+        self.x_log = False
+        self.y_log = False
+
         # 启用拖拽缩放 + 'a' 重置
         self.setup_drag_zoom()
         # 启用元素交互（pick + 右键菜单）
         self._init_element_interaction()
+
+    def set_p_unit(self, unit: str):
+        self.p_unit = unit or "Mbar"
+        self.refresh()
+
+    def set_xscale(self, log: bool):
+        self.x_log = bool(log)
+        self.refresh()
+
+    def set_yscale(self, log: bool):
+        self.y_log = bool(log)
+        self.refresh()
 
     def update_plot(
         self,
@@ -1022,20 +1139,34 @@ class EOSPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
                 if is_selected:
                     lw *= 1.5
 
-                line, = self.ax.plot(mat.compression, mat.p, color=line_color,
+                # P 单位转换（Y 轴为 P）+ log 过滤
+                pf = pressure_factor(self.p_unit)
+                comp_arr = np.asarray(mat.compression)
+                p_arr = np.asarray(mat.p) * pf
+                if self.x_log or self.y_log:
+                    vmask = _mask_nonpositive(comp_arr if self.x_log else None,
+                                              p_arr if self.y_log else None)
+                    if vmask.size and vmask.size == comp_arr.size:
+                        comp_arr = comp_arr[vmask]
+                        p_arr = p_arr[vmask]
+
+                line, = self.ax.plot(comp_arr, p_arr, color=line_color,
                                      linewidth=lw, linestyle=ls,
                                      label=label, alpha=style_dict.get("alpha") or 0.6,
                                      picker=10, pickradius=15, zorder=1)
 
                 # 绘制误差带（P-CR 图纵轴为 P）
                 if hasattr(mat, "p_err") and mat.p_err is not None and len(mat.p_err) > 0:
-                    valid = (np.isfinite(mat.p_err) & np.isfinite(mat.compression)
-                             & np.isfinite(mat.p))
+                    p_err_arr = np.asarray(mat.p_err) * pf
+                    valid = (np.isfinite(p_err_arr) & np.isfinite(comp_arr)
+                             & np.isfinite(p_arr))
+                    if self.y_log and valid.size == p_arr.size:
+                        valid &= (p_arr - p_err_arr) > 0
                     if valid.sum() > 1:
                         self.ax.fill_between(
-                            mat.compression[valid],
-                            mat.p[valid] - mat.p_err[valid],
-                            mat.p[valid] + mat.p_err[valid],
+                            comp_arr[valid],
+                            p_arr[valid] - p_err_arr[valid],
+                            p_arr[valid] + p_err_arr[valid],
                             alpha=0.12, color=line_color, zorder=0,
                         )
 
@@ -1054,12 +1185,16 @@ class EOSPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
                 artist_map=self._artist_map,
                 element_meta=self._element_meta,
                 element_zorder=self._artist_zorder,
+                p_unit=self.p_unit,
+                x_log=self.x_log, y_log=self.y_log,
             )
             has_content = has_content or has_scatter
 
         apply_prl_style(self.fig, self.ax,
-                         xlabel=LABEL_COMP, ylabel=LABEL_P,
-                         xlim=xlim, ylim=ylim)
+                         xlabel=LABEL_COMP, ylabel=pressure_label(self.p_unit),
+                         xlim=xlim, ylim=ylim,
+                         xscale="log" if self.x_log else "linear",
+                         yscale="log" if self.y_log else "linear")
 
         # Add legend if there's content
         if has_content:
@@ -1110,7 +1245,7 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
     DEFAULT_LIMITS = {
         "Up": (0, 30),
         "Us": (0, 30),
-        "P": (0, 30),
+        "P": (0, 1e6),
         "rho": (0, 20),
         "compression": (1, 5),
         "T": (0, 10),
@@ -1161,6 +1296,10 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
         self.show_legend = True
         self.linewidth = 1.2
         self.linestyle = "-"
+        # Pressure 单位（仅当 x_var 或 y_var 为 "P" 时生效）与轴 log 模式
+        self.p_unit = "Mbar"
+        self.x_log = False
+        self.y_log = False
 
         # Save last parameters for refresh (already stored in self.materials and self._scatter_points)
 
@@ -1168,6 +1307,18 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
         self.setup_drag_zoom()
         # 启用元素交互（pick + 右键菜单）
         self._init_element_interaction()
+
+    def set_p_unit(self, unit: str):
+        self.p_unit = unit or "Mbar"
+        self.refresh()
+
+    def set_xscale(self, log: bool):
+        self.x_log = bool(log)
+        self.refresh()
+
+    def set_yscale(self, log: bool):
+        self.y_log = bool(log)
+        self.refresh()
 
     def update_plot(
         self,
@@ -1258,10 +1409,25 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
                 x_data = x_data[:min_len]
                 y_data = y_data[:min_len]
 
+            # Pressure 单位转换（仅 P 轴）
+            pf = pressure_factor(self.p_unit)
+            if self.x_var == "P":
+                x_data = x_data * pf
+            if self.y_var == "P":
+                y_data = y_data * pf
+
             # Filter out NaN values
             valid_mask = ~(np.isnan(x_data) | np.isnan(y_data))
             x_data = x_data[valid_mask]
             y_data = y_data[valid_mask]
+
+            # log 模式过滤 ≤0 点
+            if self.x_log or self.y_log:
+                pos_mask = _mask_nonpositive(x_data if self.x_log else None,
+                                             y_data if self.y_log else None)
+                if pos_mask.size and pos_mask.size == x_data.size:
+                    x_data = x_data[pos_mask]
+                    y_data = y_data[pos_mask]
 
             if len(x_data) == 0:
                 continue
@@ -1296,14 +1462,16 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
 
             # 绘制误差带（仅当 y 轴变量为 P 时，p_err 才有意义）
             if self.y_var == "P" and hasattr(mat, "p_err") and mat.p_err is not None:
+                ee = np.array(mat.p_err[:len(x_data)]) * pf
                 # 使用与 x_data/y_data 相同的有效掩码
-                valid_mask2 = ~(np.isnan(x_data) | np.isnan(y_data) | np.isnan(mat.p_err[:len(x_data)]))
+                valid_mask2 = ~(np.isnan(x_data) | np.isnan(y_data) | np.isnan(ee))
+                if self.y_log and valid_mask2.size == y_data.size:
+                    valid_mask2 &= (y_data - ee) > 0
                 if valid_mask2.sum() > 1:
                     xe = x_data[valid_mask2]
                     ye = y_data[valid_mask2]
-                    ee = mat.p_err[:len(x_data)][valid_mask2]
                     self.ax.fill_between(
-                        xe, ye - ee, ye + ee,
+                        xe, ye - ee[valid_mask2], ye + ee[valid_mask2],
                         alpha=0.12, color=line_color, zorder=0,
                     )
 
@@ -1321,14 +1489,25 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
             artist_map=self._artist_map,
             element_meta=self._element_meta,
             element_zorder=self._artist_zorder,
+            p_unit=self.p_unit,
+            x_log=self.x_log, y_log=self.y_log,
         )
         has_content = has_content or has_scatter
 
         # Apply PRL style
         from im_app.core.plot_style import apply_prl_style
+        # 当对应轴是 P 时，按单位替换标签
+        xlabel = self.x_label_attr
+        ylabel = self.y_label_attr
+        if self.x_var == "P":
+            xlabel = pressure_label(self.p_unit)
+        if self.y_var == "P":
+            ylabel = pressure_label(self.p_unit)
         apply_prl_style(self.fig, self.ax,
-                       xlabel=self.x_label_attr, ylabel=self.y_label_attr,
-                       xlim=xlim, ylim=ylim)
+                       xlabel=xlabel, ylabel=ylabel,
+                       xlim=xlim, ylim=ylim,
+                       xscale="log" if self.x_log else "linear",
+                       yscale="log" if self.y_log else "linear")
 
         # Add legend
         if has_content and self.show_legend:
@@ -1411,6 +1590,9 @@ def render_scatter_points(
     artist_map=None,
     element_meta=None,
     element_zorder=None,
+    p_unit: str = "Mbar",
+    x_log: bool = False,
+    y_log: bool = False,
 ) -> bool:
     """
     在指定 ax 上为特定 tab 渲染 scatter 点。
@@ -1419,6 +1601,7 @@ def render_scatter_points(
     - scope == "global" → 在所有 tab 尝试画
     - scope == "local"  → 仅当 target_tab == tab_key 时画
     - 若 point[x_var] 或 point[y_var] 为 None → 该点跳过
+    - log 模式下若对应坐标 ≤0 → 该点跳过（log 无法绘制）
 
     若提供 artist_map / element_meta / element_zorder（dict 引用），
     会将 scatter artist 注册进交互模型（前缀 "scat_"），支持右键 pick。
@@ -1431,6 +1614,11 @@ def render_scatter_points(
         VARIABLE_MAP 中的 key，例如 "Up"、"P"、"compression"。
     tab_key : str
         当前 tab 的 short name，例如 "P-T"。
+    p_unit : str
+        Pressure 显示单位（"Mbar"/"GPa"）。当 x_var 或 y_var 为 "P" 时，
+        把对应坐标及误差值乘以 pressure_factor(p_unit)。
+    x_log, y_log : bool
+        是否处于对数刻度模式（用于过滤 ≤0 点）。
 
     Returns
     -------
@@ -1438,6 +1626,9 @@ def render_scatter_points(
         True 表示至少画了一个点。
     """
     has_drawn = False
+    pf = pressure_factor(p_unit)
+    x_is_p = (x_var == "P")
+    y_is_p = (y_var == "P")
 
     for point in points or []:
         # scope 过滤
@@ -1447,6 +1638,14 @@ def render_scatter_points(
         x_val = point.get(x_var)
         y_val = point.get(y_var)
         if x_val is None or y_val is None:
+            continue
+
+        # Pressure 单位转换
+        x_val = float(x_val) * (pf if x_is_p else 1.0)
+        y_val = float(y_val) * (pf if y_is_p else 1.0)
+
+        # log 模式过滤 ≤0 点
+        if (x_log and x_val <= 0) or (y_log and y_val <= 0):
             continue
 
         s = point.get("style", {}) or {}
@@ -1512,6 +1711,11 @@ def render_scatter_points(
             y_err = point.get(y_err_key)
             x_err_val = abs(x_err) if (x_err is not None and np.isfinite(x_err) and x_err > 0) else None
             y_err_val = abs(y_err) if (y_err is not None and np.isfinite(y_err) and y_err > 0) else None
+            # Pressure 单位转换误差
+            if x_err_val is not None and x_is_p:
+                x_err_val *= pf
+            if y_err_val is not None and y_is_p:
+                y_err_val *= pf
             if x_err_val is not None or y_err_val is not None:
                 ecolor = s.get("markeredgecolor", "black")
                 ax.errorbar(

@@ -62,6 +62,15 @@ TAB_XY_MAP = {
     "P-Us":   ("P", "Us"),
 }
 
+# 含 Pressure 的图（P 出现在 X 或 Y）。用于控制 p_unit_combo 可见性。
+PLOTS_WITH_P = {k for k, (xv, yv) in TAB_XY_MAP.items() if "P" in (xv, yv)}
+
+# Spinbox 范围上限。压强内部单位是 Mbar（1 Mbar = 100 GPa），
+# 用户需求覆盖到 10^8 GPa = 10^6 Mbar（极端高压 / ICF / 行星核心量级）。
+# 其它物理量（km/s、g/cm³、eV、MJ/g、压缩比）用通用大上限。
+P_MAX_MBAR = 1e6
+SPIN_GENERIC_MAX = 1e6
+
 
 class MainWindow(QMainWindow):
     """Impedance matching tool main window."""
@@ -120,12 +129,12 @@ class MainWindow(QMainWindow):
         # X-axis limits
         xlim_layout = QHBoxLayout()
         self.xmin_spin = QDoubleSpinBox()
-        self.xmin_spin.setRange(0, 100)
+        self.xmin_spin.setRange(0, SPIN_GENERIC_MAX)
         self.xmin_spin.setValue(0)
         self.xmin_spin.setSingleStep(1)
         self.xmin_spin.setSuffix(" km/s")
         self.xmax_spin = QDoubleSpinBox()
-        self.xmax_spin.setRange(0, 100)
+        self.xmax_spin.setRange(0, SPIN_GENERIC_MAX)
         self.xmax_spin.setValue(30)
         self.xmax_spin.setSingleStep(1)
         self.xmax_spin.setSuffix(" km/s")
@@ -137,12 +146,12 @@ class MainWindow(QMainWindow):
         # Y-axis limits
         ylim_layout = QHBoxLayout()
         self.ymin_spin = QDoubleSpinBox()
-        self.ymin_spin.setRange(0, 100)
+        self.ymin_spin.setRange(0, P_MAX_MBAR)
         self.ymin_spin.setValue(0)
         self.ymin_spin.setSingleStep(1)
         self.ymin_spin.setSuffix(" Mbar")
         self.ymax_spin = QDoubleSpinBox()
-        self.ymax_spin.setRange(0, 100)
+        self.ymax_spin.setRange(0, P_MAX_MBAR)
         self.ymax_spin.setValue(30)
         self.ymax_spin.setSingleStep(1)
         self.ymax_spin.setSuffix(" Mbar")
@@ -168,6 +177,22 @@ class MainWindow(QMainWindow):
         self.linewidth_spin.setValue(1.2)
         self.linewidth_spin.setSingleStep(0.1)
         form.addRow("Line width:", self.linewidth_spin)
+
+        # Pressure 单位选择（仅含 P 的图有意义；其它图隐藏）
+        self.p_unit_combo = QComboBox()
+        self.p_unit_combo.addItems(["Mbar", "GPa"])
+        self.p_unit_combo.setCurrentIndex(0)
+        self.p_unit_label = QLabel("Pressure unit:")
+        form.addRow(self.p_unit_label, self.p_unit_combo)
+
+        # X / Y 轴对数刻度
+        log_row = QHBoxLayout()
+        self.x_log_check = QCheckBox("X log")
+        self.y_log_check = QCheckBox("Y log")
+        log_row.addWidget(self.x_log_check)
+        log_row.addWidget(self.y_log_check)
+        log_row.addStretch()
+        form.addRow("Log scale:", log_row)
 
         # Action buttons row
         action_btn_layout = QHBoxLayout()
@@ -201,54 +226,81 @@ class MainWindow(QMainWindow):
                 "linestyle": "-",
                 "linewidth": 1.2,
                 "inverse": False,
+                "p_unit": "Mbar",
+                "x_log": False,
+                "y_log": False,
             },
             "P-CR": {
                 "xlim": (1, 5),
                 "ylim": (0, 10),
                 "show_legend": True,
                 "inverse": False,
+                "p_unit": "Mbar",
+                "x_log": False,
+                "y_log": False,
             },
             "P-rho": {
                 "xlim": (2, 20),
                 "ylim": (0, 30),
                 "show_legend": True,
                 "inverse": False,
+                "p_unit": "Mbar",
+                "x_log": False,
+                "y_log": False,
             },
             "Us-Up": {
                 "xlim": (0, 30),
                 "ylim": (0, 30),
                 "show_legend": True,
                 "inverse": False,
+                "p_unit": "Mbar",
+                "x_log": False,
+                "y_log": False,
             },
             "P-T": {
                 "xlim": (0, 30),  # X = P
                 "ylim": (0, 10),  # Y = T
                 "show_legend": True,
                 "inverse": False,
+                "p_unit": "Mbar",
+                "x_log": False,
+                "y_log": False,
             },
             "rho-Up": {
                 "xlim": (2, 20),  # X = rho
                 "ylim": (0, 30),  # Y = Up
                 "show_legend": True,
                 "inverse": False,
+                "p_unit": "Mbar",
+                "x_log": False,
+                "y_log": False,
             },
             "T-Up": {
                 "xlim": (0, 10),  # X = T
                 "ylim": (0, 30),  # Y = Up
                 "show_legend": True,
                 "inverse": False,
+                "p_unit": "Mbar",
+                "x_log": False,
+                "y_log": False,
             },
             "E-Up": {
                 "xlim": (0, 20),  # X = E
                 "ylim": (0, 30),  # Y = Up
                 "show_legend": True,
                 "inverse": False,
+                "p_unit": "Mbar",
+                "x_log": False,
+                "y_log": False,
             },
             "P-Us": {
                 "xlim": (0, 30),  # X = P
                 "ylim": (0, 30),  # Y = Us
                 "show_legend": True,
                 "inverse": False,
+                "p_unit": "Mbar",
+                "x_log": False,
+                "y_log": False,
             },
         }
 
@@ -301,14 +353,14 @@ class MainWindow(QMainWindow):
         self.scatter_x_label = QLabel("Up:")
         manual_layout.addWidget(self.scatter_x_label)
         self.scatter_x_spin = QDoubleSpinBox()
-        self.scatter_x_spin.setRange(0, 30)
+        self.scatter_x_spin.setRange(0, 1e6)
         self.scatter_x_spin.setDecimals(3)
         self.scatter_x_spin.setValue(5.0)
         manual_layout.addWidget(self.scatter_x_spin)
         self.scatter_y_label = QLabel("P:")
         manual_layout.addWidget(self.scatter_y_label)
         self.scatter_y_spin = QDoubleSpinBox()
-        self.scatter_y_spin.setRange(0, 100)
+        self.scatter_y_spin.setRange(0, 1e6)
         self.scatter_y_spin.setDecimals(3)
         self.scatter_y_spin.setValue(1.0)
         manual_layout.addWidget(self.scatter_y_spin)
@@ -1070,6 +1122,10 @@ class MainWindow(QMainWindow):
         if hasattr(self, '_refresh_scatter_ix_combo'):
             self._refresh_scatter_ix_combo()
 
+        # 把交点 scatter 的位置键与重算后的 Intersection 对象同步
+        # （仅 MC 更新 *_err 误差键，位置键 Up/P/Us/... 需在此同步）
+        self._sync_intersection_scatter_positions()
+
         # 蒙特卡洛误差传播（异步，完成后自动刷新 plot 和表格）
         self._run_monte_carlo_for_scene()
 
@@ -1711,6 +1767,14 @@ class MainWindow(QMainWindow):
         self._plot_settings[settings_key]["ylim"] = (ymin, ymax)
         self._plot_settings[settings_key]["show_legend"] = show_legend
 
+        # Pressure 单位 + 轴 log 模式（每图独立）
+        p_unit = self.p_unit_combo.currentText()  # "Mbar" / "GPa"
+        x_log = self.x_log_check.isChecked()
+        y_log = self.y_log_check.isChecked()
+        self._plot_settings[settings_key]["p_unit"] = p_unit
+        self._plot_settings[settings_key]["x_log"] = x_log
+        self._plot_settings[settings_key]["y_log"] = y_log
+
         # Apply to specific plot
         if target == "P-Up Diagram":
             # Get line style
@@ -1780,6 +1844,13 @@ class MainWindow(QMainWindow):
             self.p_us_plot.set_ylim(ymin, ymax)
             self.p_us_plot.set_legend_visible(show_legend)
 
+        # Pressure 单位 + log 模式应用到目标 plot（所有 plot 类都有这三个 setter）
+        sel_plot = self._get_plot_by_key(settings_key)
+        if sel_plot is not None:
+            sel_plot.set_p_unit(p_unit)
+            sel_plot.set_xscale(x_log)
+            sel_plot.set_yscale(y_log)
+
         self.status.showMessage(f"{target} settings: xlim=({xmin},{xmax}), ylim=({ymin},{ymax})")
 
     def _on_target_plot_changed(self, index):
@@ -1789,10 +1860,12 @@ class MainWindow(QMainWindow):
         # Map target to settings key
         if target == "P-Up Diagram":
             settings_key = "P-Up"
-            self.xmin_spin.setRange(0, 100)
-            self.xmax_spin.setRange(0, 100)
+            self.xmin_spin.setRange(0, SPIN_GENERIC_MAX)
+            self.xmax_spin.setRange(0, SPIN_GENERIC_MAX)
             self.xmin_spin.setSuffix(" km/s")
             self.xmax_spin.setSuffix(" km/s")
+            self.ymin_spin.setRange(0, P_MAX_MBAR)
+            self.ymax_spin.setRange(0, P_MAX_MBAR)
             self.ymin_spin.setSuffix(" Mbar")
             self.ymax_spin.setSuffix(" Mbar")
             self.axis_info_label.setText("Axes: Up (km/s) vs P (Mbar)")
@@ -1802,22 +1875,26 @@ class MainWindow(QMainWindow):
             self.xmax_spin.setRange(0.5, 20)
             self.xmin_spin.setSuffix("")  # Compression is unitless
             self.xmax_spin.setSuffix("")
+            self.ymin_spin.setRange(0, P_MAX_MBAR)
+            self.ymax_spin.setRange(0, P_MAX_MBAR)
             self.ymin_spin.setSuffix(" Mbar")
             self.ymax_spin.setSuffix(" Mbar")
             self.axis_info_label.setText("Axes: Compression Ratio vs P (Mbar)")
         elif target == "P-rho Diagram":
             settings_key = "P-rho"
-            self.xmin_spin.setRange(0, 100)
-            self.xmax_spin.setRange(0, 100)
+            self.xmin_spin.setRange(0, SPIN_GENERIC_MAX)
+            self.xmax_spin.setRange(0, SPIN_GENERIC_MAX)
             self.xmin_spin.setSuffix(" g/cm^3")  # X = rho
             self.xmax_spin.setSuffix(" g/cm^3")
+            self.ymin_spin.setRange(0, P_MAX_MBAR)
+            self.ymax_spin.setRange(0, P_MAX_MBAR)
             self.ymin_spin.setSuffix(" Mbar")  # Y = P
             self.ymax_spin.setSuffix(" Mbar")
             self.axis_info_label.setText("Axes: rho (g/cm^3) vs P (Mbar)")
         elif target == "Us-Up Diagram":
             settings_key = "Us-Up"
-            self.xmin_spin.setRange(0, 100)
-            self.xmax_spin.setRange(0, 100)
+            self.xmin_spin.setRange(0, SPIN_GENERIC_MAX)
+            self.xmax_spin.setRange(0, SPIN_GENERIC_MAX)
             self.xmin_spin.setSuffix(" km/s")  # X = Us
             self.xmax_spin.setSuffix(" km/s")
             self.ymin_spin.setSuffix(" km/s")  # Y = Up
@@ -1825,8 +1902,8 @@ class MainWindow(QMainWindow):
             self.axis_info_label.setText("Axes: Us (km/s) vs Up (km/s)")
         elif target == "P-T Diagram":
             settings_key = "P-T"
-            self.xmin_spin.setRange(0, 100)
-            self.xmax_spin.setRange(0, 100)
+            self.xmin_spin.setRange(0, P_MAX_MBAR)
+            self.xmax_spin.setRange(0, P_MAX_MBAR)
             self.xmin_spin.setSuffix(" Mbar")  # X = P
             self.xmax_spin.setSuffix(" Mbar")
             self.ymin_spin.setSuffix(" eV")  # Y = T
@@ -1834,8 +1911,8 @@ class MainWindow(QMainWindow):
             self.axis_info_label.setText("Axes: P (Mbar) vs T (eV)")
         elif target == "rho-Up Diagram":
             settings_key = "rho-Up"
-            self.xmin_spin.setRange(0, 100)
-            self.xmax_spin.setRange(0, 100)
+            self.xmin_spin.setRange(0, SPIN_GENERIC_MAX)
+            self.xmax_spin.setRange(0, SPIN_GENERIC_MAX)
             self.xmin_spin.setSuffix(" g/cm^3")  # X = rho
             self.xmax_spin.setSuffix(" g/cm^3")
             self.ymin_spin.setSuffix(" km/s")  # Y = Up
@@ -1843,8 +1920,8 @@ class MainWindow(QMainWindow):
             self.axis_info_label.setText("Axes: rho (g/cm^3) vs Up (km/s)")
         elif target == "T-Up Diagram":
             settings_key = "T-Up"
-            self.xmin_spin.setRange(0, 100)
-            self.xmax_spin.setRange(0, 100)
+            self.xmin_spin.setRange(0, SPIN_GENERIC_MAX)
+            self.xmax_spin.setRange(0, SPIN_GENERIC_MAX)
             self.xmin_spin.setSuffix(" eV")  # X = T
             self.xmax_spin.setSuffix(" eV")
             self.ymin_spin.setSuffix(" km/s")  # Y = Up
@@ -1852,8 +1929,8 @@ class MainWindow(QMainWindow):
             self.axis_info_label.setText("Axes: T (eV) vs Up (km/s)")
         elif target == "E-Up Diagram":
             settings_key = "E-Up"
-            self.xmin_spin.setRange(0, 100)
-            self.xmax_spin.setRange(0, 100)
+            self.xmin_spin.setRange(0, SPIN_GENERIC_MAX)
+            self.xmax_spin.setRange(0, SPIN_GENERIC_MAX)
             self.xmin_spin.setSuffix(" MJ/g")  # X = E
             self.xmax_spin.setSuffix(" MJ/g")
             self.ymin_spin.setSuffix(" km/s")  # Y = Up
@@ -1861,8 +1938,8 @@ class MainWindow(QMainWindow):
             self.axis_info_label.setText("Axes: E (MJ/g) vs Up (km/s)")
         elif target == "P-Us Diagram":
             settings_key = "P-Us"
-            self.xmin_spin.setRange(0, 100)
-            self.xmax_spin.setRange(0, 100)
+            self.xmin_spin.setRange(0, P_MAX_MBAR)
+            self.xmax_spin.setRange(0, P_MAX_MBAR)
             self.xmin_spin.setSuffix(" Mbar")  # X = P
             self.xmax_spin.setSuffix(" Mbar")
             self.ymin_spin.setSuffix(" km/s")  # Y = Us
@@ -1893,6 +1970,41 @@ class MainWindow(QMainWindow):
         else:
             self.linestyle_combo.setEnabled(False)
             self.linewidth_spin.setEnabled(False)
+
+        # ── Pressure 单位 + 轴 log 模式同步 ──────────────────
+        p_unit = settings.get("p_unit", "Mbar")
+        self.p_unit_combo.blockSignals(True)
+        self.p_unit_combo.setCurrentText(p_unit)
+        self.p_unit_combo.blockSignals(False)
+        self.x_log_check.blockSignals(True)
+        self.y_log_check.blockSignals(True)
+        self.x_log_check.setChecked(settings.get("x_log", False))
+        self.y_log_check.setChecked(settings.get("y_log", False))
+        self.x_log_check.blockSignals(False)
+        self.y_log_check.blockSignals(False)
+
+        # 仅含 P 的图显示 Pressure 单位选择器
+        has_p = settings_key in PLOTS_WITH_P
+        self.p_unit_combo.setVisible(has_p)
+        self.p_unit_label.setVisible(has_p)
+
+        # 更新 P 轴后缀（X 或 Y 含 P 时按当前单位切换）
+        p_suffix = f" {p_unit}"
+        x_var, y_var = TAB_XY_MAP.get(settings_key, ("", ""))
+        if x_var == "P":
+            self.xmin_spin.setSuffix(p_suffix)
+            self.xmax_spin.setSuffix(p_suffix)
+        if y_var == "P":
+            self.ymin_spin.setSuffix(p_suffix)
+            self.ymax_spin.setSuffix(p_suffix)
+        # 更新 axis_info_label 文本中的单位
+        unit_in_text = p_unit
+        if settings_key in PLOTS_WITH_P:
+            txt = self.axis_info_label.text()
+            # 把 "(Mbar)" / "(GPa)" 替换为当前单位
+            import re
+            txt = re.sub(r"\(M ?bar\)|\(GPa\)", f"({unit_in_text})", txt)
+            self.axis_info_label.setText(txt)
 
     def _sync_plot_settings_to_ui(self):
         """当前 tab 的 plot settings 同步到 spinbox。"""
@@ -2019,6 +2131,13 @@ class MainWindow(QMainWindow):
             self.p_us_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
             self.p_us_plot.set_legend_visible(settings["show_legend"])
 
+        # 应用 Pressure 单位 + 轴 log 模式（切 tab 时确保 plot 状态与设置一致）
+        cur_plot = self._get_plot_by_key(settings_key)
+        if cur_plot is not None:
+            cur_plot.set_p_unit(settings.get("p_unit", "Mbar"))
+            cur_plot.set_xscale(settings.get("x_log", False))
+            cur_plot.set_yscale(settings.get("y_log", False))
+
         # 同步手动输入区
         tab_keys = ["P-Up", "P-CR", "P-rho", "Us-Up", "P-T", "rho-Up", "T-Up", "E-Up", "P-Us"]
         if 0 <= index < len(tab_keys):
@@ -2101,10 +2220,22 @@ class MainWindow(QMainWindow):
         if y_max == y_min:
             y_margin = max(abs(y_min) * 0.1, 0.1) if y_min != 0 else 1.0
 
-        xmin = max(0, x_min - x_margin) if x_min >= 0 else x_min - x_margin
-        xmax = x_max + x_margin
-        ymin = max(0, y_min - y_margin) if y_min >= 0 else y_min - y_margin
-        ymax = y_max + y_margin
+        # log 模式下下界需 >0（否则 log(0) 崩溃）
+        x_log = self._plot_settings.get(settings_key, {}).get("x_log", False)
+        y_log = self._plot_settings.get(settings_key, {}).get("y_log", False)
+
+        if x_log:
+            xmin = max(x_min / 10.0, 1e-6)
+            xmax = x_max * 1.5 if x_max > 0 else 1.0
+        else:
+            xmin = max(0, x_min - x_margin) if x_min >= 0 else x_min - x_margin
+            xmax = x_max + x_margin
+        if y_log:
+            ymin = max(y_min / 10.0, 1e-6)
+            ymax = y_max * 1.5 if y_max > 0 else 1.0
+        else:
+            ymin = max(0, y_min - y_margin) if y_min >= 0 else y_min - y_margin
+            ymax = y_max + y_margin
 
         # Update spinboxes
         self.xmin_spin.setValue(xmin)
@@ -2170,10 +2301,16 @@ class MainWindow(QMainWindow):
         # Update settings
         old_xlim = self._plot_settings[settings_key]["xlim"]
         old_ylim = self._plot_settings[settings_key]["ylim"]
+        # log 模式随轴一起交换
+        old_x_log = self._plot_settings[settings_key].get("x_log", False)
+        old_y_log = self._plot_settings[settings_key].get("y_log", False)
 
         # Swap limits
         self._plot_settings[settings_key]["xlim"] = old_ylim
         self._plot_settings[settings_key]["ylim"] = old_xlim
+        # Swap log state（轴交换后 x_log/y_log 也跟着交换）
+        self._plot_settings[settings_key]["x_log"] = old_y_log
+        self._plot_settings[settings_key]["y_log"] = old_x_log
 
         # Replace plot instance in the tab
         tab_index = self.plot_tabs.currentIndex()
@@ -2200,6 +2337,10 @@ class MainWindow(QMainWindow):
         new_plot.set_xlim(old_ylim[0], old_ylim[1])
         new_plot.set_ylim(old_xlim[0], old_xlim[1])
         new_plot.set_legend_visible(self._plot_settings[settings_key]["show_legend"])
+        # 应用当前 Pressure 单位 + 交换后的 log 模式
+        new_plot.set_p_unit(self._plot_settings[settings_key].get("p_unit", "Mbar"))
+        new_plot.set_xscale(self._plot_settings[settings_key].get("x_log", False))
+        new_plot.set_yscale(self._plot_settings[settings_key].get("y_log", False))
 
         # Update UI display
         self.plot_tabs.setCurrentIndex(tab_index)
@@ -2250,6 +2391,40 @@ class MainWindow(QMainWindow):
             if material_id in self.material_panel._in_memory_materials:
                 return self.material_panel._in_memory_materials[material_id]
         return None
+
+    def _sync_intersection_scatter_positions(self):
+        """速度变化后，把 self._scatter_points 中所有交点 scatter 的位置/误差键
+        与最新 Intersection 对象同步（保持 id/label/source/scope/style 不变）。
+
+        背景：_auto_refresh_intersections 只重算 Intersection 对象的位置，
+        但 scatter dict 是快照，旧实现只更新 *_err 误差键，位置键 Up/P/Us/
+        compression/rho/E 从不刷新 → 加载 JSON 改速度后，除 P-Up 外的 8 个
+        tab 上交点不跟随移动。
+        """
+        if not self._scatter_points:
+            return
+        updated = False
+        for sp in self._scatter_points:
+            if sp.get("source") != "intersection":
+                continue
+            label = sp.get("label", "")
+            ix_id = label.split(" (")[0] if " (" in label else label
+            ix = next((x for x in self.hugoniot_plot.intersections if x.id == ix_id), None)
+            if ix is None:
+                continue
+            fresh = self._intersection_to_scatter_point(ix_id)
+            if fresh is None:
+                continue
+            # 复制位置 + 误差键；保留 sp 原有的 id/scope/target_tab/style。
+            # label 也同步（T 插值标记可能变化）。
+            for k in ("Up", "P", "Us", "rho", "compression", "T", "E",
+                      "Up_err", "P_err", "compression_err", "rho_err", "Us_err"):
+                if k in fresh:
+                    sp[k] = fresh[k]
+            sp["label"] = fresh["label"]
+            updated = True
+        if updated:
+            self._refresh_all_plots_with_scatter()
 
     def _intersection_to_scatter_point(self, ix_id: str):
         """Convert an intersection to a global scatter point.
@@ -2373,15 +2548,17 @@ class MainWindow(QMainWindow):
             self.status.showMessage(f"Intersection {ix_id} not found")
             return
 
-        # 去重：已存在的交点 scatter 点只更新误差数据（不改变位置/样式）
+        # 去重：已存在的交点 scatter 点刷新位置 + 误差（保留 id/scope/style）
         for existing in self._scatter_points:
             if existing.get("source") == "intersection" and existing.get("label", "").startswith(ix_id):
-                # 只更新误差键，保留原有位置和样式
-                for k in ("Up_err", "P_err", "compression_err", "rho_err", "Us_err"):
+                # 同步位置 + 误差键，使手动重新添加同名交点也能更新位置
+                for k in ("Up", "P", "Us", "rho", "compression", "T", "E",
+                          "Up_err", "P_err", "compression_err", "rho_err", "Us_err"):
                     if k in point:
                         existing[k] = point[k]
+                existing["label"] = point["label"]
                 self._refresh_all_plots_with_scatter()
-                self.status.showMessage(f"Updated errors for scatter {ix_id}")
+                self.status.showMessage(f"Refreshed scatter {ix_id} (position + errors)")
                 return
 
         self._scatter_points.append(point)
@@ -2573,7 +2750,15 @@ class MainWindow(QMainWindow):
         if plot is not None:
             if key == "P-CR":
                 # EOSPlot 使用 update_plot 方法而不是 set_xlim/set_ylim
-                materials = self.hugoniot_plot.materials  # Always show materials
+                # 合并参考曲线（与 _apply_plot_settings P-CR 分支保持一致），
+                # 否则仅含 compression+P 的参考曲线会在 zoom 后丢失。
+                materials = dict(self.hugoniot_plot.materials) if self.hugoniot_plot.materials else {}
+                ref_curves = self.reference_curve_panel.get_selected_curves()
+                for mid, mat in ref_curves.items():
+                    if mid not in materials:
+                        if (mat.compression is not None and len(mat.compression) > 0
+                                and mat.p is not None and len(mat.p) > 0):
+                            materials[mid] = mat
                 plot.update_plot(
                     materials=materials,
                     scatter_points=self._scatter_points,
@@ -2687,6 +2872,9 @@ class MainWindow(QMainWindow):
                     "show_legend": self.hugoniot_plot.show_legend,
                     "linewidth": self.hugoniot_plot.linewidth,
                     "linestyle": self.hugoniot_plot.linestyle,
+                    "p_unit": getattr(self.hugoniot_plot, "p_unit", "Mbar"),
+                    "x_log": getattr(self.hugoniot_plot, "x_log", False),
+                    "y_log": getattr(self.hugoniot_plot, "y_log", False),
                 },
                 "p_cr": self._plot_settings["P-CR"],
                 "p_rho": self._plot_settings["P-rho"],
@@ -2839,6 +3027,12 @@ class MainWindow(QMainWindow):
                     self._plot_settings["P-Up"]["show_legend"] = p_up_ps.get("show_legend", True)
                     self._plot_settings["P-Up"]["linewidth"] = p_up_ps.get("linewidth", 1.2)
                     self._plot_settings["P-Up"]["linestyle"] = p_up_ps.get("linestyle", "-")
+                    self._plot_settings["P-Up"]["p_unit"] = p_up_ps.get("p_unit", "Mbar")
+                    self._plot_settings["P-Up"]["x_log"] = p_up_ps.get("x_log", False)
+                    self._plot_settings["P-Up"]["y_log"] = p_up_ps.get("y_log", False)
+                    self.hugoniot_plot.set_p_unit(self._plot_settings["P-Up"]["p_unit"])
+                    self.hugoniot_plot.set_xscale(self._plot_settings["P-Up"]["x_log"])
+                    self.hugoniot_plot.set_yscale(self._plot_settings["P-Up"]["y_log"])
 
                 # All other plot settings (with migration for old "eos" key)
                 if "p_cr" in ps:
@@ -2860,6 +3054,25 @@ class MainWindow(QMainWindow):
                     self._plot_settings["E-Up"] = ps["e_up"]
                 if "p_us" in ps:
                     self._plot_settings["P-Us"] = ps["p_us"]
+
+                # 迁移：旧 workflow 缺 p_unit / x_log / y_log 键，补默认值
+                for _pk in ("P-Up", "P-CR", "P-rho", "Us-Up", "P-T",
+                            "rho-Up", "T-Up", "E-Up", "P-Us"):
+                    s = self._plot_settings.get(_pk)
+                    if isinstance(s, dict):
+                        s.setdefault("p_unit", "Mbar")
+                        s.setdefault("x_log", False)
+                        s.setdefault("y_log", False)
+
+                # 把加载的 p_unit / log 应用到各 plot 实例
+                for _pk in ("P-Up", "P-CR", "P-rho", "Us-Up", "P-T",
+                            "rho-Up", "T-Up", "E-Up", "P-Us"):
+                    _plot = self._get_plot_by_key(_pk)
+                    if _plot is not None:
+                        _s = self._plot_settings.get(_pk, {})
+                        _plot.set_p_unit(_s.get("p_unit", "Mbar"))
+                        _plot.set_xscale(_s.get("x_log", False))
+                        _plot.set_yscale(_s.get("y_log", False))
 
             # Restore EOS scatter points with migration from old format
             # 迁移：兼容旧字段 eos_scatter_points
@@ -2908,7 +3121,15 @@ class MainWindow(QMainWindow):
             # Refresh UI to show loaded scatter points
             if hasattr(self, '_update_scatter_list_widget'):
                 self._update_scatter_list_widget()
-            materials = self.hugoniot_plot.materials  # Always show materials
+            # 合并参考曲线（与 _apply_plot_settings P-CR 分支保持一致），
+            # 否则仅含 compression+P 的参考曲线会在 load 后不显示。
+            materials = dict(self.hugoniot_plot.materials) if self.hugoniot_plot.materials else {}
+            ref_curves = self.reference_curve_panel.get_selected_curves()
+            for mid, mat in ref_curves.items():
+                if mid not in materials:
+                    if (mat.compression is not None and len(mat.compression) > 0
+                            and mat.p is not None and len(mat.p) > 0):
+                        materials[mid] = mat
             eos_settings = self._plot_settings["P-CR"]
             self.eos_plot.update_plot(
                 materials=materials,

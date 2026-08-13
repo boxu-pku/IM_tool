@@ -101,11 +101,22 @@ PRL_STYLE = {
 # ---------------------------------------------------------------------------
 LABEL_UP   = r"Particle velocity $u_p$ (km/s)"
 LABEL_P    = r"Pressure $P$ (Mbar)"
+LABEL_P_GPA = r"Pressure $P$ (GPa)"
 LABEL_RHO  = r"Density $\rho$ (g/cm$^3$)"
 LABEL_COMP = r"Compression $\rho/\rho_0$"
 LABEL_US   = r"Shock velocity $U_s$ (km/s)"
 LABEL_T    = r"Temperature $T$ (eV)"
 LABEL_E    = r"Internal energy $E$ (MJ/g)"
+
+
+def pressure_label(unit: str) -> str:
+    """按单位返回 Pressure 轴标签。默认 Mbar。"""
+    return LABEL_P_GPA if (unit or "Mbar").lower().startswith("g") else LABEL_P
+
+
+def pressure_factor(unit: str) -> float:
+    """内部 P 以 Mbar 存储；渲染到 GPa 时乘 100。"""
+    return 100.0 if (unit or "Mbar").lower().startswith("g") else 1.0
 
 
 # ---------------------------------------------------------------------------
@@ -120,6 +131,8 @@ def apply_prl_style(
     ylabel: str | None = None,
     xlim: tuple[float, float] | None = None,
     ylim: tuple[float, float] | None = None,
+    xscale: str | None = None,
+    yscale: str | None = None,
 ) -> None:
     """
     Apply PRL publication style to a matplotlib Figure/Axes pair.
@@ -134,6 +147,9 @@ def apply_prl_style(
         Axis labels.  Pass ``LABEL_UP``, ``LABEL_P``, etc. from this module.
     xlim, ylim : tuple, optional
         Axis limits.
+    xscale, yscale : str, optional
+        Axis scale, ``"linear"`` or ``"log"``. Log 模式下若下界 ≤0 自动钳到
+        小正值（hi*1e-4），避免 matplotlib 报错。
     """
     # 全局 rcParams
     mpl.rcParams.update(PRL_STYLE)
@@ -154,11 +170,29 @@ def apply_prl_style(
     if ylabel is not None:
         ax.set_ylabel(ylabel)
 
-    # 范围
+    # 范围（log 模式需保证下界 >0）
+    def _clamp_log(lo: float, hi: float) -> float:
+        if lo <= 0:
+            ref = hi if hi > 0 else 1.0
+            return ref * 1e-4
+        return lo
+
     if xlim is not None:
-        ax.set_xlim(xlim)
+        lo, hi = xlim
+        if xscale == "log":
+            lo = _clamp_log(lo, hi)
+        ax.set_xlim(lo, hi)
     if ylim is not None:
-        ax.set_ylim(ylim)
+        lo, hi = ylim
+        if yscale == "log":
+            lo = _clamp_log(lo, hi)
+        ax.set_ylim(lo, hi)
+
+    # 刻度模式（linear / log）
+    if xscale is not None:
+        ax.set_xscale(xscale)
+    if yscale is not None:
+        ax.set_yscale(yscale)
 
     # 紧凑布局
     fig.tight_layout()
