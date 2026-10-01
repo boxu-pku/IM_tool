@@ -20,6 +20,7 @@ dependencies = [
 
 [project.scripts]
 im-tool = "im_app.main:main"
+imt = "im_app.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["im_app*"]

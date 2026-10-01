@@ -19,6 +19,15 @@ python run_app.bat           # Windows batch launcher (pauses on exit)
 
 Dependencies: `pip install -r requirements.txt` (PyQt5, numpy, pandas, matplotlib, scipy, xlrd, openpyxl)
 
+**Headless / AI operator interface** (drive the analysis without the GUI — full manual in `docs/AI_GUIDE.md`):
+```bash
+python -m im_app.cli materials search quartz          # query the material library (pure JSON)
+python -m im_app.cli template impedance               # two-layer impedance-matching workflow template
+python -m im_app.cli run im_app/workflows/AC_shot384-L.json --out runs/AC_shot384-L/   # recompute + MC + export figures/results
+```
+Engine: `im_app/api/headless.py` (offscreen MainWindow — same code path as the GUI).
+CLI stdout is always pure JSON; debug output goes to stderr. Regression test: `python scripts/smoke_test_headless.py`.
+
 **Packaged release**:
 ```bash
 python scripts/package_release.py    # builds dist/im-tool-v*.zip
@@ -38,6 +47,9 @@ python scripts/validate_hugoniot.py      # CLI Hugoniot file validation
 ```
 im_app/
 ├── main.py                          # Entry point (Fusion style, window maximized)
+├── cli.py                           # Headless CLI (`python -m im_app.cli`, AI/agent interface)
+├── api/
+│   └── headless.py                  # HeadlessSession engine (offscreen MainWindow; drives the same code path as the GUI)
 ├── core/
 │   ├── data_loader.py                # Standard format loader (auto-detects .csv/.txt/.hug)
 │   ├── data_converter.py             # Raw → standard format converter; read/write .txt
