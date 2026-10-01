@@ -1,0 +1,32 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          URANIUM DIOXIDE, p = 6.3 g/cm3
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   6.347 g/cm^3
+# Data Source:       ref/shd.pdf book p.357 (pdf p.373)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 5 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+1.02500000E+00	2.15200000E+00	1.41720000E-01	1.22690000E+01	1.90839695E+00			
+2.08100000E+00	4.14200000E+00	5.57340000E-01	1.29950000E+01	2.00803213E+00			
+2.51200000E+00	4.80900000E+00	7.79290000E-01	1.34958159E+01	2.09205021E+00			
+3.28600000E+00	5.88300000E+00	1.21344000E+00	1.42190000E+01	2.26757370E+00			
+# =============================================================================
+# End of Data
+# Total Points: 4
+# Up Range: [1.025, 3.286] km/s
+# P Range: [0.14172, 1.2134] Mbar
+# Compression Range: [1.9084, 2.2676]
+# =============================================================================

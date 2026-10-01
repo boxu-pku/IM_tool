@@ -1,0 +1,31 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          OIL SHALE,
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   2.176 g/cm^3
+# Data Source:       ref/shd.pdf book p.399 (pdf p.414)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 15 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+2.30100000E+00	6.46500000E+00	3.43490000E-01	3.56500000E+00	1.55259366E+00			
+2.35300000E+00	6.43900000E+00	3.29690000E-01	3.42900000E+00	1.57586882E+00			
+2.36200000E+00	6.44700000E+00	3.27400000E-01	3.39300000E+00	1.57821297E+00			
+# =============================================================================
+# End of Data
+# Total Points: 3
+# Up Range: [2.301, 2.362] km/s
+# P Range: [0.3274, 0.34349] Mbar
+# Compression Range: [1.5526, 1.5782]
+# =============================================================================

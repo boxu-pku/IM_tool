@@ -1,0 +1,30 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          ZINC
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   7.14 g/cm^3
+# Data Source:       ref/shd.pdf book p.157 (pdf p.173)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 0 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+2.67600000E+00	7.25000000E+00	1.38523000E+00	1.13170000E+01	1.58478605E+00			
+2.67900000E+00	7.13000000E+00	1.36383000E+00	1.14370000E+01	1.60256410E+00			
+# =============================================================================
+# End of Data
+# Total Points: 2
+# Up Range: [2.676, 2.679] km/s
+# P Range: [1.3638, 1.3852] Mbar
+# Compression Range: [1.5848, 1.6026]
+# =============================================================================

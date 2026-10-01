@@ -1,0 +1,30 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          TATB-10 wt% Kel F 800, Pantex standard TATB
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   1.9135 g/cm^3
+# Data Source:       ref/shd.pdf book p.634 (pdf p.650)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 16 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+1.11400000E+00	4.59600000E+00	9.80000000E-02	2.52634808E+00	1.31993107E+00			
+1.39000000E+00	5.34000000E+00	1.41990000E-01	2.58618228E+00	1.35189873E+00			
+# =============================================================================
+# End of Data
+# Total Points: 2
+# Up Range: [1.114, 1.39] km/s
+# P Range: [0.098, 0.14199] Mbar
+# Compression Range: [1.3199, 1.3519]
+# =============================================================================

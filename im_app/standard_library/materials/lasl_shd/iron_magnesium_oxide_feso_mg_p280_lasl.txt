@@ -1,0 +1,33 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          IRON MAGNESIUM OXIDE, Feso, Mg&
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   5.191 g/cm^3
+# Data Source:       ref/shd.pdf book p.280 (pdf p.296)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 2 row(s) digit-repaired, 22 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+7.05000000E-01	6.07400000E+00	2.22670000E-01	5.88280872E+00	1.13130937E+00			
+9.21000000E-01	6.37600000E+00	3.05360000E-01	6.07794684E+00	1.16883593E+00			
+1.28000000E+00	6.98800000E+00	4.63790000E-01	6.36942675E+00	1.22549020E+00			
+2.42700000E+00	8.38800000E+00	1.05860000E+00	7.31700000E+00	1.40646976E+00			
+2.72100000E+00	8.79800000E+00	1.24485000E+00	7.52800000E+00	1.44717800E+00			
+# =============================================================================
+# End of Data
+# Total Points: 5
+# Up Range: [0.705, 2.721] km/s
+# P Range: [0.22267, 1.2449] Mbar
+# Compression Range: [1.1313, 1.4472]
+# =============================================================================

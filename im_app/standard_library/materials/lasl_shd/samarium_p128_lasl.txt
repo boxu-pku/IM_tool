@@ -1,0 +1,30 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          SAMARIUM
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   7.461 g/cm^3
+# Data Source:       ref/shd.pdf book p.128 (pdf p.144)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 20 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+3.10800000E+00	5.72600000E+00	1.32654000E+00	1.63030000E+01	2.18818381E+00			
+3.14300000E+00	5.81400000E+00	1.36320000E+00	1.62380000E+01	2.17864924E+00			
+# =============================================================================
+# End of Data
+# Total Points: 2
+# Up Range: [3.108, 3.143] km/s
+# P Range: [1.3265, 1.3632] Mbar
+# Compression Range: [2.1786, 2.1882]
+# =============================================================================

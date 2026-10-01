@@ -1,0 +1,30 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          WATER
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   0.998 g/cm^3
+# Data Source:       ref/shd.pdf book p.573 (pdf p.589)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 12 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+1.14000000E+00	3.60800000E+00	4.10500000E-02	6.84000000E-01	1.46191248E+00			
+1.74900000E+00	4.72000000E+00	8.24000000E-02	1.58664547E+00	1.58982512E+00			
+# =============================================================================
+# End of Data
+# Total Points: 2
+# Up Range: [1.14, 1.749] km/s
+# P Range: [0.04105, 0.0824] Mbar
+# Compression Range: [1.4619, 1.5898]
+# =============================================================================

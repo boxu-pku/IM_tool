@@ -1,0 +1,36 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          PYROLUSITE, Ironton, Minnesota
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   4.318 g/cm^3
+# Data Source:       ref/shd.pdf book p.317 (pdf p.333)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 2 row(s) digit-repaired, 75 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+7.69000000E-01	5.03900000E+00	1.71160000E-01	5.21200000E+00	1.18009368E+00			
+1.43400000E+00	5.91700000E+00	3.67570000E-01	5.71800000E+00	1.31926121E+00			
+2.17900000E+00	6.98300000E+00	6.53500000E-01	6.25800000E+00	1.45358035E+00			
+2.25900000E+00	7.37900000E+00	7.19610000E-01	6.22046110E+00	1.44092219E+00			
+2.39300000E+00	7.28700000E+00	7.43020000E-01	6.34400000E+00	1.48809524E+00			
+3.10200000E+00	8.25400000E+00	1.11147000E+00	6.95500000E+00	1.60256410E+00			
+3.25000000E+00	8.77000000E+00	1.22304000E+00	6.81700000E+00	1.58982512E+00			
+3.26300000E+00	8.27800000E+00	1.16310000E+00	7.10800000E+00	1.65016502E+00			
+# =============================================================================
+# End of Data
+# Total Points: 8
+# Up Range: [0.769, 3.263] km/s
+# P Range: [0.17116, 1.223] Mbar
+# Compression Range: [1.1801, 1.6502]
+# =============================================================================

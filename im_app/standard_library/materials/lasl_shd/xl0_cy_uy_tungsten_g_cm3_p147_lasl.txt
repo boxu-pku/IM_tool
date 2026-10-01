@@ -1,0 +1,31 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          XL0, CY, UY, TUNGSTEN g/cm3
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   18.67 g/cm^3
+# Data Source:       ref/shd.pdf book p.147 (pdf p.163)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 2 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+3.02000000E-01	3.49500000E+00	1.97060000E-01	2.04360000E+01	1.09409190E+00			
+7.13000000E-01	4.35600000E+00	5.79860000E-01	2.23240000E+01	1.19617225E+00			
+7.21000000E-01	4.34900000E+00	5.85420000E-01	2.23800000E+01	1.19904077E+00			
+# =============================================================================
+# End of Data
+# Total Points: 3
+# Up Range: [0.302, 0.721] km/s
+# P Range: [0.19706, 0.58542] Mbar
+# Compression Range: [1.0941, 1.199]
+# =============================================================================

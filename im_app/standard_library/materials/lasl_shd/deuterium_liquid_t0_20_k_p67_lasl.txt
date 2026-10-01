@@ -1,0 +1,34 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          DEUTERIUM, liquid, T0 = 20 K
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   0.165 g/cm^3
+# Data Source:       ref/shd.pdf book p.67 (pdf p.83)
+# Date Created:      2026-08-27
+# Notes:             Transcribed visually from the page image (OCR text layer unusable); every row Rankine-Hugoniot validated
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+4.27000000E+00	7.13000000E+00	5.02300000E-02	4.11000000E-01	2.49376559E+00			
+4.28000000E+00	6.78000000E+00	4.78800000E-02	4.47000000E-01	2.71002710E+00			
+4.48000000E+00	7.97000000E+00	5.89100000E-02	3.77000000E-01	2.28310502E+00			
+4.99000000E+00	8.31000000E+00	6.92500000E-02	4.18000000E-01	2.50000000E+00			
+5.97000000E+00	9.45000000E+00	9.30900000E-02	4.48000000E-01	2.71739130E+00			
+7.25000000E+00	1.09700000E+01	1.29640000E-01	4.81000000E-01	2.94985251E+00			
+# =============================================================================
+# End of Data
+# Total Points: 6
+# Up Range: [4.27, 7.25] km/s
+# P Range: [0.04788, 0.12964] Mbar
+# Compression Range: [2.2831, 2.9499]
+# =============================================================================

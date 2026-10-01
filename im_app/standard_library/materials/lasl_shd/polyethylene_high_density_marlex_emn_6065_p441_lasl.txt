@@ -1,0 +1,36 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          POLYETHYLENE, high-density, Marlex EMN 6065
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   0.918 g/cm^3
+# Data Source:       ref/shd.pdf book p.441 (pdf p.455)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 4 row(s) digit-repaired, 63 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+8.31000000E-01	3.65300000E+00	2.83900000E-02	1.17000000E+00	1.27551020E+00			
+1.00100000E+00	4.22900000E+00	3.88800000E-02	1.20267100E+00	1.31009913E+00			
+4.40900000E+00	9.85700000E+00	4.08190000E-01	1.72606057E+00	1.80928781E+00			
+4.41200000E+00	9.83100000E+00	4.05370000E-01	1.70068027E+00	1.84501845E+00			
+4.67500000E+00	9.97800000E+00	4.45010000E-01	1.79500987E+00	1.88323917E+00			
+4.69700000E+00	9.84800000E+00	4.45870000E-01	1.80900000E+00	1.89393939E+00			
+5.30500000E+00	1.07380000E+01	5.43350000E-01	1.88552402E+00	1.97644027E+00			
+5.32800000E+00	1.07970000E+01	5.48800000E-01	1.88340428E+00	1.97421832E+00			
+# =============================================================================
+# End of Data
+# Total Points: 8
+# Up Range: [0.831, 5.328] km/s
+# P Range: [0.02839, 0.5488] Mbar
+# Compression Range: [1.2755, 1.9764]
+# =============================================================================

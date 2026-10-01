@@ -1,0 +1,35 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          QUARTZ.
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   2.204 g/cm^3
+# Data Source:       ref/shd.pdf book p.322 (pdf p.338)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 1 row(s) digit-repaired, 80 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+2.10500000E+00	5.04900000E+00	2.34240000E-01	3.76000000E+00	1.71501359E+00			
+2.10600000E+00	5.04000000E+00	2.33940000E-01	3.76600000E+00	1.71779141E+00			
+2.19100000E+00	5.02600000E+00	2.32520000E-01	3.76400000E+00	1.77935943E+00			
+2.24500000E+00	5.10600000E+00	2.52640000E-01	3.93300000E+00	1.78571429E+00			
+2.34200000E+00	5.16500000E+00	2.67640000E-01	4.02000000E+00	1.82961389E+00			
+3.00200000E+00	5.91400000E+00	3.91290000E-01	4.47967480E+00	2.03252033E+00			
+3.81400000E+00	7.10700000E+00	5.96660000E-01	4.75200000E+00	2.15821439E+00			
+# =============================================================================
+# End of Data
+# Total Points: 7
+# Up Range: [2.105, 3.814] km/s
+# P Range: [0.23252, 0.59666] Mbar
+# Compression Range: [1.715, 2.1582]
+# =============================================================================

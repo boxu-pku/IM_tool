@@ -1,0 +1,37 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          SQ, SPINEL.
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   2.991 g/cm^3
+# Data Source:       ref/shd.pdf book p.346 (pdf p.363)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 2 row(s) digit-repaired, 5 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+1.72700000E+00	6.57300000E+00	3.44750000E-01	4.11900000E+00	1.35685210E+00			
+1.86900000E+00	6.88100000E+00	3.91220000E-01	4.17600000E+00	1.37362637E+00			
+2.03700000E+00	6.87800000E+00	4.15130000E-01	4.21000000E+00	1.42045455E+00			
+2.50700000E+00	7.42600000E+00	5.57210000E-01	4.51800000E+00	1.51057402E+00			
+3.12400000E+00	8.52700000E+00	7.61060000E-01	4.50900000E+00	1.57819730E+00			
+3.13900000E+00	8.43900000E+00	7.90460000E-01	4.75100000E+00	1.59226415E+00			
+3.27100000E+00	8.94100000E+00	8.92000000E-01	4.81000000E+00	1.57728707E+00			
+3.39900000E+00	8.88700000E+00	8.94820000E-01	4.81500000E+00	1.62074554E+00			
+3.63000000E+00	9.28300000E+00	1.01988000E+00	4.96900000E+00	1.64203612E+00			
+# =============================================================================
+# End of Data
+# Total Points: 9
+# Up Range: [1.727, 3.63] km/s
+# P Range: [0.34475, 1.0199] Mbar
+# Compression Range: [1.3569, 1.642]
+# =============================================================================

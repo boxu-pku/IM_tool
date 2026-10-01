@@ -1,0 +1,32 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          HYDROGEN, liquid, To = 20 K
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   0.072 g/cm^3
+# Data Source:       ref/shd.pdf book p.85 (pdf p.101)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 1 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+3.49000000E+00	6.60000000E+00	1.64900000E-02	1.52000000E-01	2.12314225E+00			
+5.25000000E+00	9.09000000E+00	3.41700000E-02	1.69000000E-01	2.36966825E+00			
+6.34000000E+00	1.05700000E+01	4.79800000E-02	1.78916482E-01	2.50000000E+00			
+7.67000000E+00	1.18000000E+01	6.48000000E-02	2.04570096E-01	2.85714286E+00			
+# =============================================================================
+# End of Data
+# Total Points: 4
+# Up Range: [3.49, 7.67] km/s
+# P Range: [0.01649, 0.0648] Mbar
+# Compression Range: [2.1231, 2.8571]
+# =============================================================================

@@ -1,0 +1,30 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          HEXANE CoH,,
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   0.673 g/cm^3
+# Data Source:       ref/shd.pdf book p.564 (pdf p.580)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 1 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+1.45900000E+00	3.97200000E+00	3.94100000E-02	1.07500000E+00	1.57977883E+00			
+2.52400000E+00	5.47400000E+00	9.21600000E-02	1.23800000E+00	1.85528757E+00			
+# =============================================================================
+# End of Data
+# Total Points: 2
+# Up Range: [1.459, 2.524] km/s
+# P Range: [0.03941, 0.09216] Mbar
+# Compression Range: [1.5798, 1.8553]
+# =============================================================================

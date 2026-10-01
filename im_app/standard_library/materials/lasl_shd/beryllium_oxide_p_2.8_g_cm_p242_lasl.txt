@@ -1,0 +1,37 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          BERYLLIUM OXIDE, p,, = 2.8 g/cm”
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   2.781 g/cm^3
+# Data Source:       ref/shd.pdf book p.242 (pdf p.258)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 2 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+3.68000000E-01	8.71300000E+00	9.01600000E-02	2.93600000E+00	1.04384134E+00			
+5.77000000E-01	7.82900000E+00	1.20160000E-01	2.87200000E+00	1.07991361E+00			
+7.81000000E-01	8.19400000E+00	1.79060000E-01	3.09300000E+00	1.10497238E+00			
+1.09400000E+00	8.04300000E+00	2.44970000E-01	3.22200000E+00	1.15740741E+00			
+1.57800000E+00	8.36500000E+00	3.59040000E-01	3.35200000E+00	1.23304562E+00			
+1.70600000E+00	8.84000000E+00	4.20310000E-01	3.45300000E+00	1.23915737E+00			
+2.41800000E+00	1.02940000E+01	7.01430000E-01	3.68300000E+00	1.30718954E+00			
+2.54300000E+00	1.05540000E+01	7.63560000E-01	3.74800000E+00	1.31752306E+00			
+3.03400000E+00	1.10520000E+01	9.29170000E-01	3.82000000E+00	1.37931034E+00			
+# =============================================================================
+# End of Data
+# Total Points: 9
+# Up Range: [0.368, 3.034] km/s
+# P Range: [0.09016, 0.92917] Mbar
+# Compression Range: [1.0438, 1.3793]
+# =============================================================================

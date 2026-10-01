@@ -1,0 +1,31 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          NEOPRENE
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   1.439 g/cm^3
+# Data Source:       ref/shd.pdf book p.423 (pdf p.439)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 1 row(s) digit-repaired, 2 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+1.53200000E+00	5.01300000E+00	1.10440000E-01	2.07100000E+00	1.44092219E+00			
+2.08100000E+00	5.75600000E+00	1.73360000E-01	2.26100000E+00	1.56625850E+00			
+2.08700000E+00	5.74400000E+00	1.73330000E-01	2.26600000E+00	1.57068635E+00			
+# =============================================================================
+# End of Data
+# Total Points: 3
+# Up Range: [1.532, 2.087] km/s
+# P Range: [0.11044, 0.17336] Mbar
+# Compression Range: [1.4409, 1.5707]
+# =============================================================================

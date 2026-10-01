@@ -1,0 +1,35 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          NQ-2 wt% B square wax-2 wt% Elvax, large-grain NQ
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   1.676 g/cm^3
+# Data Source:       ref/shd.pdf book p.602 (pdf p.618)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 3 row(s) digit-repaired, 10 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+1.77200000E+00	6.14700000E+00	1.85170000E-01	2.38800000E+00	1.40449438E+00			
+1.79400000E+00	6.20600000E+00	1.86600000E-01	2.35700000E+00	1.40646976E+00			
+1.82000000E+00	6.13400000E+00	1.89070000E-01	2.37100000E+00	1.39470014E+00			
+1.89600000E+00	6.36000000E+00	2.02950000E-01	2.38406828E+00	1.42247511E+00			
+2.12500000E+00	6.76400000E+00	2.44350000E-01	2.47900000E+00	1.45772595E+00			
+2.21600000E+00	6.53900000E+00	2.42860000E-01	2.53485425E+00	1.51285930E+00			
+2.30200000E+00	6.87400000E+00	2.63150000E-01	2.50062516E+00	1.50375940E+00			
+# =============================================================================
+# End of Data
+# Total Points: 7
+# Up Range: [1.772, 2.302] km/s
+# P Range: [0.18517, 0.26315] Mbar
+# Compression Range: [1.3947, 1.5129]
+# =============================================================================

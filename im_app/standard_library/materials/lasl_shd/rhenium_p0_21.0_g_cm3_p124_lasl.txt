@@ -1,0 +1,35 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          RHENIUM, p0 = 21.0 g/cm3
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   20.984 g/cm^3
+# Data Source:       ref/shd.pdf book p.124 (pdf p.140)
+# Date Created:      2026-08-27
+# Notes:             Transcribed visually from the page image (OCR text layer unusable); every row Rankine-Hugoniot validated
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+0.00000000E+00	4.11800000E+00	0.00000000E+00	2.09900000E+01	1.00000000E+00			
+3.27000000E-01	4.69100000E+00	3.21980000E-01	2.25630000E+01	1.07526882E+00			
+4.33000000E-01	4.74000000E+00	4.30190000E-01	2.30670000E+01	1.10011001E+00			
+6.65000000E-01	5.04100000E+00	7.03310000E-01	2.41680000E+01	1.15207373E+00			
+6.90000000E-01	5.19200000E+00	7.51960000E-01	2.42070000E+01	1.15340254E+00			
+9.61000000E-01	5.51500000E+00	1.11245000E+00	2.54190000E+01	1.21065375E+00			
+1.12700000E+00	5.71000000E+00	1.35074000E+00	2.61520000E+01	1.24533001E+00			
+# =============================================================================
+# End of Data
+# Total Points: 7
+# Up Range: [0, 1.127] km/s
+# P Range: [0, 1.3507] Mbar
+# Compression Range: [1, 1.2453]
+# =============================================================================

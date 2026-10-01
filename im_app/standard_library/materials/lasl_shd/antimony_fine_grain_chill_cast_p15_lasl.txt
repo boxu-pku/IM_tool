@@ -1,0 +1,30 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          ANTIMONY, fine-grain, chill-cast
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   6.67 g/cm^3
+# Data Source:       ref/shd.pdf book p.15 (pdf p.31)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 4 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+3.11000000E-01	2.91000000E+00	6.03600000E-02	7.46800000E+00	1.11982083E+00			
+3.72000000E-01	2.98900000E+00	7.41600000E-02	7.61800000E+00	1.14155251E+00			
+# =============================================================================
+# End of Data
+# Total Points: 2
+# Up Range: [0.311, 0.372] km/s
+# P Range: [0.06036, 0.07416] Mbar
+# Compression Range: [1.1198, 1.1416]
+# =============================================================================

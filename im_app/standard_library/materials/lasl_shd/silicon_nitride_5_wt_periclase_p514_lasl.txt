@@ -1,0 +1,30 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          SILICON NITRIDE-5 wt% PERICLASE
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   3.164 g/cm^3
+# Data Source:       ref/shd.pdf book p.514 (pdf p.530)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 2 row(s) digit-repaired, 5 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+0.00000000E+00	8.81800000E+00	0.00000000E+00	3.16000000E+00	1.00000000E+00			
+2.48200000E+00	8.78700000E+00	6.90920000E-01	4.41500000E+00	1.39365583E+00			
+# =============================================================================
+# End of Data
+# Total Points: 2
+# Up Range: [0, 2.482] km/s
+# P Range: [0, 0.69092] Mbar
+# Compression Range: [1, 1.3937]
+# =============================================================================

@@ -1,0 +1,30 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          GOLD-g.3 wt% GERMANIUM
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   15.536 g/cm^3
+# Data Source:       ref/shd.pdf book p.191 (pdf p.207)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 2 row(s) digit-repaired, 8 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+0.00000000E+00	2.93400000E+00	0.00000000E+00	1.54960000E+01	1.00000000E+00			
+3.04000000E-01	3.22900000E+00	1.51760000E-01	1.70670000E+01	1.10393162E+00			
+# =============================================================================
+# End of Data
+# Total Points: 2
+# Up Range: [0, 0.304] km/s
+# P Range: [0, 0.15176] Mbar
+# Compression Range: [1, 1.1039]
+# =============================================================================

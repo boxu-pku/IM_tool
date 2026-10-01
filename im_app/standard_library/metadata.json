@@ -231,6 +231,5538 @@
                 1.0,
                 4.5716226415094345
             ]
+        },
+        {
+            "id": "antimony_fine_grain_chill_cast_p15_lasl",
+            "name": "ANTIMONY, fine-grain, chill-cast",
+            "source": "LASL SHD 1980",
+            "rho0": 6.67,
+            "file": "materials/lasl_shd/antimony_fine_grain_chill_cast_p15_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                0.311,
+                0.372
+            ],
+            "p_range": [
+                0.06036,
+                0.07416
+            ],
+            "compression_range": [
+                1.11982083,
+                1.14155251
+            ]
+        },
+        {
+            "id": "argon_solid_t_75_k_p18_lasl",
+            "name": "ARGON, solid, T,, = 75 K",
+            "source": "LASL SHD 1980",
+            "rho0": 1.65,
+            "file": "materials/lasl_shd/argon_solid_t_75_k_p18_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 13,
+            "up_range": [
+                0.56,
+                4.6
+            ],
+            "p_range": [
+                0.01848,
+                0.64439
+            ],
+            "compression_range": [
+                1.38888889,
+                2.18340611
+            ]
+        },
+        {
+            "id": "barium_p19_lasl",
+            "name": "BARIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 3.705,
+            "file": "materials/lasl_shd/barium_p19_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 34,
+            "up_range": [
+                0.0,
+                3.78
+            ],
+            "p_range": [
+                0.0,
+                0.89367
+            ],
+            "compression_range": [
+                1.0,
+                2.54452926
+            ]
+        },
+        {
+            "id": "beryllium_sintered_p21_lasl",
+            "name": "BERYLLIUM, sintered",
+            "source": "LASL SHD 1980",
+            "rho0": 1.85,
+            "file": "materials/lasl_shd/beryllium_sintered_p21_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 43,
+            "up_range": [
+                0.0,
+                3.871
+            ],
+            "p_range": [
+                0.0,
+                0.88526
+            ],
+            "compression_range": [
+                1.0,
+                1.45560408
+            ]
+        },
+        {
+            "id": "bismuth_p12_lasl",
+            "name": "BISMUTH",
+            "source": "LASL SHD 1980",
+            "rho0": 9.836,
+            "file": "materials/lasl_shd/bismuth_p12_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 20,
+            "up_range": [
+                0.0,
+                2.478
+            ],
+            "p_range": [
+                0.0,
+                1.32892
+            ],
+            "compression_range": [
+                1.0,
+                1.86567164
+            ]
+        },
+        {
+            "id": "cadmium_p25_lasl",
+            "name": "CADMIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 8.639,
+            "file": "materials/lasl_shd/cadmium_p25_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 15,
+            "up_range": [
+                0.0,
+                2.405
+            ],
+            "p_range": [
+                0.0,
+                1.32093
+            ],
+            "compression_range": [
+                1.0,
+                1.61290323
+            ]
+        },
+        {
+            "id": "calcium_p26_lasl",
+            "name": "CALCIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 1.547,
+            "file": "materials/lasl_shd/calcium_p26_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 39,
+            "up_range": [
+                0.0,
+                5.041
+            ],
+            "p_range": [
+                0.0,
+                0.64552
+            ],
+            "compression_range": [
+                1.0,
+                2.53807107
+            ]
+        },
+        {
+            "id": "carbon_foamed_p_0.32_g_cm8_p33_lasl",
+            "name": "CARBON, foamed, p,, = 0.32 g/cm8",
+            "source": "LASL SHD 1980",
+            "rho0": 0.315,
+            "file": "materials/lasl_shd/carbon_foamed_p_0.32_g_cm8_p33_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 15,
+            "up_range": [
+                1.786,
+                5.669
+            ],
+            "p_range": [
+                0.01107,
+                0.11277
+            ],
+            "compression_range": [
+                3.38486998,
+                8.99827288
+            ]
+        },
+        {
+            "id": "carbon_graphite_pressed_p_2.13_g_cm3_p39_lasl",
+            "name": "CARBON, graphite, pressed, p = 2.13 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 2.1285,
+            "file": "materials/lasl_shd/carbon_graphite_pressed_p_2.13_g_cm3_p39_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 90,
+            "up_range": [
+                0.405,
+                4.29
+            ],
+            "p_range": [
+                0.02835,
+                0.87657
+            ],
+            "compression_range": [
+                1.13378685,
+                1.90839695
+            ]
+        },
+        {
+            "id": "carbon_graphite_pressed_p._1.93_g_cm9_p43_lasl",
+            "name": "CARBON, graphite, pressed, p. = 1.93 g/cm9",
+            "source": "LASL SHD 1980",
+            "rho0": 1.8795,
+            "file": "materials/lasl_shd/carbon_graphite_pressed_p._1.93_g_cm9_p43_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 29,
+            "up_range": [
+                0.977,
+                4.551
+            ],
+            "p_range": [
+                0.06974,
+                0.81051
+            ],
+            "compression_range": [
+                1.34589502,
+                2.10526316
+            ]
+        },
+        {
+            "id": "carbon_graphite_atj_p._1.77_g_cm8_p45_lasl",
+            "name": "CARBON, graphite, ATJ, p. = 1.77 g/cm8",
+            "source": "LASL SHD 1980",
+            "rho0": 1.768,
+            "file": "materials/lasl_shd/carbon_graphite_atj_p._1.77_g_cm8_p45_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 19,
+            "up_range": [
+                0.0,
+                2.827
+            ],
+            "p_range": [
+                0.0,
+                0.30335
+            ],
+            "compression_range": [
+                1.0,
+                1.87969925
+            ]
+        },
+        {
+            "id": "carbon_graphite_pt_0178_p._1.54_g_cm8_p47_lasl",
+            "name": "CARBON, graphite, PT 0178, p. = 1.54 g/cm8",
+            "source": "LASL SHD 1980",
+            "rho0": 1.0265,
+            "file": "materials/lasl_shd/carbon_graphite_pt_0178_p._1.54_g_cm8_p47_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 22,
+            "up_range": [
+                0.772,
+                4.685
+            ],
+            "p_range": [
+                0.0134,
+                0.35208
+            ],
+            "compression_range": [
+                1.73611111,
+                3.44827586
+            ]
+        },
+        {
+            "id": "carbon_exd_p49_lasl",
+            "name": "CARBON, EXD",
+            "source": "LASL SHD 1980",
+            "rho0": 1.0,
+            "file": "materials/lasl_shd/carbon_exd_p49_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 14,
+            "up_range": [
+                4.821,
+                5.617
+            ],
+            "p_range": [
+                0.32078,
+                0.47154
+            ],
+            "compression_range": [
+                2.80898876,
+                3.93700787
+            ]
+        },
+        {
+            "id": "carbon_vitreous_p50_lasl",
+            "name": "CARBON, vitreous",
+            "source": "LASL SHD 1980",
+            "rho0": 1.492,
+            "file": "materials/lasl_shd/carbon_vitreous_p50_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                1.338,
+                1.371
+            ],
+            "p_range": [
+                0.07815,
+                0.082
+            ],
+            "compression_range": [
+                1.51975684,
+                1.53374233
+            ]
+        },
+        {
+            "id": "cerium_p52_lasl",
+            "name": "CERIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 6.743,
+            "file": "materials/lasl_shd/cerium_p52_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 9,
+            "up_range": [
+                0.0,
+                3.161
+            ],
+            "p_range": [
+                0.0,
+                1.35744
+            ],
+            "compression_range": [
+                1.0,
+                1.98807157
+            ]
+        },
+        {
+            "id": "cesium_p54_lasl",
+            "name": "CESIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 1.826,
+            "file": "materials/lasl_shd/cesium_p54_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 9,
+            "up_range": [
+                1.342,
+                3.846
+            ],
+            "p_range": [
+                0.06036,
+                0.40571
+            ],
+            "compression_range": [
+                2.1978022,
+                2.99401198
+            ]
+        },
+        {
+            "id": "cobalt_p56_lasl",
+            "name": "COBALT",
+            "source": "LASL SHD 1980",
+            "rho0": 8.82,
+            "file": "materials/lasl_shd/cobalt_p56_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 5,
+            "up_range": [
+                0.0,
+                0.933
+            ],
+            "p_range": [
+                0.0,
+                0.4921
+            ],
+            "compression_range": [
+                1.0,
+                1.18483412
+            ]
+        },
+        {
+            "id": "copper_p57_lasl",
+            "name": "COPPER",
+            "source": "LASL SHD 1980",
+            "rho0": 8.924,
+            "file": "materials/lasl_shd/copper_p57_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 71,
+            "up_range": [
+                0.0,
+                4.161
+            ],
+            "p_range": [
+                0.0,
+                3.6605
+            ],
+            "compression_range": [
+                1.0,
+                1.72711572
+            ]
+        },
+        {
+            "id": "copper_sintered_p_6.3_g_cma_p64_lasl",
+            "name": "COPPER, sintered, p = 6.3 g/cma",
+            "source": "LASL SHD 1980",
+            "rho0": 6.326,
+            "file": "materials/lasl_shd/copper_sintered_p_6.3_g_cma_p64_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 22,
+            "up_range": [
+                0.0,
+                3.269
+            ],
+            "p_range": [
+                0.0,
+                1.5226
+            ],
+            "compression_range": [
+                1.0,
+                1.82815356
+            ]
+        },
+        {
+            "id": "dysprosium_.._p69_lasl",
+            "name": "DYSPROSIUM ..-",
+            "source": "LASL SHD 1980",
+            "rho0": 8.41,
+            "file": "materials/lasl_shd/dysprosium_.._p69_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                3.021,
+                3.045
+            ],
+            "p_range": [
+                1.4063,
+                1.45381
+            ],
+            "compression_range": [
+                2.15982721,
+                2.19298246
+            ]
+        },
+        {
+            "id": "erbium_p71_lasl",
+            "name": "ERBIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 9.015,
+            "file": "materials/lasl_shd/erbium_p71_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 49,
+            "up_range": [
+                0.0,
+                3.268
+            ],
+            "p_range": [
+                0.0,
+                1.47945
+            ],
+            "compression_range": [
+                1.0,
+                2.52525253
+            ]
+        },
+        {
+            "id": "europium_p76_lasl",
+            "name": "EUROPIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 5.28,
+            "file": "materials/lasl_shd/europium_p76_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 15,
+            "up_range": [
+                0.392,
+                3.562
+            ],
+            "p_range": [
+                0.04079,
+                1.05918
+            ],
+            "compression_range": [
+                1.24533001,
+                2.81690141
+            ]
+        },
+        {
+            "id": "gadolinium_p77_lasl",
+            "name": "GADOLINIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 7.861,
+            "file": "materials/lasl_shd/gadolinium_p77_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 6,
+            "up_range": [
+                0.0,
+                0.865
+            ],
+            "p_range": [
+                0.0,
+                0.20393
+            ],
+            "compression_range": [
+                1.0,
+                1.40646976
+            ]
+        },
+        {
+            "id": "cadolinium_p78_lasl",
+            "name": "CADOLINIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 7.869,
+            "file": "materials/lasl_shd/cadolinium_p78_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 9,
+            "up_range": [
+                2.639,
+                3.199
+            ],
+            "p_range": [
+                1.07052,
+                1.41939
+            ],
+            "compression_range": [
+                2.04498978,
+                2.25733634
+            ]
+        },
+        {
+            "id": "germanium_p79_lasl",
+            "name": "GERMANIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 5.328,
+            "file": "materials/lasl_shd/germanium_p79_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 47,
+            "up_range": [
+                0.602,
+                3.188
+            ],
+            "p_range": [
+                0.13634,
+                1.17347
+            ],
+            "compression_range": [
+                1.16550117,
+                1.86915888
+            ]
+        },
+        {
+            "id": "hafnium_gla_v_vq_p83_lasl",
+            "name": "HAFNIUM, (GLa), V/VQ",
+            "source": "LASL SHD 1980",
+            "rho0": 12.9,
+            "file": "materials/lasl_shd/hafnium_gla_v_vq_p83_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                2.251,
+                2.422
+            ],
+            "p_range": [
+                1.57507,
+                1.72363
+            ],
+            "compression_range": [
+                1.70940171,
+                1.78253119
+            ]
+        },
+        {
+            "id": "holmium_p84_lasl",
+            "name": "HOLMIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 8.734,
+            "file": "materials/lasl_shd/holmium_p84_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 13,
+            "up_range": [
+                0.643,
+                2.675
+            ],
+            "p_range": [
+                0.16202,
+                1.20796
+            ],
+            "compression_range": [
+                1.28700129,
+                2.07039337
+            ]
+        },
+        {
+            "id": "hydrogen_liquid_to_20_k_p85_lasl",
+            "name": "HYDROGEN, liquid, To = 20 K",
+            "source": "LASL SHD 1980",
+            "rho0": 0.072,
+            "file": "materials/lasl_shd/hydrogen_liquid_to_20_k_p85_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 4,
+            "up_range": [
+                3.49,
+                7.67
+            ],
+            "p_range": [
+                0.01649,
+                0.0648
+            ],
+            "compression_range": [
+                2.12314225,
+                2.85714286
+            ]
+        },
+        {
+            "id": "indium_p87_lasl",
+            "name": "INDIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 7.278,
+            "file": "materials/lasl_shd/indium_p87_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 12,
+            "up_range": [
+                0.756,
+                2.932
+            ],
+            "p_range": [
+                0.20347,
+                1.46106
+            ],
+            "compression_range": [
+                1.25628141,
+                1.74825175
+            ]
+        },
+        {
+            "id": "iron_p89_lasl",
+            "name": "IRON",
+            "source": "LASL SHD 1980",
+            "rho0": 7.856,
+            "file": "materials/lasl_shd/iron_p89_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 80,
+            "up_range": [
+                0.0,
+                4.07
+            ],
+            "p_range": [
+                0.0,
+                3.30719
+            ],
+            "compression_range": [
+                1.0,
+                1.65837479
+            ]
+        },
+        {
+            "id": "lanthanum_p98_lasl",
+            "name": "LANTHANUM",
+            "source": "LASL SHD 1980",
+            "rho0": 6.138,
+            "file": "materials/lasl_shd/lanthanum_p98_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 28,
+            "up_range": [
+                0.0,
+                3.295
+            ],
+            "p_range": [
+                0.0,
+                1.31344
+            ],
+            "compression_range": [
+                1.0,
+                2.03252033
+            ]
+        },
+        {
+            "id": "lead_p100_lasl",
+            "name": "LEAD",
+            "source": "LASL SHD 1980",
+            "rho0": 11.346,
+            "file": "materials/lasl_shd/lead_p100_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 71,
+            "up_range": [
+                0.0,
+                2.859
+            ],
+            "p_range": [
+                0.0,
+                2.00395
+            ],
+            "compression_range": [
+                1.0,
+                1.86219739
+            ]
+        },
+        {
+            "id": "lithi_um_p104_lasl",
+            "name": "LITHI:UM",
+            "source": "LASL SHD 1980",
+            "rho0": 0.53,
+            "file": "materials/lasl_shd/lithi_um_p104_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 9,
+            "up_range": [
+                1.37,
+                4.814
+            ],
+            "p_range": [
+                0.0454,
+                0.25693
+            ],
+            "compression_range": [
+                1.28040973,
+                1.91570881
+            ]
+        },
+        {
+            "id": "magnesium_p105_lasl",
+            "name": "MAGNESIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 1.74,
+            "file": "materials/lasl_shd/magnesium_p105_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 39,
+            "up_range": [
+                0.0,
+                4.049
+            ],
+            "p_range": [
+                0.0,
+                0.67511
+            ],
+            "compression_range": [
+                1.0,
+                1.73611111
+            ]
+        },
+        {
+            "id": "mercury_p107_lasl",
+            "name": "MERCURY",
+            "source": "LASL SHD 1980",
+            "rho0": 13.54,
+            "file": "materials/lasl_shd/mercury_p107_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                0.0,
+                0.762
+            ],
+            "p_range": [
+                0.0,
+                0.31613
+            ],
+            "compression_range": [
+                1.0,
+                1.33155792
+            ]
+        },
+        {
+            "id": "moly_bdekum_p106_lasl",
+            "name": "MOLY BDEKUM",
+            "source": "LASL SHD 1980",
+            "rho0": 10.208,
+            "file": "materials/lasl_shd/moly_bdekum_p106_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 30,
+            "up_range": [
+                0.0,
+                2.487
+            ],
+            "p_range": [
+                0.0,
+                2.08674
+            ],
+            "compression_range": [
+                1.0,
+                1.43472023
+            ]
+        },
+        {
+            "id": "neodymium_p110_lasl",
+            "name": "NEODYMIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 6.98,
+            "file": "materials/lasl_shd/neodymium_p110_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 14,
+            "up_range": [
+                0.0,
+                3.056
+            ],
+            "p_range": [
+                0.0,
+                1.24437
+            ],
+            "compression_range": [
+                1.0,
+                2.10084034
+            ]
+        },
+        {
+            "id": "nickel_p111_lasl",
+            "name": "NICKEL",
+            "source": "LASL SHD 1980",
+            "rho0": 8.875,
+            "file": "materials/lasl_shd/nickel_p111_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 18,
+            "up_range": [
+                0.0,
+                2.145
+            ],
+            "p_range": [
+                0.0,
+                1.45766
+            ],
+            "compression_range": [
+                1.0,
+                1.38888889
+            ]
+        },
+        {
+            "id": "neodymium_.llo_nickel_.lll_niobium_p112_lasl",
+            "name": "NEODYMIUM .llO NICKEL .lll NIOBIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 8.587,
+            "file": "materials/lasl_shd/neodymium_.llo_nickel_.lll_niobium_p112_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 13,
+            "up_range": [
+                0.496,
+                2.654
+            ],
+            "p_range": [
+                0.21797,
+                1.73667
+            ],
+            "compression_range": [
+                1.10741971,
+                1.53374233
+            ]
+        },
+        {
+            "id": "nitrogen_liquid_p113_lasl",
+            "name": "NITROGEN liquid,",
+            "source": "LASL SHD 1980",
+            "rho0": 0.82,
+            "file": "materials/lasl_shd/nitrogen_liquid_p113_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 21,
+            "up_range": [
+                0.0,
+                5.35
+            ],
+            "p_range": [
+                0.0,
+                0.39132
+            ],
+            "compression_range": [
+                1.0,
+                2.5
+            ]
+        },
+        {
+            "id": "nitrldgen_liquid_to_75_k_113_oxygen_liquid_p115_lasl",
+            "name": "NITRlDGEN, liquid, To = 75 K -113 OXYGEN, liquid",
+            "source": "LASL SHD 1980",
+            "rho0": 1.202,
+            "file": "materials/lasl_shd/nitrldgen_liquid_to_75_k_113_oxygen_liquid_p115_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 17,
+            "up_range": [
+                2.06,
+                4.72
+            ],
+            "p_range": [
+                0.11499,
+                0.46
+            ],
+            "compression_range": [
+                1.79856115,
+                2.3923445
+            ]
+        },
+        {
+            "id": "palladium_p118_lasl",
+            "name": "PALLADIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 11.391,
+            "file": "materials/lasl_shd/palladium_p118_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 14,
+            "up_range": [
+                0.0,
+                2.317
+            ],
+            "p_range": [
+                0.0,
+                2.10782
+            ],
+            "compression_range": [
+                1.0,
+                1.44092219
+            ]
+        },
+        {
+            "id": "platinum_p119_lasl",
+            "name": "PLATINUM",
+            "source": "LASL SHD 1980",
+            "rho0": 21.449,
+            "file": "materials/lasl_shd/platinum_p119_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 44,
+            "up_range": [
+                0.0,
+                3.52
+            ],
+            "p_range": [
+                0.0,
+                6.66074
+            ],
+            "compression_range": [
+                1.0,
+                1.68350168
+            ]
+        },
+        {
+            "id": "praseodymium_p122_lasl",
+            "name": "PRASEODYMIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 6.756,
+            "file": "materials/lasl_shd/praseodymium_p122_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 24,
+            "up_range": [
+                0.0,
+                3.219
+            ],
+            "p_range": [
+                0.0,
+                1.38164
+            ],
+            "compression_range": [
+                1.0,
+                2.06185567
+            ]
+        },
+        {
+            "id": "rhenium_p_20.5_g_cm3_p125_lasl",
+            "name": "RHENIUM, p = 20.5 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 20.53,
+            "file": "materials/lasl_shd/rhenium_p_20.5_g_cm3_p125_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 11,
+            "up_range": [
+                0.206,
+                2.028
+            ],
+            "p_range": [
+                0.17551,
+                2.78704
+            ],
+            "compression_range": [
+                1.05263158,
+                1.43472023
+            ]
+        },
+        {
+            "id": "rhodium_p126_lasl",
+            "name": "RHODIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 12.429,
+            "file": "materials/lasl_shd/rhodium_p126_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 14,
+            "up_range": [
+                0.0,
+                2.191
+            ],
+            "p_range": [
+                0.0,
+                2.12481
+            ],
+            "compression_range": [
+                1.0,
+                1.39082058
+            ]
+        },
+        {
+            "id": "rubidium_p127_lasl",
+            "name": "RUBIDIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 1.53,
+            "file": "materials/lasl_shd/rubidium_p127_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 9,
+            "up_range": [
+                1.236,
+                3.967
+            ],
+            "p_range": [
+                0.05206,
+                0.38074
+            ],
+            "compression_range": [
+                1.81488203,
+                2.73972603
+            ]
+        },
+        {
+            "id": "samarium_p128_lasl",
+            "name": "SAMARIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 7.461,
+            "file": "materials/lasl_shd/samarium_p128_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                3.108,
+                3.143
+            ],
+            "p_range": [
+                1.32654,
+                1.3632
+            ],
+            "compression_range": [
+                2.17864924,
+                2.18818381
+            ]
+        },
+        {
+            "id": "silver_p131_lasl",
+            "name": "SILVER",
+            "source": "LASL SHD 1980",
+            "rho0": 10.49,
+            "file": "materials/lasl_shd/silver_p131_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 11,
+            "up_range": [
+                0.0,
+                2.149
+            ],
+            "p_range": [
+                0.0,
+                1.49595
+            ],
+            "compression_range": [
+                1.0,
+                1.4858841
+            ]
+        },
+        {
+            "id": "sodium_p132_lasl",
+            "name": "SODIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 0.968,
+            "file": "materials/lasl_shd/sodium_p132_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 16,
+            "up_range": [
+                1.282,
+                4.309
+            ],
+            "p_range": [
+                0.05185,
+                0.33281
+            ],
+            "compression_range": [
+                1.44300144,
+                2.18818381
+            ]
+        },
+        {
+            "id": "strontium_p133_lasl",
+            "name": "STRONTIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 2.628,
+            "file": "materials/lasl_shd/strontium_p133_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 30,
+            "up_range": [
+                0.0,
+                4.163
+            ],
+            "p_range": [
+                0.0,
+                0.75194
+            ],
+            "compression_range": [
+                1.0,
+                2.63157895
+            ]
+        },
+        {
+            "id": "tantalum_p136_lasl",
+            "name": "TANTALUM",
+            "source": "LASL SHD 1980",
+            "rho0": 18.656,
+            "file": "materials/lasl_shd/tantalum_p136_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 7,
+            "up_range": [
+                0.0,
+                2.219
+            ],
+            "p_range": [
+                0.0,
+                2.22232
+            ],
+            "compression_range": [
+                1.0,
+                1.58478605
+            ]
+        },
+        {
+            "id": "terbium_p137_lasl",
+            "name": "TERBIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 8.209,
+            "file": "materials/lasl_shd/terbium_p137_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 4,
+            "up_range": [
+                0.0,
+                0.792
+            ],
+            "p_range": [
+                0.0,
+                0.1909
+            ],
+            "compression_range": [
+                1.0,
+                1.36986301
+            ]
+        },
+        {
+            "id": "thallium_p138_lasl",
+            "name": "THALLIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 11.84,
+            "file": "materials/lasl_shd/thallium_p138_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 13,
+            "up_range": [
+                0.614,
+                2.347
+            ],
+            "p_range": [
+                0.20232,
+                1.48252
+            ],
+            "compression_range": [
+                1.28369705,
+                1.78890877
+            ]
+        },
+        {
+            "id": "thorium_p139_lasl",
+            "name": "THORIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 11.68,
+            "file": "materials/lasl_shd/thorium_p139_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 9,
+            "up_range": [
+                0.0,
+                2.334
+            ],
+            "p_range": [
+                0.0,
+                1.37423
+            ],
+            "compression_range": [
+                1.0,
+                1.86219739
+            ]
+        },
+        {
+            "id": "thulium_p140_lasl",
+            "name": "THULIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 9.291,
+            "file": "materials/lasl_shd/thulium_p140_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 16,
+            "up_range": [
+                0.0,
+                3.175
+            ],
+            "p_range": [
+                0.0,
+                1.65925
+            ],
+            "compression_range": [
+                1.0,
+                2.29357798
+            ]
+        },
+        {
+            "id": "tin_p141_lasl",
+            "name": "TIN",
+            "source": "LASL SHD 1980",
+            "rho0": 7.287,
+            "file": "materials/lasl_shd/tin_p141_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 37,
+            "up_range": [
+                0.0,
+                3.118
+            ],
+            "p_range": [
+                0.0,
+                1.64476
+            ],
+            "compression_range": [
+                1.0,
+                1.75746924
+            ]
+        },
+        {
+            "id": "titanium_p143_lasl",
+            "name": "TITANIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 4.527,
+            "file": "materials/lasl_shd/titanium_p143_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 39,
+            "up_range": [
+                0.397,
+                3.165
+            ],
+            "p_range": [
+                0.09931,
+                1.17234
+            ],
+            "compression_range": [
+                1.07758621,
+                1.63934426
+            ]
+        },
+        {
+            "id": "tungsten_p0_19.2_g_cm3_p145_lasl",
+            "name": "TUNGSTEN, p0 = 19.2 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 19.235,
+            "file": "materials/lasl_shd/tungsten_p0_19.2_g_cm3_p145_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 18,
+            "up_range": [
+                0.0,
+                1.156
+            ],
+            "p_range": [
+                0.000319,
+                1.20154
+            ],
+            "compression_range": [
+                1.0,
+                1.27064803
+            ]
+        },
+        {
+            "id": "xl0_cy_uy_tungsten_g_cm3_p147_lasl",
+            "name": "XL0, CY, UY, TUNGSTEN g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 18.67,
+            "file": "materials/lasl_shd/xl0_cy_uy_tungsten_g_cm3_p147_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                0.302,
+                0.721
+            ],
+            "p_range": [
+                0.19706,
+                0.58542
+            ],
+            "compression_range": [
+                1.0940919,
+                1.19904077
+            ]
+        },
+        {
+            "id": "tungsten_p_18.7_g_cm3_xf_uranium_p148_lasl",
+            "name": "TUNGSTEN, p = 18.7 g/cm3 xf URANIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 18.93,
+            "file": "materials/lasl_shd/tungsten_p_18.7_g_cm3_xf_uranium_p148_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 81,
+            "up_range": [
+                0.0,
+                3.463
+            ],
+            "p_range": [
+                0.0,
+                4.79513
+            ],
+            "compression_range": [
+                1.0,
+                1.90114068
+            ]
+        },
+        {
+            "id": "vanadium_p152_lasl",
+            "name": "VANADIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 6.099,
+            "file": "materials/lasl_shd/vanadium_p152_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 16,
+            "up_range": [
+                0.0,
+                2.561
+            ],
+            "p_range": [
+                0.0,
+                1.26508
+            ],
+            "compression_range": [
+                1.0,
+                1.4619883
+            ]
+        },
+        {
+            "id": "ytterbium_p153_lasl",
+            "name": "YTTERBIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 7.019,
+            "file": "materials/lasl_shd/ytterbium_p153_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 15,
+            "up_range": [
+                0.0,
+                3.319
+            ],
+            "p_range": [
+                0.0,
+                1.25356
+            ],
+            "compression_range": [
+                1.0,
+                2.61096606
+            ]
+        },
+        {
+            "id": "yttrium_p155_lasl",
+            "name": "YTTRIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 4.579,
+            "file": "materials/lasl_shd/yttrium_p155_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                0.0,
+                2.522
+            ],
+            "p_range": [
+                0.0,
+                0.66451
+            ],
+            "compression_range": [
+                1.0,
+                1.77935943
+            ]
+        },
+        {
+            "id": "zinc_p157_lasl",
+            "name": "ZINC",
+            "source": "LASL SHD 1980",
+            "rho0": 7.14,
+            "file": "materials/lasl_shd/zinc_p157_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                2.676,
+                2.679
+            ],
+            "p_range": [
+                1.36383,
+                1.38523
+            ],
+            "compression_range": [
+                1.58478605,
+                1.6025641
+            ]
+        },
+        {
+            "id": "zirconium_p156_lasl",
+            "name": "ZIRCONIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 6.506,
+            "file": "materials/lasl_shd/zirconium_p156_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 21,
+            "up_range": [
+                0.0,
+                2.678
+            ],
+            "p_range": [
+                0.0,
+                1.17919
+            ],
+            "compression_range": [
+                1.0,
+                1.65562914
+            ]
+        },
+        {
+            "id": "aluminum_921t_p162_lasl",
+            "name": "ALUMINUM, 921T",
+            "source": "LASL SHD 1980",
+            "rho0": 2.828,
+            "file": "materials/lasl_shd/aluminum_921t_p162_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 85,
+            "up_range": [
+                0.0,
+                3.771
+            ],
+            "p_range": [
+                0.0,
+                1.10542
+            ],
+            "compression_range": [
+                1.0,
+                1.57728707
+            ]
+        },
+        {
+            "id": "aluminum_p165_lasl",
+            "name": "ALUMINUM",
+            "source": "LASL SHD 1980",
+            "rho0": 2.712,
+            "file": "materials/lasl_shd/aluminum_p165_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 4,
+            "up_range": [
+                0.428,
+                0.804
+            ],
+            "p_range": [
+                0.06741,
+                0.13809
+            ],
+            "compression_range": [
+                1.07991361,
+                1.14547537
+            ]
+        },
+        {
+            "id": "aluminum_2024_p166_lasl",
+            "name": "ALUMINUM, 2024",
+            "source": "LASL SHD 1980",
+            "rho0": 2.784,
+            "file": "materials/lasl_shd/aluminum_2024_p166_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 182,
+            "up_range": [
+                0.279,
+                4.26
+            ],
+            "p_range": [
+                0.04491,
+                1.23743
+            ],
+            "compression_range": [
+                1.05042017,
+                1.68918919
+            ]
+        },
+        {
+            "id": "aluminum_p173_lasl",
+            "name": "ALUMINUM",
+            "source": "LASL SHD 1980",
+            "rho0": 2.559,
+            "file": "materials/lasl_shd/aluminum_p173_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 18,
+            "up_range": [
+                0.0,
+                3.817
+            ],
+            "p_range": [
+                0.0,
+                0.98882
+            ],
+            "compression_range": [
+                1.0,
+                1.6286645
+            ]
+        },
+        {
+            "id": "aluminum_p175_lasl",
+            "name": "ALUMINUM",
+            "source": "LASL SHD 1980",
+            "rho0": 2.224,
+            "file": "materials/lasl_shd/aluminum_p175_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 21,
+            "up_range": [
+                0.0,
+                4.064
+            ],
+            "p_range": [
+                0.0,
+                0.89006
+            ],
+            "compression_range": [
+                1.0,
+                1.73913043
+            ]
+        },
+        {
+            "id": "aluminum_2024_sintered_p_2.0_g_cma_p177_lasl",
+            "name": "ALUMINUM, 2024, sintered, p = 2.0 g/cma",
+            "source": "LASL SHD 1980",
+            "rho0": 1.955,
+            "file": "materials/lasl_shd/aluminum_2024_sintered_p_2.0_g_cma_p177_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 23,
+            "up_range": [
+                0.0,
+                4.361
+            ],
+            "p_range": [
+                0.0,
+                0.78815
+            ],
+            "compression_range": [
+                1.0,
+                1.90114068
+            ]
+        },
+        {
+            "id": "aluminum_2024_sintered_p_1.7_g_cm9_p179_lasl",
+            "name": "ALUMINUM, 2024, sintered, p = 1.7 g/cm9",
+            "source": "LASL SHD 1980",
+            "rho0": 1.661,
+            "file": "materials/lasl_shd/aluminum_2024_sintered_p_1.7_g_cm9_p179_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 21,
+            "up_range": [
+                1.012,
+                4.567
+            ],
+            "p_range": [
+                0.03792,
+                0.70541
+            ],
+            "compression_range": [
+                1.6722408,
+                2.06185567
+            ]
+        },
+        {
+            "id": "aluminum_p18_lasl",
+            "name": "ALUMINUM",
+            "source": "LASL SHD 1980",
+            "rho0": 2.7,
+            "file": "materials/lasl_shd/aluminum_p18_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                1.178,
+                1.491
+            ],
+            "p_range": [
+                0.21752,
+                0.29718
+            ],
+            "compression_range": [
+                1.20772947,
+                1.25313283
+            ]
+        },
+        {
+            "id": "aluminum_6061_p182_lasl",
+            "name": "ALUMINUM, 6061",
+            "source": "LASL SHD 1980",
+            "rho0": 2.703,
+            "file": "materials/lasl_shd/aluminum_6061_p182_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 19,
+            "up_range": [
+                0.0,
+                3.47
+            ],
+            "p_range": [
+                0.0,
+                0.96317
+            ],
+            "compression_range": [
+                1.0,
+                1.53846154
+            ]
+        },
+        {
+            "id": "gold_7.9_wt_germanium_p190_lasl",
+            "name": "GOLD-7.9 wt% GERMANIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 16.111,
+            "file": "materials/lasl_shd/gold_7.9_wt_germanium_p190_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 6,
+            "up_range": [
+                0.488,
+                1.809
+            ],
+            "p_range": [
+                0.25684,
+                1.65491
+            ],
+            "compression_range": [
+                1.17508813,
+                1.47058824
+            ]
+        },
+        {
+            "id": "gold_g.3_wt_germanium_p191_lasl",
+            "name": "GOLD-g.3 wt% GERMANIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 15.536,
+            "file": "materials/lasl_shd/gold_g.3_wt_germanium_p191_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                0.0,
+                0.304
+            ],
+            "p_range": [
+                0.0,
+                0.15176
+            ],
+            "compression_range": [
+                1.0,
+                1.10393162
+            ]
+        },
+        {
+            "id": "gold_20.6_wt_lead_p192_lasl",
+            "name": "GOLD-20.6 wt% LEAD",
+            "source": "LASL SHD 1980",
+            "rho0": 17.025,
+            "file": "materials/lasl_shd/gold_20.6_wt_lead_p192_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 4,
+            "up_range": [
+                0.0,
+                1.816
+            ],
+            "p_range": [
+                0.0,
+                1.71998
+            ],
+            "compression_range": [
+                1.0,
+                1.4858841
+            ]
+        },
+        {
+            "id": "gold_33.5_wt_lead_p193_lasl",
+            "name": "GOLD-33.5 wt% LEAD",
+            "source": "LASL SHD 1980",
+            "rho0": 16.032,
+            "file": "materials/lasl_shd/gold_33.5_wt_lead_p193_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                0.0,
+                0.879
+            ],
+            "p_range": [
+                0.0,
+                0.54197
+            ],
+            "compression_range": [
+                1.0,
+                1.29701686
+            ]
+        },
+        {
+            "id": "iron_40.0_wt_cobalt_p195_lasl",
+            "name": "IRON-40.0 wt% COBALT",
+            "source": "LASL SHD 1980",
+            "rho0": 8.091,
+            "file": "materials/lasl_shd/iron_40.0_wt_cobalt_p195_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 18,
+            "up_range": [
+                0.0,
+                1.186
+            ],
+            "p_range": [
+                0.0,
+                0.53335
+            ],
+            "compression_range": [
+                1.0,
+                1.27064803
+            ]
+        },
+        {
+            "id": "iron_10.0_wt_nickel_p197_lasl",
+            "name": "IRON-10.0 wt% NICKEL",
+            "source": "LASL SHD 1980",
+            "rho0": 7.886,
+            "file": "materials/lasl_shd/iron_10.0_wt_nickel_p197_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 10,
+            "up_range": [
+                0.0,
+                2.754
+            ],
+            "p_range": [
+                0.0,
+                1.79648
+            ],
+            "compression_range": [
+                1.0,
+                1.49925037
+            ]
+        },
+        {
+            "id": "iron_l_wt_nickel_p196_lasl",
+            "name": "IRON-l? wt% NICKEL",
+            "source": "LASL SHD 1980",
+            "rho0": 7.962,
+            "file": "materials/lasl_shd/iron_l_wt_nickel_p196_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 15,
+            "up_range": [
+                0.0,
+                2.76
+            ],
+            "p_range": [
+                0.0,
+                1.82745
+            ],
+            "compression_range": [
+                1.0,
+                1.49700599
+            ]
+        },
+        {
+            "id": "iron_26.2_wt_nickel_p199_lasl",
+            "name": "IRON-26.2 wt% NICKEL",
+            "source": "LASL SHD 1980",
+            "rho0": 7.974,
+            "file": "materials/lasl_shd/iron_26.2_wt_nickel_p199_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 15,
+            "up_range": [
+                0.0,
+                2.777
+            ],
+            "p_range": [
+                0.0,
+                1.81048
+            ],
+            "compression_range": [
+                1.0,
+                1.51515152
+            ]
+        },
+        {
+            "id": "iron_2_wt._silicon_p200_lasl",
+            "name": "IRON-2 wt.% SILICON",
+            "source": "LASL SHD 1980",
+            "rho0": 7.685,
+            "file": "materials/lasl_shd/iron_2_wt._silicon_p200_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 8,
+            "up_range": [
+                0.986,
+                2.843
+            ],
+            "p_range": [
+                0.40887,
+                1.89339
+            ],
+            "compression_range": [
+                1.22399021,
+                1.48809524
+            ]
+        },
+        {
+            "id": "iron_3.8_we_silicon_p201_lasl",
+            "name": "IRON-3.8 We% SILICON",
+            "source": "LASL SHD 1980",
+            "rho0": 7.652,
+            "file": "materials/lasl_shd/iron_3.8_we_silicon_p201_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 7,
+            "up_range": [
+                0.986,
+                2.845
+            ],
+            "p_range": [
+                0.40999,
+                1.89224
+            ],
+            "compression_range": [
+                1.22100122,
+                1.4858841
+            ]
+        },
+        {
+            "id": "iron_4.6_wt_silicon_p202_lasl",
+            "name": "IRON-4.6 wt% SILICON",
+            "source": "LASL SHD 1980",
+            "rho0": 7.589,
+            "file": "materials/lasl_shd/iron_4.6_wt_silicon_p202_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 10,
+            "up_range": [
+                0.984,
+                2.857
+            ],
+            "p_range": [
+                0.41139,
+                1.87851
+            ],
+            "compression_range": [
+                1.2180268,
+                1.49253731
+            ]
+        },
+        {
+            "id": "iron_6.9_wt_silicon_p203_lasl",
+            "name": "IRON-6.9 wt% SILICON",
+            "source": "LASL SHD 1980",
+            "rho0": 7.49,
+            "file": "materials/lasl_shd/iron_6.9_wt_silicon_p203_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                0.975,
+                2.291
+            ],
+            "p_range": [
+                0.41669,
+                1.36058
+            ],
+            "compression_range": [
+                1.20627262,
+                1.40646976
+            ]
+        },
+        {
+            "id": "iron_20_wt_silicon_p204_lasl",
+            "name": "IRON-20 wt% SILICON",
+            "source": "LASL SHD 1980",
+            "rho0": 6.828,
+            "file": "materials/lasl_shd/iron_20_wt_silicon_p204_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                0.999,
+                2.748
+            ],
+            "p_range": [
+                0.46824,
+                1.6778
+            ],
+            "compression_range": [
+                1.17233294,
+                1.44508671
+            ]
+        },
+        {
+            "id": "iron_10.0_wt_vanadium_p206_lasl",
+            "name": "IRON-10.0 wt% VANADIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 7.703,
+            "file": "materials/lasl_shd/iron_10.0_wt_vanadium_p206_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 16,
+            "up_range": [
+                0.0,
+                1.111
+            ],
+            "p_range": [
+                0.0,
+                0.47948
+            ],
+            "compression_range": [
+                1.0,
+                1.24688279
+            ]
+        },
+        {
+            "id": "magnesium_az31b_p209_lasl",
+            "name": "MAGNESIUM, AZ31B",
+            "source": "LASL SHD 1980",
+            "rho0": 1.776,
+            "file": "materials/lasl_shd/magnesium_az31b_p209_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 79,
+            "up_range": [
+                0.0,
+                6.304
+            ],
+            "p_range": [
+                0.0,
+                1.31554
+            ],
+            "compression_range": [
+                1.0,
+                2.18818381
+            ]
+        },
+        {
+            "id": "magnesium_14_wt_li_1_wt_al_p211_lasl",
+            "name": "MAGNESIUM-14 wt% Li-1 wt% Al",
+            "source": "LASL SHD 1980",
+            "rho0": 1.391,
+            "file": "materials/lasl_shd/magnesium_14_wt_li_1_wt_al_p211_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 16,
+            "up_range": [
+                0.668,
+                4.467
+            ],
+            "p_range": [
+                0.05022,
+                0.62703
+            ],
+            "compression_range": [
+                1.14285714,
+                1.80505415
+            ]
+        },
+        {
+            "id": "steel_304l_p214_lasl",
+            "name": "STEEL, 304L",
+            "source": "LASL SHD 1980",
+            "rho0": 7.903,
+            "file": "materials/lasl_shd/steel_304l_p214_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 12,
+            "up_range": [
+                0.0,
+                2.713
+            ],
+            "p_range": [
+                0.0,
+                1.83791
+            ],
+            "compression_range": [
+                1.0,
+                1.4619883
+            ]
+        },
+        {
+            "id": "steel_347_p215_lasl",
+            "name": "STEEL, 347",
+            "source": "LASL SHD 1980",
+            "rho0": 7.91,
+            "file": "materials/lasl_shd/steel_347_p215_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 20,
+            "up_range": [
+                0.304,
+                3.49
+            ],
+            "p_range": [
+                0.11889,
+                2.62894
+            ],
+            "compression_range": [
+                1.06609808,
+                1.57728707
+            ]
+        },
+        {
+            "id": "steel_348_p217_lasl",
+            "name": "STEEL, 348",
+            "source": "LASL SHD 1980",
+            "rho0": 7.923,
+            "file": "materials/lasl_shd/steel_348_p217_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                0.0,
+                0.965
+            ],
+            "p_range": [
+                0.0,
+                0.46109
+            ],
+            "compression_range": [
+                1.0,
+                1.19047619
+            ]
+        },
+        {
+            "id": "steel_maraging_almar_p218_lasl",
+            "name": "STEEL, maraging, Almar",
+            "source": "LASL SHD 1980",
+            "rho0": 7.758,
+            "file": "materials/lasl_shd/steel_maraging_almar_p218_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 15,
+            "up_range": [
+                0.0,
+                2.929
+            ],
+            "p_range": [
+                0.0,
+                1.97423
+            ],
+            "compression_range": [
+                1.0,
+                1.51745068
+            ]
+        },
+        {
+            "id": "steel_maraging_vascomax_300_p221_lasl",
+            "name": "STEEL, maraging, Vascomax 300",
+            "source": "LASL SHD 1980",
+            "rho0": 8.091,
+            "file": "materials/lasl_shd/steel_maraging_vascomax_300_p221_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 15,
+            "up_range": [
+                0.0,
+                2.889
+            ],
+            "p_range": [
+                0.0,
+                2.00954
+            ],
+            "compression_range": [
+                1.0,
+                1.50829563
+            ]
+        },
+        {
+            "id": "tungsten_carbide_5_wt_cobalt_p222_lasl",
+            "name": "TUNGSTEN CARBIDE-5 wt% COBALT",
+            "source": "LASL SHD 1980",
+            "rho0": 15.013,
+            "file": "materials/lasl_shd/tungsten_carbide_5_wt_cobalt_p222_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 11,
+            "up_range": [
+                0.22,
+                1.819
+            ],
+            "p_range": [
+                0.18439,
+                2.00242
+            ],
+            "compression_range": [
+                1.04166667,
+                1.32978723
+            ]
+        },
+        {
+            "id": "uranium_2_p4_lasl",
+            "name": "URANIUM-2",
+            "source": "LASL SHD 1980",
+            "rho0": 18.58,
+            "file": "materials/lasl_shd/uranium_2_p4_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 6,
+            "up_range": [
+                1.813,
+                2.385
+            ],
+            "p_range": [
+                1.79278,
+                2.64085
+            ],
+            "compression_range": [
+                1.5128593,
+                1.66666667
+            ]
+        },
+        {
+            "id": "uranium_3.0_wt_molybdenum_p224_lasl",
+            "name": "URANIUM-3.0 wt% MOLYBDENUM",
+            "source": "LASL SHD 1980",
+            "rho0": 18.447,
+            "file": "materials/lasl_shd/uranium_3.0_wt_molybdenum_p224_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 41,
+            "up_range": [
+                0.265,
+                2.747
+            ],
+            "p_range": [
+                0.14834,
+                3.42713
+            ],
+            "compression_range": [
+                1.09529025,
+                1.68350168
+            ]
+        },
+        {
+            "id": "uranium_8_p227_lasl",
+            "name": "URANIUM-8",
+            "source": "LASL SHD 1980",
+            "rho0": 17.312,
+            "file": "materials/lasl_shd/uranium_8_p227_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 16,
+            "up_range": [
+                0.0,
+                2.317
+            ],
+            "p_range": [
+                0.0,
+                2.48017
+            ],
+            "compression_range": [
+                1.0,
+                1.59744409
+            ]
+        },
+        {
+            "id": "uranium_4.7_wt_niobium_p228_lasl",
+            "name": "URANIUM-4.7 wt% NIOBIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 17.65,
+            "file": "materials/lasl_shd/uranium_4.7_wt_niobium_p228_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 12,
+            "up_range": [
+                1.863,
+                2.44
+            ],
+            "p_range": [
+                1.75011,
+                2.59929
+            ],
+            "compression_range": [
+                1.53609831,
+                1.68918919
+            ]
+        },
+        {
+            "id": "uranium_6.0_wt_niobium_p229_lasl",
+            "name": "URANIUM-6.0 wt% NIOBIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 17.411,
+            "file": "materials/lasl_shd/uranium_6.0_wt_niobium_p229_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 15,
+            "up_range": [
+                0.0,
+                2.093
+            ],
+            "p_range": [
+                0.0,
+                2.11444
+            ],
+            "compression_range": [
+                1.0,
+                1.5625
+            ]
+        },
+        {
+            "id": "uranium_l.0_wt_rhodium_p230_lasl",
+            "name": "URANIUM-l.0 wt% RHODIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 18.825,
+            "file": "materials/lasl_shd/uranium_l.0_wt_rhodium_p230_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 11,
+            "up_range": [
+                0.0,
+                2.353
+            ],
+            "p_range": [
+                0.0,
+                2.66034
+            ],
+            "compression_range": [
+                1.0,
+                1.64744646
+            ]
+        },
+        {
+            "id": "uranium_5.4_wt_rhodium_p232_lasl",
+            "name": "URANIUM-5.4 wt% RHODIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 18.326,
+            "file": "materials/lasl_shd/uranium_5.4_wt_rhodium_p232_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 12,
+            "up_range": [
+                0.0,
+                2.337
+            ],
+            "p_range": [
+                0.0,
+                2.71484
+            ],
+            "compression_range": [
+                1.0,
+                1.59489633
+            ]
+        },
+        {
+            "id": "uranium_13.4_wt_rhodium_p233_lasl",
+            "name": "URANIUM-13.4 wt% RHODIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 17.204,
+            "file": "materials/lasl_shd/uranium_13.4_wt_rhodium_p233_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                2.213,
+                2.231
+            ],
+            "p_range": [
+                2.25919,
+                2.29047
+            ],
+            "compression_range": [
+                1.57977883,
+                1.61030596
+            ]
+        },
+        {
+            "id": "uranium_o.6_wt_titanium_p235_lasl",
+            "name": "URANIUM-O.6 wt% TITANIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 18.65,
+            "file": "materials/lasl_shd/uranium_o.6_wt_titanium_p235_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 10,
+            "up_range": [
+                1.823,
+                2.376
+            ],
+            "p_range": [
+                1.79235,
+                2.6521
+            ],
+            "compression_range": [
+                1.52671756,
+                1.65837479
+            ]
+        },
+        {
+            "id": "uranium_2.5_wt_nb_1.3_wt_ti_p236_lasl",
+            "name": "URANIUM-2.5 wt% Nb-1.3 wt% Ti",
+            "source": "LASL SHD 1980",
+            "rho0": 17.75,
+            "file": "materials/lasl_shd/uranium_2.5_wt_nb_1.3_wt_ti_p236_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 10,
+            "up_range": [
+                1.85,
+                2.436
+            ],
+            "p_range": [
+                1.75847,
+                2.58552
+            ],
+            "compression_range": [
+                1.52439024,
+                1.69204738
+            ]
+        },
+        {
+            "id": "andalusite_chiastolite_south_australia_p238_lasl",
+            "name": "ANDALUSITE, chiastolite, South Australia",
+            "source": "LASL SHD 1980",
+            "rho0": 3.074,
+            "file": "materials/lasl_shd/andalusite_chiastolite_south_australia_p238_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 17,
+            "up_range": [
+                0.0,
+                3.633
+            ],
+            "p_range": [
+                0.0,
+                1.0531
+            ],
+            "compression_range": [
+                1.0,
+                1.63132137
+            ]
+        },
+        {
+            "id": "anthracene_reagent_grade_polycrystalline_pressed_p239_lasl",
+            "name": "ANTHRACENE, reagent-grade, polycrystalline, pressed",
+            "source": "LASL SHD 1980",
+            "rho0": 1.249,
+            "file": "materials/lasl_shd/anthracene_reagent_grade_polycrystalline_pressed_p239_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 19,
+            "up_range": [
+                0.0,
+                4.81
+            ],
+            "p_range": [
+                0.0,
+                0.547
+            ],
+            "compression_range": [
+                1.0,
+                2.23713647
+            ]
+        },
+        {
+            "id": "barium_titanate_p240_lasl",
+            "name": "BARIUM TITANATE",
+            "source": "LASL SHD 1980",
+            "rho0": 5.431,
+            "file": "materials/lasl_shd/barium_titanate_p240_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 17,
+            "up_range": [
+                0.756,
+                2.479
+            ],
+            "p_range": [
+                0.18157,
+                1.02206
+            ],
+            "compression_range": [
+                1.20627262,
+                1.5015015
+            ]
+        },
+        {
+            "id": "beryllium_oxide_p0_3.0_g_cm3_p241_lasl",
+            "name": "BERYLLIUM OXIDE, p0 = 3.0 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 2.989,
+            "file": "materials/lasl_shd/beryllium_oxide_p0_3.0_g_cm3_p241_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 10,
+            "up_range": [
+                0.0,
+                2.822
+            ],
+            "p_range": [
+                0.0,
+                1.01675
+            ],
+            "compression_range": [
+                1.0,
+                1.30548303
+            ]
+        },
+        {
+            "id": "beryllium_oxide_p_2.8_g_cm_p242_lasl",
+            "name": "BERYLLIUM OXIDE, p,, = 2.8 g/cm”",
+            "source": "LASL SHD 1980",
+            "rho0": 2.781,
+            "file": "materials/lasl_shd/beryllium_oxide_p_2.8_g_cm_p242_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 9,
+            "up_range": [
+                0.368,
+                3.034
+            ],
+            "p_range": [
+                0.09016,
+                0.92917
+            ],
+            "compression_range": [
+                1.04384134,
+                1.37931034
+            ]
+        },
+        {
+            "id": "boric_acid_lasl",
+            "name": "BORIC ACID",
+            "source": "LASL SHD 1980",
+            "rho0": 1.471,
+            "file": "materials/lasl_shd/boric_acid_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                1.279,
+                2.114
+            ],
+            "p_range": [
+                0.06963,
+                0.1572
+            ],
+            "compression_range": [
+                1.52905199,
+                1.71821306
+            ]
+        },
+        {
+            "id": "boron_carbide_p0_2.4_g_cm3_p245_lasl",
+            "name": "BORON CARBIDE, p0 = 2.4 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 2.4,
+            "file": "materials/lasl_shd/boron_carbide_p0_2.4_g_cm3_p245_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 16,
+            "up_range": [
+                0.537,
+                3.781
+            ],
+            "p_range": [
+                0.13537,
+                1.12881
+            ],
+            "compression_range": [
+                1.05485232,
+                1.44927536
+            ]
+        },
+        {
+            "id": "boron_nitride_pressed_p0_2.15_g_cm3_p247_lasl",
+            "name": "BORON NITRIDE, pressed, p0 = 2.15 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 2.145,
+            "file": "materials/lasl_shd/boron_nitride_pressed_p0_2.15_g_cm3_p247_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 18,
+            "up_range": [
+                2.621,
+                4.281
+            ],
+            "p_range": [
+                0.36232,
+                0.87961
+            ],
+            "compression_range": [
+                1.67785235,
+                1.84842884
+            ]
+        },
+        {
+            "id": "boron_nitride_pressed_pa_2.12_g_cm3_p248_lasl",
+            "name": "BORON NITRIDE, pressed, pa = 2.12 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 2.115,
+            "file": "materials/lasl_shd/boron_nitride_pressed_pa_2.12_g_cm3_p248_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 9,
+            "up_range": [
+                0.899,
+                3.98
+            ],
+            "p_range": [
+                0.08401,
+                0.74816
+            ],
+            "compression_range": [
+                1.25628141,
+                1.86567164
+            ]
+        },
+        {
+            "id": "boron_nitride_pressed_p0_2.08_g_cm3_p249_lasl",
+            "name": "BORON NITRIDE, pressed, p0 = 2.08 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 2.082,
+            "file": "materials/lasl_shd/boron_nitride_pressed_p0_2.08_g_cm3_p249_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 51,
+            "up_range": [
+                0.636,
+                4.283
+            ],
+            "p_range": [
+                0.04971,
+                0.83842
+            ],
+            "compression_range": [
+                1.20481928,
+                2.14132762
+            ]
+        },
+        {
+            "id": "boron_nitride_pressed_p0_1.81_g_cm3_p253_lasl",
+            "name": "BORON NITRIDE, pressed, p0 = 1.81 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 1.809,
+            "file": "materials/lasl_shd/boron_nitride_pressed_p0_1.81_g_cm3_p253_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 4,
+            "up_range": [
+                2.267,
+                3.319
+            ],
+            "p_range": [
+                0.19559,
+                0.39466
+            ],
+            "compression_range": [
+                1.86567164,
+                2.02020202
+            ]
+        },
+        {
+            "id": "calcium_oxide_pressed_p254_lasl",
+            "name": "CALCIUM OXIDE, pressed",
+            "source": "LASL SHD 1980",
+            "rho0": 2.98,
+            "file": "materials/lasl_shd/calcium_oxide_pressed_p254_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 13,
+            "up_range": [
+                0.0,
+                3.558
+            ],
+            "p_range": [
+                0.0,
+                0.90635
+            ],
+            "compression_range": [
+                1.0,
+                1.70940171
+            ]
+        },
+        {
+            "id": "cassiterite_san_luis_potosi_mexico_p255_lasl",
+            "name": "CASSITERITE, San Luis Potosi, Mexico",
+            "source": "LASL SHD 1980",
+            "rho0": 6.694,
+            "file": "materials/lasl_shd/cassiterite_san_luis_potosi_mexico_p255_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 12,
+            "up_range": [
+                0.509,
+                2.833
+            ],
+            "p_range": [
+                0.22989,
+                1.36648
+            ],
+            "compression_range": [
+                1.08108108,
+                1.61812298
+            ]
+        },
+        {
+            "id": "boo_p259_lasl",
+            "name": "bOO)",
+            "source": "LASL SHD 1980",
+            "rho0": 4.528,
+            "file": "materials/lasl_shd/boo_p259_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 4,
+            "up_range": [
+                0.561,
+                3.174
+            ],
+            "p_range": [
+                0.06523,
+                0.85944
+            ],
+            "compression_range": [
+                1.27877238,
+                2.13219616
+            ]
+        },
+        {
+            "id": "corundum_ceramic_p0_3.83_g_cm3_p262_lasl",
+            "name": "CORUNDUM, ceramic, p0 = 3.83 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 3.977,
+            "file": "materials/lasl_shd/corundum_ceramic_p0_3.83_g_cm3_p262_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 71,
+            "up_range": [
+                0.0,
+                3.231
+            ],
+            "p_range": [
+                0.0,
+                1.4348
+            ],
+            "compression_range": [
+                1.0,
+                1.43061516
+            ]
+        },
+        {
+            "id": "enstatite_ceramic_p_2.95_g_cm3_p266_lasl",
+            "name": "ENSTATITE, ceramic, p,, = 2.95 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 2.933,
+            "file": "materials/lasl_shd/enstatite_ceramic_p_2.95_g_cm3_p266_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 17,
+            "up_range": [
+                0.746,
+                3.825
+            ],
+            "p_range": [
+                0.08649,
+                0.93976
+            ],
+            "compression_range": [
+                1.19331742,
+                1.88679245
+            ]
+        },
+        {
+            "id": "fayalite_rockport_massachusetts_p270_lasl",
+            "name": "FAYALITE, Rockport, Massachusetts",
+            "source": "LASL SHD 1980",
+            "rho0": 4.245,
+            "file": "materials/lasl_shd/fayalite_rockport_massachusetts_p270_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 16,
+            "up_range": [
+                0.702,
+                3.483
+            ],
+            "p_range": [
+                0.18751,
+                1.28412
+            ],
+            "compression_range": [
+                1.12485939,
+                1.68067227
+            ]
+        },
+        {
+            "id": "forsterite_ceramic_p_3.20_g_cm3_p271_lasl",
+            "name": "FORSTERITE, ceramic, p = 3.20 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 3.201,
+            "file": "materials/lasl_shd/forsterite_ceramic_p_3.20_g_cm3_p271_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 5,
+            "up_range": [
+                0.0,
+                1.953
+            ],
+            "p_range": [
+                0.0,
+                0.52772
+            ],
+            "compression_range": [
+                1.0,
+                1.30039012
+            ]
+        },
+        {
+            "id": "forsterite_ceramic_p_3.06_g_cm3_p273_lasl",
+            "name": "FORSTERITE, ceramic, p = 3.06 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 3.059,
+            "file": "materials/lasl_shd/forsterite_ceramic_p_3.06_g_cm3_p273_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 26,
+            "up_range": [
+                0.12,
+                3.626
+            ],
+            "p_range": [
+                0.0325,
+                1.04775
+            ],
+            "compression_range": [
+                1.01522843,
+                1.67504188
+            ]
+        },
+        {
+            "id": "hafnium_titanate_p_6.93_g_cm3_p275_lasl",
+            "name": "HAFNIUM TITANATE, p = 6.93 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 6.932,
+            "file": "materials/lasl_shd/hafnium_titanate_p_6.93_g_cm3_p275_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 13,
+            "up_range": [
+                0.664,
+                3.057
+            ],
+            "p_range": [
+                0.16457,
+                1.64403
+            ],
+            "compression_range": [
+                1.22850123,
+                1.65562914
+            ]
+        },
+        {
+            "id": "hafnium_titanate_p15_lasl",
+            "name": "HAFNIUM, TITANATE",
+            "source": "LASL SHD 1980",
+            "rho0": 5.597,
+            "file": "materials/lasl_shd/hafnium_titanate_p15_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 11,
+            "up_range": [
+                1.043,
+                3.334
+            ],
+            "p_range": [
+                0.17011,
+                1.31086
+            ],
+            "compression_range": [
+                1.55520995,
+                1.9047619
+            ]
+        },
+        {
+            "id": "hlafnium_titanate_p._4.37_g_cm3_p277_lasl",
+            "name": "HLAFNIUM TITANATE, p. = 4.37 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 4.367,
+            "file": "materials/lasl_shd/hlafnium_titanate_p._4.37_g_cm3_p277_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 14,
+            "up_range": [
+                1.091,
+                3.76
+            ],
+            "p_range": [
+                0.10652,
+                1.11578
+            ],
+            "compression_range": [
+                1.86915888,
+                2.22717149
+            ]
+        },
+        {
+            "id": "hlematite_p278_lasl",
+            "name": "HLEMATITE",
+            "source": "LASL SHD 1980",
+            "rho0": 5.007,
+            "file": "materials/lasl_shd/hlematite_p278_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                2.343,
+                2.873
+            ],
+            "p_range": [
+                0.8687,
+                1.20305
+            ],
+            "compression_range": [
+                1.44927536,
+                1.52439024
+            ]
+        },
+        {
+            "id": "ilmenlte_p279_lasl",
+            "name": "ILMENlTE",
+            "source": "LASL SHD 1980",
+            "rho0": 4.787,
+            "file": "materials/lasl_shd/ilmenlte_p279_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 14,
+            "up_range": [
+                0.0,
+                3.082
+            ],
+            "p_range": [
+                0.0,
+                1.3026
+            ],
+            "compression_range": [
+                1.0,
+                1.53846154
+            ]
+        },
+        {
+            "id": "iron_magnesium_oxide_feso_mg_p280_lasl",
+            "name": "IRON MAGNESIUM OXIDE, Feso, Mg&",
+            "source": "LASL SHD 1980",
+            "rho0": 5.191,
+            "file": "materials/lasl_shd/iron_magnesium_oxide_feso_mg_p280_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 5,
+            "up_range": [
+                0.705,
+                2.721
+            ],
+            "p_range": [
+                0.22267,
+                1.24485
+            ],
+            "compression_range": [
+                1.13130937,
+                1.447178
+            ]
+        },
+        {
+            "id": "lithium_8_deuteride_p266_lasl",
+            "name": "LITHIUM-8, DEUTERIDE",
+            "source": "LASL SHD 1980",
+            "rho0": 0.798,
+            "file": "materials/lasl_shd/lithium_8_deuteride_p266_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 15,
+            "up_range": [
+                0.0,
+                4.712
+            ],
+            "p_range": [
+                0.0,
+                0.44224
+            ],
+            "compression_range": [
+                1.0,
+                1.6722408
+            ]
+        },
+        {
+            "id": "lithium_fluoride_single_crystal_loo_p296_lasl",
+            "name": "LITHIUM FLUORIDE, single-crystal, [loo]",
+            "source": "LASL SHD 1980",
+            "rho0": 0.5785,
+            "file": "materials/lasl_shd/lithium_fluoride_single_crystal_loo_p296_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 48,
+            "up_range": [
+                0.451,
+                5.372
+            ],
+            "p_range": [
+                0.01442,
+                5.85
+            ],
+            "compression_range": [
+                1.0845987,
+                2.07039337
+            ]
+        },
+        {
+            "id": "magnetite_p301_lasl",
+            "name": "MAGNETITE",
+            "source": "LASL SHD 1980",
+            "rho0": 5.117,
+            "file": "materials/lasl_shd/magnetite_p301_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 12,
+            "up_range": [
+                0.0,
+                2.975
+            ],
+            "p_range": [
+                0.0,
+                1.26961
+            ],
+            "compression_range": [
+                1.0,
+                1.55520995
+            ]
+        },
+        {
+            "id": "niobium_carbide_p_7.2_g_cm3_p306_lasl",
+            "name": "NIOBIUM CARBIDE, p = 7.2 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 7.463,
+            "file": "materials/lasl_shd/niobium_carbide_p_7.2_g_cm3_p306_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 10,
+            "up_range": [
+                1.064,
+                2.834
+            ],
+            "p_range": [
+                0.55354,
+                2.03137
+            ],
+            "compression_range": [
+                1.18063754,
+                1.41843972
+            ]
+        },
+        {
+            "id": "0_livine_p307_lasl",
+            "name": "0:LIVINE",
+            "source": "LASL SHD 1980",
+            "rho0": 3.215,
+            "file": "materials/lasl_shd/0_livine_p307_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                1.43,
+                4.81
+            ],
+            "p_range": [
+                0.34061,
+                1.5959
+            ],
+            "compression_range": [
+                1.23915737,
+                1.87265918
+            ]
+        },
+        {
+            "id": "periclase_ceramic_p_3.34_g_cm8_p308_lasl",
+            "name": "PERICLASE, ceramic, p = 3.34 g/cm8",
+            "source": "LASL SHD 1980",
+            "rho0": 3.35,
+            "file": "materials/lasl_shd/periclase_ceramic_p_3.34_g_cm8_p308_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 12,
+            "up_range": [
+                1.147,
+                3.405
+            ],
+            "p_range": [
+                0.24742,
+                1.17012
+            ],
+            "compression_range": [
+                1.21359223,
+                1.5015015
+            ]
+        },
+        {
+            "id": "periclase_ceramic_p_3.0_g_cm3_p310_lasl",
+            "name": "PERICLASE, ceramic, p = 3.0 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 3.001,
+            "file": "materials/lasl_shd/periclase_ceramic_p_3.0_g_cm3_p310_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 6,
+            "up_range": [
+                1.259,
+                3.362
+            ],
+            "p_range": [
+                0.19464,
+                0.94065
+            ],
+            "compression_range": [
+                1.31406045,
+                1.92090724
+            ]
+        },
+        {
+            "id": "potassium_bromide_single_crystal_1001_p315_lasl",
+            "name": "POTASSIUM BROMIDE, single-crystal, [ 1001",
+            "source": "LASL SHD 1980",
+            "rho0": 2.75,
+            "file": "materials/lasl_shd/potassium_bromide_single_crystal_1001_p315_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 5,
+            "up_range": [
+                2.526,
+                4.225
+            ],
+            "p_range": [
+                0.39171,
+                0.91509
+            ],
+            "compression_range": [
+                1.8115942,
+                2.15517241
+            ]
+        },
+        {
+            "id": "pyrolusite_ironton_minnesota_p317_lasl",
+            "name": "PYROLUSITE, Ironton, Minnesota",
+            "source": "LASL SHD 1980",
+            "rho0": 4.318,
+            "file": "materials/lasl_shd/pyrolusite_ironton_minnesota_p317_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 8,
+            "up_range": [
+                0.769,
+                3.263
+            ],
+            "p_range": [
+                0.17116,
+                1.22304
+            ],
+            "compression_range": [
+                1.18009368,
+                1.65016502
+            ]
+        },
+        {
+            "id": "quartz._p322_lasl",
+            "name": "QUARTZ.",
+            "source": "LASL SHD 1980",
+            "rho0": 2.204,
+            "file": "materials/lasl_shd/quartz._p322_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 7,
+            "up_range": [
+                2.105,
+                3.814
+            ],
+            "p_range": [
+                0.23252,
+                0.59666
+            ],
+            "compression_range": [
+                1.71501359,
+                2.15821439
+            ]
+        },
+        {
+            "id": "rutile_p326_lasl",
+            "name": "RUTILE",
+            "source": "LASL SHD 1980",
+            "rho0": 4.243,
+            "file": "materials/lasl_shd/rutile_p326_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 4,
+            "up_range": [
+                3.056,
+                3.191
+            ],
+            "p_range": [
+                1.11944,
+                1.1956
+            ],
+            "compression_range": [
+                1.5503876,
+                1.57232704
+            ]
+        },
+        {
+            "id": "serpentine_ver_myen_italy_p327_lasl",
+            "name": "SERPENTINE, Ver-myen, Italy",
+            "source": "LASL SHD 1980",
+            "rho0": 2.602,
+            "file": "materials/lasl_shd/serpentine_ver_myen_italy_p327_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 11,
+            "up_range": [
+                0.926,
+                3.326
+            ],
+            "p_range": [
+                0.16343,
+                0.78063
+            ],
+            "compression_range": [
+                1.17069124,
+                1.64639461
+            ]
+        },
+        {
+            "id": "silicon_carbide_p_3.1_g_cm3_p328_lasl",
+            "name": "SILICON CARBIDE, p = 3.1 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 3.1245000000000003,
+            "file": "materials/lasl_shd/silicon_carbide_p_3.1_g_cm3_p328_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 9,
+            "up_range": [
+                0.0,
+                2.162
+            ],
+            "p_range": [
+                0.0,
+                0.67794
+            ],
+            "compression_range": [
+                1.0,
+                1.30559977
+            ]
+        },
+        {
+            "id": "sodium_chloride_pressed_p333_lasl",
+            "name": "SODIUM CHLORIDE, pressed",
+            "source": "LASL SHD 1980",
+            "rho0": 2.137,
+            "file": "materials/lasl_shd/sodium_chloride_pressed_p333_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 28,
+            "up_range": [
+                0.0,
+                4.194
+            ],
+            "p_range": [
+                0.0,
+                0.81174
+            ],
+            "compression_range": [
+                1.0,
+                1.88323917
+            ]
+        },
+        {
+            "id": "uy_uy_spinel._lasl",
+            "name": "UY, UY, SPINEL.",
+            "source": "LASL SHD 1980",
+            "rho0": 3.479,
+            "file": "materials/lasl_shd/uy_uy_spinel._lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 5,
+            "up_range": [
+                0.0,
+                3.118
+            ],
+            "p_range": [
+                0.0,
+                1.06524
+            ],
+            "compression_range": [
+                1.0,
+                1.46627566
+            ]
+        },
+        {
+            "id": "spinel._p345_lasl",
+            "name": "SPINEL.",
+            "source": "LASL SHD 1980",
+            "rho0": 3.417,
+            "file": "materials/lasl_shd/spinel._p345_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 12,
+            "up_range": [
+                1.367,
+                3.348
+            ],
+            "p_range": [
+                0.38101,
+                1.12008
+            ],
+            "compression_range": [
+                1.2007637,
+                1.51745068
+            ]
+        },
+        {
+            "id": "sq_spinel._p346_lasl",
+            "name": "SQ, SPINEL.",
+            "source": "LASL SHD 1980",
+            "rho0": 2.991,
+            "file": "materials/lasl_shd/sq_spinel._p346_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 9,
+            "up_range": [
+                1.727,
+                3.63
+            ],
+            "p_range": [
+                0.34475,
+                1.01988
+            ],
+            "compression_range": [
+                1.3568521,
+                1.64203612
+            ]
+        },
+        {
+            "id": "spinel._p349_lasl",
+            "name": "SPINEL.",
+            "source": "LASL SHD 1980",
+            "rho0": 3.622,
+            "file": "materials/lasl_shd/spinel._p349_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 7,
+            "up_range": [
+                0.927,
+                3.452
+            ],
+            "p_range": [
+                0.29636,
+                1.29883
+            ],
+            "compression_range": [
+                1.11731844,
+                1.49700599
+            ]
+        },
+        {
+            "id": "uranium_hydride_p360_lasl",
+            "name": "URANIUM HYDRIDE",
+            "source": "LASL SHD 1980",
+            "rho0": 14.094,
+            "file": "materials/lasl_shd/uranium_hydride_p360_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 11,
+            "up_range": [
+                0.435,
+                2.433
+            ],
+            "p_range": [
+                0.29473,
+                2.58376
+            ],
+            "compression_range": [
+                1.09977064,
+                1.48331668
+            ]
+        },
+        {
+            "id": "tantalum_carbide_g_cm_._lasl",
+            "name": "TANTALUM CARBIDE, g/cm’.",
+            "source": "LASL SHD 1980",
+            "rho0": 12.626,
+            "file": "materials/lasl_shd/tantalum_carbide_g_cm_._lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 11,
+            "up_range": [
+                0.887,
+                2.619
+            ],
+            "p_range": [
+                0.52538,
+                2.35003
+            ],
+            "compression_range": [
+                1.23304562,
+                1.61550889
+            ]
+        },
+        {
+            "id": "tita.nium_diboride_p354_lasl",
+            "name": "TITA.NIUM DIBORIDE",
+            "source": "LASL SHD 1980",
+            "rho0": 4.484,
+            "file": "materials/lasl_shd/tita.nium_diboride_p354_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 12,
+            "up_range": [
+                0.805,
+                2.908
+            ],
+            "p_range": [
+                0.32837,
+                1.44181
+            ],
+            "compression_range": [
+                1.09649123,
+                1.3568521
+            ]
+        },
+        {
+            "id": "tita.nium_carbide_p352_lasl",
+            "name": "TITA.NIUM CARBIDE",
+            "source": "LASL SHD 1980",
+            "rho0": 4.458,
+            "file": "materials/lasl_shd/tita.nium_carbide_p352_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 15,
+            "up_range": [
+                0.342,
+                3.44
+            ],
+            "p_range": [
+                0.12824,
+                1.49733
+            ],
+            "compression_range": [
+                1.04384134,
+                1.54320988
+            ]
+        },
+        {
+            "id": "tourmaline_p355_lasl",
+            "name": "TOURMALINE",
+            "source": "LASL SHD 1980",
+            "rho0": 3.1975,
+            "file": "materials/lasl_shd/tourmaline_p355_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 10,
+            "up_range": [
+                0.824,
+                3.632
+            ],
+            "p_range": [
+                0.18489,
+                1.1147
+            ],
+            "compression_range": [
+                1.12949866,
+                1.61030596
+            ]
+        },
+        {
+            "id": "uranium_dioxide_g_cm5._lasl",
+            "name": "URANIUM DIOXIDE, g/cm5.",
+            "source": "LASL SHD 1980",
+            "rho0": 10.337,
+            "file": "materials/lasl_shd/uranium_dioxide_g_cm5._lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 8,
+            "up_range": [
+                0.0,
+                2.493
+            ],
+            "p_range": [
+                0.0,
+                1.6118
+            ],
+            "compression_range": [
+                1.0,
+                1.65837479
+            ]
+        },
+        {
+            "id": "uranium_dioxide_p_6.3_g_cm3_p357_lasl",
+            "name": "URANIUM DIOXIDE, p = 6.3 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 6.347,
+            "file": "materials/lasl_shd/uranium_dioxide_p_6.3_g_cm3_p357_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 4,
+            "up_range": [
+                1.025,
+                3.286
+            ],
+            "p_range": [
+                0.14172,
+                1.21344
+            ],
+            "compression_range": [
+                1.90839695,
+                2.2675737
+            ]
+        },
+        {
+            "id": "zirconium_diboride_p383_lasl",
+            "name": "ZIRCONIUM DIBORIDE",
+            "source": "LASL SHD 1980",
+            "rho0": 5.992,
+            "file": "materials/lasl_shd/zirconium_diboride_p383_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                1.728,
+                2.758
+            ],
+            "p_range": [
+                0.82898,
+                1.53143
+            ],
+            "compression_range": [
+                1.27454719,
+                1.42450142
+            ]
+        },
+        {
+            "id": "albitite_sylmar_pennsylvania_p366_lasl",
+            "name": "ALBITITE, Sylmar, Pennsylvania",
+            "source": "LASL SHD 1980",
+            "rho0": 1.67,
+            "file": "materials/lasl_shd/albitite_sylmar_pennsylvania_p366_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                0.978,
+                3.093
+            ],
+            "p_range": [
+                0.03875,
+                0.42788
+            ],
+            "compression_range": [
+                1.52736573,
+                1.77935943
+            ]
+        },
+        {
+            "id": "bronzitite_bushveld_complex_transvaal_p370_lasl",
+            "name": "BRONZITITE, Bushveld Complex, Transvaal",
+            "source": "LASL SHD 1980",
+            "rho0": 3.298,
+            "file": "materials/lasl_shd/bronzitite_bushveld_complex_transvaal_p370_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                1.075,
+                1.653
+            ],
+            "p_range": [
+                0.24737,
+                0.40715
+            ],
+            "compression_range": [
+                1.18063754,
+                1.28205128
+            ]
+        },
+        {
+            "id": "corljndum_mixture_85.2_9.7_2.7_2.4_wt_al_o_sio_igo_cao_bao_p373_lasl",
+            "name": "CORlJNDUM MIXTURE 85.2/9.7/2.7/2.4 wt% Al,O,/SiO&IgO/CaO-BaO",
+            "source": "LASL SHD 1980",
+            "rho0": 3.389,
+            "file": "materials/lasl_shd/corljndum_mixture_85.2_9.7_2.7_2.4_wt_al_o_sio_igo_cao_bao_p373_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 13,
+            "up_range": [
+                0.744,
+                3.309
+            ],
+            "p_range": [
+                0.17897,
+                1.11588
+            ],
+            "compression_range": [
+                1.11358575,
+                1.59489633
+            ]
+        },
+        {
+            "id": "glass_high_density_nuclear_pacific_x_ray_plate_p392_lasl",
+            "name": "GLASS, high-density, Nuclear Pacific x-ray plate",
+            "source": "LASL SHD 1980",
+            "rho0": 4.617,
+            "file": "materials/lasl_shd/glass_high_density_nuclear_pacific_x_ray_plate_p392_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 4,
+            "up_range": [
+                1.222,
+                3.425
+            ],
+            "p_range": [
+                0.23414,
+                1.27242
+            ],
+            "compression_range": [
+                1.47996858,
+                1.88323917
+            ]
+        },
+        {
+            "id": "oil_shale_p399_lasl",
+            "name": "OIL SHALE,",
+            "source": "LASL SHD 1980",
+            "rho0": 2.176,
+            "file": "materials/lasl_shd/oil_shale_p399_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                2.301,
+                2.362
+            ],
+            "p_range": [
+                0.3274,
+                0.34349
+            ],
+            "compression_range": [
+                1.55259366,
+                1.57821297
+            ]
+        },
+        {
+            "id": "periclase_mixture_50_50_mol_mgo_a1203_p400_lasl",
+            "name": "PERICLASE MIXTURE 50/50 mol% MgO/A1203",
+            "source": "LASL SHD 1980",
+            "rho0": 1.679,
+            "file": "materials/lasl_shd/periclase_mixture_50_50_mol_mgo_a1203_p400_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 14,
+            "up_range": [
+                0.969,
+                3.998
+            ],
+            "p_range": [
+                0.0405,
+                6.43
+            ],
+            "compression_range": [
+                1.48367953,
+                2.37529691
+            ]
+        },
+        {
+            "id": "cellulose_acetate_p415_lasl",
+            "name": "CELLULOSE ACETATE",
+            "source": "LASL SHD 1980",
+            "rho0": 1.263,
+            "file": "materials/lasl_shd/cellulose_acetate_p415_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 7,
+            "up_range": [
+                3.141,
+                5.037
+            ],
+            "p_range": [
+                0.26617,
+                0.5914
+            ],
+            "compression_range": [
+                1.86567164,
+                2.1970057
+            ]
+        },
+        {
+            "id": "epoxy_epon_828_p417_lasl",
+            "name": "EPOXY,Epon 828",
+            "source": "LASL SHD 1980",
+            "rho0": 1.164,
+            "file": "materials/lasl_shd/epoxy_epon_828_p417_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 7,
+            "up_range": [
+                0.0,
+                4.149
+            ],
+            "p_range": [
+                0.0,
+                0.42695
+            ],
+            "compression_range": [
+                1.0,
+                1.9047619
+            ]
+        },
+        {
+            "id": "melmac_p421_lasl",
+            "name": "MELMAC",
+            "source": "LASL SHD 1980",
+            "rho0": 1.4525000000000001,
+            "file": "materials/lasl_shd/melmac_p421_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                1.034,
+                2.031
+            ],
+            "p_range": [
+                0.07,
+                0.18
+            ],
+            "compression_range": [
+                1.30890052,
+                1.5112006
+            ]
+        },
+        {
+            "id": "micarta_p422_lasl",
+            "name": "MICARTA",
+            "source": "LASL SHD 1980",
+            "rho0": 1.384,
+            "file": "materials/lasl_shd/micarta_p422_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 5,
+            "up_range": [
+                1.276,
+                4.65
+            ],
+            "p_range": [
+                0.08711,
+                0.66527
+            ],
+            "compression_range": [
+                1.35317997,
+                1.97238659
+            ]
+        },
+        {
+            "id": "neoprene_p423_lasl",
+            "name": "NEOPRENE",
+            "source": "LASL SHD 1980",
+            "rho0": 1.439,
+            "file": "materials/lasl_shd/neoprene_p423_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                1.532,
+                2.087
+            ],
+            "p_range": [
+                0.11044,
+                0.17336
+            ],
+            "compression_range": [
+                1.44092219,
+                1.57068635
+            ]
+        },
+        {
+            "id": "phenolic_durile_hr_p426_lasl",
+            "name": "PHENOLIC Durile, HR",
+            "source": "LASL SHD 1980",
+            "rho0": 1.375,
+            "file": "materials/lasl_shd/phenolic_durile_hr_p426_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                3.767,
+                4.88
+            ],
+            "p_range": [
+                0.43272,
+                0.66545
+            ],
+            "compression_range": [
+                1.84501845,
+                2.01964062
+            ]
+        },
+        {
+            "id": "phenoxy_prda_p429_lasl",
+            "name": "PHENOXY PRDA",
+            "source": "LASL SHD 1980",
+            "rho0": 1.161,
+            "file": "materials/lasl_shd/phenoxy_prda_p429_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                2.603,
+                3.326
+            ],
+            "p_range": [
+                0.20416,
+                0.28295
+            ],
+            "compression_range": [
+                1.65016502,
+                1.86098887
+            ]
+        },
+        {
+            "id": "polyethylene_high_density_marlex_emn_6065_p441_lasl",
+            "name": "POLYETHYLENE, high-density, Marlex EMN 6065",
+            "source": "LASL SHD 1980",
+            "rho0": 0.918,
+            "file": "materials/lasl_shd/polyethylene_high_density_marlex_emn_6065_p441_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 8,
+            "up_range": [
+                0.831,
+                5.328
+            ],
+            "p_range": [
+                0.02839,
+                0.5488
+            ],
+            "compression_range": [
+                1.2755102,
+                1.97644027
+            ]
+        },
+        {
+            "id": "ewxy_vol_enspatite_lasl",
+            "name": "EWXY VOL% ENSPATITE",
+            "source": "LASL SHD 1980",
+            "rho0": 2.016,
+            "file": "materials/lasl_shd/ewxy_vol_enspatite_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                2.027,
+                3.969
+            ],
+            "p_range": [
+                0.26006,
+                0.73478
+            ],
+            "compression_range": [
+                1.46737376,
+                1.76121979
+            ]
+        },
+        {
+            "id": "paraffin_65.6_wt_corundum_p500_lasl",
+            "name": "PARAFFIN-65.6 wt% CORUNDUM",
+            "source": "LASL SHD 1980",
+            "rho0": 1.662,
+            "file": "materials/lasl_shd/paraffin_65.6_wt_corundum_p500_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                2.701,
+                3.053
+            ],
+            "p_range": [
+                0.32376,
+                0.39602
+            ],
+            "compression_range": [
+                1.61836081,
+                1.66112957
+            ]
+        },
+        {
+            "id": "paraffin_is._wtz_forsi_erite_lasl",
+            "name": "PARAFFIN-IS., WTZ FORSI’ERITE",
+            "source": "LASL SHD 1980",
+            "rho0": 2.196,
+            "file": "materials/lasl_shd/paraffin_is._wtz_forsi_erite_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.401,
+                2.775
+            ],
+            "p_range": [
+                0.17688,
+                0.47845
+            ],
+            "compression_range": [
+                1.3255868,
+                1.54518664
+            ]
+        },
+        {
+            "id": "paraffin_84.2_wt_periclase_p504_lasl",
+            "name": "PARAFFIN-84.2 wt% PERICLASE",
+            "source": "LASL SHD 1980",
+            "rho0": 2.353,
+            "file": "materials/lasl_shd/paraffin_84.2_wt_periclase_p504_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                2.346,
+                2.669
+            ],
+            "p_range": [
+                0.4206,
+                0.50673
+            ],
+            "compression_range": [
+                1.44457078,
+                1.49031297
+            ]
+        },
+        {
+            "id": "silicon_carbide_50_ut_carbon_p611_lasl",
+            "name": "SILICON CARBIDE-50, UT% CARBON",
+            "source": "LASL SHD 1980",
+            "rho0": 1.763,
+            "file": "materials/lasl_shd/silicon_carbide_50_ut_carbon_p611_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 26,
+            "up_range": [
+                0.447,
+                4.843
+            ],
+            "p_range": [
+                0.0148,
+                0.7117
+            ],
+            "compression_range": [
+                1.31406045,
+                2.28310502
+            ]
+        },
+        {
+            "id": "silicon_carbide_80_ut_carbon_p613_lasl",
+            "name": "SILICON CARBIDE-80, UT% CARBON",
+            "source": "LASL SHD 1980",
+            "rho0": 1.32,
+            "file": "materials/lasl_shd/silicon_carbide_80_ut_carbon_p613_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 22,
+            "up_range": [
+                0.828,
+                5.238
+            ],
+            "p_range": [
+                0.02162,
+                0.58163
+            ],
+            "compression_range": [
+                1.73913043,
+                2.7173913
+            ]
+        },
+        {
+            "id": "silicon_nitride_5_wt_periclase_p514_lasl",
+            "name": "SILICON NITRIDE-5 wt% PERICLASE",
+            "source": "LASL SHD 1980",
+            "rho0": 3.164,
+            "file": "materials/lasl_shd/silicon_nitride_5_wt_periclase_p514_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                0.0,
+                2.482
+            ],
+            "p_range": [
+                0.0,
+                0.69092
+            ],
+            "compression_range": [
+                1.0,
+                1.39365583
+            ]
+        },
+        {
+            "id": "tantalum_carbide_70_wt_carbon_p._2.0_g_cm3_p516_lasl",
+            "name": "TANTALUM CARBIDE-70 wt% CARBON, p. = 2.0 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 4.433,
+            "file": "materials/lasl_shd/tantalum_carbide_70_wt_carbon_p._2.0_g_cm3_p516_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                1.377,
+                3.414
+            ],
+            "p_range": [
+                0.18,
+                0.97
+            ],
+            "compression_range": [
+                1.84842884,
+                2.12765957
+            ]
+        },
+        {
+            "id": "tantalum_carbide_85_wt_carbon_p._1.8_g_cm3_p518_lasl",
+            "name": "TANTALUM CARBIDE-85 wt% CARBON, p. = 1.8 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 1.775,
+            "file": "materials/lasl_shd/tantalum_carbide_85_wt_carbon_p._1.8_g_cm3_p518_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 14,
+            "up_range": [
+                0.884,
+                4.824
+            ],
+            "p_range": [
+                0.04502,
+                0.70706
+            ],
+            "compression_range": [
+                1.44927536,
+                2.38663484
+            ]
+        },
+        {
+            "id": "titanium_carbide_50_wt_carbon_p519_lasl",
+            "name": "TITANIUM CARBIDE-50 wt% CARBON",
+            "source": "LASL SHD 1980",
+            "rho0": 2.165,
+            "file": "materials/lasl_shd/titanium_carbide_50_wt_carbon_p519_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 25,
+            "up_range": [
+                0.748,
+                4.204
+            ],
+            "p_range": [
+                0.03456,
+                0.72804
+            ],
+            "compression_range": [
+                1.52207002,
+                2.11864407
+            ]
+        },
+        {
+            "id": "titanium_carbide_80_wt_carbon_p521_lasl",
+            "name": "TITANIUM CARBIDE-80 wt% CARBON",
+            "source": "LASL SHD 1980",
+            "rho0": 1.48,
+            "file": "materials/lasl_shd/titanium_carbide_80_wt_carbon_p521_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 9,
+            "up_range": [
+                2.406,
+                5.126
+            ],
+            "p_range": [
+                0.16,
+                0.61694
+            ],
+            "compression_range": [
+                2.09205021,
+                2.68096515
+            ]
+        },
+        {
+            "id": "tungsten_sintered_45_wt_infiltrated_copper_elkonite_lw3_p525_lasl",
+            "name": "TUNGSTEN, SINTERED-45 wt% INFILTRATED COPPER :Elkonite lW3",
+            "source": "LASL SHD 1980",
+            "rho0": 12.315,
+            "file": "materials/lasl_shd/tungsten_sintered_45_wt_infiltrated_copper_elkonite_lw3_p525_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 8,
+            "up_range": [
+                1.339,
+                2.564
+            ],
+            "p_range": [
+                0.87044,
+                2.3344
+            ],
+            "compression_range": [
+                1.3368984,
+                1.54083205
+            ]
+        },
+        {
+            "id": "balsa_p631_lasl",
+            "name": "BALSA",
+            "source": "LASL SHD 1980",
+            "rho0": 0.123,
+            "file": "materials/lasl_shd/balsa_p631_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 10,
+            "up_range": [
+                1.197,
+                6.282
+            ],
+            "p_range": [
+                0.00262,
+                0.06191
+            ],
+            "compression_range": [
+                2.81690141,
+                4.83091787
+            ]
+        },
+        {
+            "id": "cherry_p_0.60_g_cm3_p533_lasl",
+            "name": "CHERRY, p = 0.60 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 0.599,
+            "file": "materials/lasl_shd/cherry_p_0.60_g_cm3_p533_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 22,
+            "up_range": [
+                1.124,
+                6.051
+            ],
+            "p_range": [
+                0.01376,
+                0.32037
+            ],
+            "compression_range": [
+                2.22222222,
+                3.26797386
+            ]
+        },
+        {
+            "id": "cherry_p_0.51_g_cm3_p534_lasl",
+            "name": "CHERRY, p = 0.51 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 0.509,
+            "file": "materials/lasl_shd/cherry_p_0.51_g_cm3_p534_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 23,
+            "up_range": [
+                0.903,
+                5.851
+            ],
+            "p_range": [
+                0.00825,
+                0.25826
+            ],
+            "compression_range": [
+                2.05985915,
+                3.4965035
+            ]
+        },
+        {
+            "id": "mahogany_philippine_p538_lasl",
+            "name": "MAHOGANY, Philippine",
+            "source": "LASL SHD 1980",
+            "rho0": 0.487,
+            "file": "materials/lasl_shd/mahogany_philippine_p538_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 11,
+            "up_range": [
+                1.169,
+                6.154
+            ],
+            "p_range": [
+                0.01187,
+                0.26831
+            ],
+            "compression_range": [
+                2.24215247,
+                3.34448161
+            ]
+        },
+        {
+            "id": "maple_p540_lasl",
+            "name": "MAPLE",
+            "source": "LASL SHD 1980",
+            "rho0": 0.796,
+            "file": "materials/lasl_shd/maple_p540_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 13,
+            "up_range": [
+                0.87,
+                5.578
+            ],
+            "p_range": [
+                0.0133,
+                0.39761
+            ],
+            "compression_range": [
+                1.79856115,
+                2.7100271
+            ]
+        },
+        {
+            "id": "walnut_p542_lasl",
+            "name": "WALNUT",
+            "source": "LASL SHD 1980",
+            "rho0": 0.632,
+            "file": "materials/lasl_shd/walnut_p542_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 15,
+            "up_range": [
+                0.893,
+                5.94
+            ],
+            "p_range": [
+                0.01075,
+                0.31869
+            ],
+            "compression_range": [
+                1.88679245,
+                3.20512821
+            ]
+        },
+        {
+            "id": "acetone_c3hd0_p544_lasl",
+            "name": "ACETONE C3Hd0",
+            "source": "LASL SHD 1980",
+            "rho0": 0.785,
+            "file": "materials/lasl_shd/acetone_c3hd0_p544_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.439,
+                2.445
+            ],
+            "p_range": [
+                0.0443,
+                0.10184
+            ],
+            "compression_range": [
+                1.57977883,
+                1.85528757
+            ]
+        },
+        {
+            "id": "alcohol_p545_lasl",
+            "name": "ALCOHOL,",
+            "source": "LASL SHD 1980",
+            "rho0": 0.786,
+            "file": "materials/lasl_shd/alcohol_p545_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.43,
+                2.436
+            ],
+            "p_range": [
+                0.04493,
+                0.10624
+            ],
+            "compression_range": [
+                1.5600624,
+                1.77935943
+            ]
+        },
+        {
+            "id": "alcohol_ch_o_p546_lasl",
+            "name": "ALCOHOL,, CH,O",
+            "source": "LASL SHD 1980",
+            "rho0": 0.792,
+            "file": "materials/lasl_shd/alcohol_ch_o_p546_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.426,
+                2.461
+            ],
+            "p_range": [
+                0.04436,
+                0.10544
+            ],
+            "compression_range": [
+                1.57480315,
+                1.82481752
+            ]
+        },
+        {
+            "id": "alcohol_p547_lasl",
+            "name": "ALCOHOL,",
+            "source": "LASL SHD 1980",
+            "rho0": 0.812,
+            "file": "materials/lasl_shd/alcohol_p547_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.41,
+                2.402
+            ],
+            "p_range": [
+                0.04837,
+                0.11154
+            ],
+            "compression_range": [
+                1.5037594,
+                1.71821306
+            ]
+        },
+        {
+            "id": "ammonia._nh_p548_lasl",
+            "name": "AMMONIA., NH,",
+            "source": "LASL SHD 1980",
+            "rho0": 0.726,
+            "file": "materials/lasl_shd/ammonia._nh_p548_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 8,
+            "up_range": [
+                1.01,
+                5.31
+            ],
+            "p_range": [
+                0.02477,
+                0.39052
+            ],
+            "compression_range": [
+                1.43061516,
+                2.1141649
+            ]
+        },
+        {
+            "id": "benzene_p549_lasl",
+            "name": "BENZENE",
+            "source": "LASL SHD 1980",
+            "rho0": 0.875,
+            "file": "materials/lasl_shd/benzene_p549_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 32,
+            "up_range": [
+                0.0,
+                5.51
+            ],
+            "p_range": [
+                0.0,
+                0.43197
+            ],
+            "compression_range": [
+                1.0,
+                2.5974026
+            ]
+        },
+        {
+            "id": "bromoethane_cj_qr_p551_lasl",
+            "name": "BROMOETHANE CJ-Qr",
+            "source": "LASL SHD 1980",
+            "rho0": 1.463,
+            "file": "materials/lasl_shd/bromoethane_cj_qr_p551_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.311,
+                2.242
+            ],
+            "p_range": [
+                0.06456,
+                0.15136
+            ],
+            "compression_range": [
+                1.63934426,
+                1.94174757
+            ]
+        },
+        {
+            "id": "bromoform_chbr_p552_lasl",
+            "name": "BROMOFORM CHBr,",
+            "source": "LASL SHD 1980",
+            "rho0": 2.849,
+            "file": "materials/lasl_shd/bromoform_chbr_p552_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 4,
+            "up_range": [
+                0.56,
+                1.36
+            ],
+            "p_range": [
+                0.02813,
+                0.13494
+            ],
+            "compression_range": [
+                1.47058824,
+                1.65016502
+            ]
+        },
+        {
+            "id": "carbon_disulfide_cs_p553_lasl",
+            "name": "CARBON DISULFIDE, CS,",
+            "source": "LASL SHD 1980",
+            "rho0": 1.257,
+            "file": "materials/lasl_shd/carbon_disulfide_cs_p553_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 17,
+            "up_range": [
+                0.0,
+                2.13
+            ],
+            "p_range": [
+                0.0,
+                0.10072
+            ],
+            "compression_range": [
+                1.0,
+                2.28832952
+            ]
+        },
+        {
+            "id": "carbon_tetrachloride_p555_lasl",
+            "name": "CARBON TETRACHLORIDE",
+            "source": "LASL SHD 1980",
+            "rho0": 1.585,
+            "file": "materials/lasl_shd/carbon_tetrachloride_p555_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 4,
+            "up_range": [
+                0.83,
+                2.0
+            ],
+            "p_range": [
+                0.03007,
+                0.13215
+            ],
+            "compression_range": [
+                1.5060241,
+                1.85528757
+            ]
+        },
+        {
+            "id": "gyw_cyclohexane_p559_lasl",
+            "name": "GYw, CYCLOHEXANE",
+            "source": "LASL SHD 1980",
+            "rho0": 0.776,
+            "file": "materials/lasl_shd/gyw_cyclohexane_p559_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 18,
+            "up_range": [
+                0.0,
+                5.45
+            ],
+            "p_range": [
+                0.0,
+                0.4263
+            ],
+            "compression_range": [
+                1.0,
+                2.17864924
+            ]
+        },
+        {
+            "id": "cyclohexene_cbh_p1_lasl",
+            "name": "CYCLOHEXENE, CBH,,",
+            "source": "LASL SHD 1980",
+            "rho0": 0.81,
+            "file": "materials/lasl_shd/cyclohexene_cbh_p1_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.46,
+                2.485
+            ],
+            "p_range": [
+                0.0398,
+                0.09254
+            ],
+            "compression_range": [
+                1.61550889,
+                1.87265918
+            ]
+        },
+        {
+            "id": "ethylene_clycol_p562_lasl",
+            "name": "ETHYLENE, CLYCOL,",
+            "source": "LASL SHD 1980",
+            "rho0": 1.112,
+            "file": "materials/lasl_shd/ethylene_clycol_p562_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 13,
+            "up_range": [
+                0.0,
+                4.86
+            ],
+            "p_range": [
+                0.0,
+                0.51341
+            ],
+            "compression_range": [
+                1.0,
+                2.04918033
+            ]
+        },
+        {
+            "id": "glycerol_c_hso_p563_lasl",
+            "name": "GLYCEROL,, C,HsO,",
+            "source": "LASL SHD 1980",
+            "rho0": 1.25,
+            "file": "materials/lasl_shd/glycerol_c_hso_p563_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                0.68,
+                0.94
+            ],
+            "p_range": [
+                0.02936,
+                0.04599
+            ],
+            "compression_range": [
+                1.24533001,
+                1.31578947
+            ]
+        },
+        {
+            "id": "hexane_coh_p564_lasl",
+            "name": "HEXANE CoH,,",
+            "source": "LASL SHD 1980",
+            "rho0": 0.673,
+            "file": "materials/lasl_shd/hexane_coh_p564_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.459,
+                2.524
+            ],
+            "p_range": [
+                0.03941,
+                0.09216
+            ],
+            "compression_range": [
+                1.57977883,
+                1.85528757
+            ]
+        },
+        {
+            "id": "chcl_p566_lasl",
+            "name": "CHCl,",
+            "source": "LASL SHD 1980",
+            "rho0": 1.483,
+            "file": "materials/lasl_shd/chcl_p566_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 19,
+            "up_range": [
+                0.0,
+                4.5
+            ],
+            "p_range": [
+                0.0,
+                0.53255
+            ],
+            "compression_range": [
+                1.0,
+                2.33100233
+            ]
+        },
+        {
+            "id": "chci_gfa_p569_lasl",
+            "name": "CHCI,, (GFa)",
+            "source": "LASL SHD 1980",
+            "rho0": 1.483,
+            "file": "materials/lasl_shd/chci_gfa_p569_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                4.7,
+                4.84
+            ],
+            "p_range": [
+                0.57991,
+                0.60939
+            ],
+            "compression_range": [
+                2.29885057,
+                2.3255814
+            ]
+        },
+        {
+            "id": "mononitrotoluene_p570_lasl",
+            "name": "MONONITROTOLUENE",
+            "source": "LASL SHD 1980",
+            "rho0": 1.168,
+            "file": "materials/lasl_shd/mononitrotoluene_p570_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.289,
+                2.241
+            ],
+            "p_range": [
+                0.06248,
+                0.14585
+            ],
+            "compression_range": [
+                1.45137881,
+                1.6722408
+            ]
+        },
+        {
+            "id": "n_hexane_cih_p571_lasl",
+            "name": "N-HEXANE, CIH,,",
+            "source": "LASL SHD 1980",
+            "rho0": 0.657,
+            "file": "materials/lasl_shd/n_hexane_cih_p571_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 18,
+            "up_range": [
+                0.0,
+                5.67
+            ],
+            "p_range": [
+                0.0,
+                0.37028
+            ],
+            "compression_range": [
+                1.0,
+                2.3255814
+            ]
+        },
+        {
+            "id": "toluene_c_h_ch_p572_lasl",
+            "name": "TOLUENE C,H,CH,",
+            "source": "LASL SHD 1980",
+            "rho0": 0.868,
+            "file": "materials/lasl_shd/toluene_c_h_ch_p572_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 16,
+            "up_range": [
+                0.0,
+                5.28
+            ],
+            "p_range": [
+                0.0,
+                0.4022
+            ],
+            "compression_range": [
+                1.0,
+                2.55102041
+            ]
+        },
+        {
+            "id": "water_p573_lasl",
+            "name": "WATER",
+            "source": "LASL SHD 1980",
+            "rho0": 0.998,
+            "file": "materials/lasl_shd/water_p573_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.14,
+                1.749
+            ],
+            "p_range": [
+                0.04105,
+                0.0824
+            ],
+            "compression_range": [
+                1.46191248,
+                1.58982512
+            ]
+        },
+        {
+            "id": "ceskjm_chloride_p578_lasl",
+            "name": "CESKJM CHLORIDE,",
+            "source": "LASL SHD 1980",
+            "rho0": 1.877,
+            "file": "materials/lasl_shd/ceskjm_chloride_p578_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 4,
+            "up_range": [
+                1.508,
+                2.188
+            ],
+            "p_range": [
+                0.11694,
+                0.21321
+            ],
+            "compression_range": [
+                1.55976244,
+                1.72884744
+            ]
+        },
+        {
+            "id": "nq_2_wt_b_square_wax_2_wt_elvax_large_grain_nq_p602_lasl",
+            "name": "NQ-2 wt% B square wax-2 wt% Elvax, large-grain NQ",
+            "source": "LASL SHD 1980",
+            "rho0": 1.676,
+            "file": "materials/lasl_shd/nq_2_wt_b_square_wax_2_wt_elvax_large_grain_nq_p602_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 7,
+            "up_range": [
+                1.772,
+                2.302
+            ],
+            "p_range": [
+                0.18517,
+                0.26315
+            ],
+            "compression_range": [
+                1.39470014,
+                1.5128593
+            ]
+        },
+        {
+            "id": "nq_10_wt_estane_large_grain_nq_p607_lasl",
+            "name": "NQ-10 wt% Estane, large-grain NQ",
+            "source": "LASL SHD 1980",
+            "rho0": 1.647,
+            "file": "materials/lasl_shd/nq_10_wt_estane_large_grain_nq_p607_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 3,
+            "up_range": [
+                1.018,
+                2.274
+            ],
+            "p_range": [
+                0.08152,
+                0.2724
+            ],
+            "compression_range": [
+                1.26888537,
+                1.4619883
+            ]
+        },
+        {
+            "id": "tatb_6_wt_estane_bimodal_1968_tatb_p629_lasl",
+            "name": "TATB-6 wt% Estane, bimodal 1968 TATB",
+            "source": "LASL SHD 1980",
+            "rho0": 1.833,
+            "file": "materials/lasl_shd/tatb_6_wt_estane_bimodal_1968_tatb_p629_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.35,
+                2.139
+            ],
+            "p_range": [
+                0.13307,
+                0.2572
+            ],
+            "compression_range": [
+                1.33155792,
+                1.48367953
+            ]
+        },
+        {
+            "id": "tatb_10_wt_kel_f_800_pantex_standard_tatb_p634_lasl",
+            "name": "TATB-10 wt% Kel F 800, Pantex standard TATB",
+            "source": "LASL SHD 1980",
+            "rho0": 1.9135,
+            "file": "materials/lasl_shd/tatb_10_wt_kel_f_800_pantex_standard_tatb_p634_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.114,
+                1.39
+            ],
+            "p_range": [
+                0.098,
+                0.14199
+            ],
+            "compression_range": [
+                1.31993107,
+                1.35189873
+            ]
+        },
+        {
+            "id": "tatb_7.5_wt_kel_f_800_7.5_wt_kel_f_827_1968_tatb_p640_lasl",
+            "name": "TATB-7.5 wt% Kel F 800-7.5 wt% Kel F 827 1968 TATB",
+            "source": "LASL SHD 1980",
+            "rho0": 1.912,
+            "file": "materials/lasl_shd/tatb_7.5_wt_kel_f_800_7.5_wt_kel_f_827_1968_tatb_p640_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.381,
+                1.707
+            ],
+            "p_range": [
+                0.14422,
+                0.18875
+            ],
+            "compression_range": [
+                1.33868809,
+                1.42450142
+            ]
+        },
+        {
+            "id": "tnt_liquid_to_81_c_p649_lasl",
+            "name": "TNT, liquid, To = 81°C",
+            "source": "LASL SHD 1980",
+            "rho0": 1.624,
+            "file": "materials/lasl_shd/tnt_liquid_to_81_c_p649_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental"
+            ],
+            "points": 2,
+            "up_range": [
+                1.568,
+                1.581
+            ],
+            "p_range": [
+                0.10583,
+                0.10708
+            ],
+            "compression_range": [
+                1.51041667,
+                1.52247191
+            ]
+        },
+        {
+            "id": "gold_p81_lasl",
+            "name": "GOLD",
+            "source": "LASL SHD 1980",
+            "rho0": 19.24,
+            "file": "materials/lasl_shd/gold_p81_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental",
+                "visual"
+            ],
+            "points": 10,
+            "up_range": [
+                0.0,
+                1.724
+            ],
+            "p_range": [
+                0.0,
+                1.89897
+            ],
+            "compression_range": [
+                1.0,
+                1.43266476
+            ]
+        },
+        {
+            "id": "iridium_p88_lasl",
+            "name": "IRIDIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 22.477,
+            "file": "materials/lasl_shd/iridium_p88_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental",
+                "visual"
+            ],
+            "points": 7,
+            "up_range": [
+                0.0,
+                1.93
+            ],
+            "p_range": [
+                0.0,
+                2.92381
+            ],
+            "compression_range": [
+                1.0,
+                1.40252454
+            ]
+        },
+        {
+            "id": "chromium_p55_lasl",
+            "name": "CHROMIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 7.119,
+            "file": "materials/lasl_shd/chromium_p55_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental",
+                "visual"
+            ],
+            "points": 14,
+            "up_range": [
+                0.519,
+                2.248
+            ],
+            "p_range": [
+                0.21655,
+                1.3514
+            ],
+            "compression_range": [
+                1.09649123,
+                1.36425648
+            ]
+        },
+        {
+            "id": "antimony_p14_lasl",
+            "name": "ANTIMONY",
+            "source": "LASL SHD 1980",
+            "rho0": 6.698,
+            "file": "materials/lasl_shd/antimony_p14_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental",
+                "visual"
+            ],
+            "points": 14,
+            "up_range": [
+                0.0,
+                2.699
+            ],
+            "p_range": [
+                0.0,
+                1.14841
+            ],
+            "compression_range": [
+                1.0,
+                1.75746924
+            ]
+        },
+        {
+            "id": "potassium_p121_lasl",
+            "name": "POTASSIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 0.86,
+            "file": "materials/lasl_shd/potassium_p121_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental",
+                "visual"
+            ],
+            "points": 18,
+            "up_range": [
+                1.335,
+                4.486
+            ],
+            "p_range": [
+                0.0413,
+                0.28179
+            ],
+            "compression_range": [
+                1.58982512,
+                2.59067358
+            ]
+        },
+        {
+            "id": "hafnium_p82_lasl",
+            "name": "HAFNIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 12.89,
+            "file": "materials/lasl_shd/hafnium_p82_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental",
+                "visual"
+            ],
+            "points": 21,
+            "up_range": [
+                0.0,
+                2.422
+            ],
+            "p_range": [
+                0.0,
+                1.72363
+            ],
+            "compression_range": [
+                1.0,
+                1.78253119
+            ]
+        },
+        {
+            "id": "rhenium_p0_21.0_g_cm3_p124_lasl",
+            "name": "RHENIUM, p0 = 21.0 g/cm3",
+            "source": "LASL SHD 1980",
+            "rho0": 20.984,
+            "file": "materials/lasl_shd/rhenium_p0_21.0_g_cm3_p124_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental",
+                "visual"
+            ],
+            "points": 7,
+            "up_range": [
+                0.0,
+                1.127
+            ],
+            "p_range": [
+                0.0,
+                1.35074
+            ],
+            "compression_range": [
+                1.0,
+                1.24533001
+            ]
+        },
+        {
+            "id": "scandium_p130_lasl",
+            "name": "SCANDIUM",
+            "source": "LASL SHD 1980",
+            "rho0": 3.195,
+            "file": "materials/lasl_shd/scandium_p130_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental",
+                "visual"
+            ],
+            "points": 8,
+            "up_range": [
+                0.0,
+                3.752
+            ],
+            "p_range": [
+                0.0,
+                0.93987
+            ],
+            "compression_range": [
+                1.0,
+                1.9193858
+            ]
+        },
+        {
+            "id": "sulfur_rhombic_p135_lasl",
+            "name": "SULFUR, rhombic",
+            "source": "LASL SHD 1980",
+            "rho0": 2.02,
+            "file": "materials/lasl_shd/sulfur_rhombic_p135_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental",
+                "visual"
+            ],
+            "points": 7,
+            "up_range": [
+                0.897,
+                2.046
+            ],
+            "p_range": [
+                0.07567,
+                0.21297
+            ],
+            "compression_range": [
+                1.27388535,
+                1.65837479
+            ]
+        },
+        {
+            "id": "deuterium_liquid_t0_20_k_p67_lasl",
+            "name": "DEUTERIUM, liquid, T0 = 20 K",
+            "source": "LASL SHD 1980",
+            "rho0": 0.165,
+            "file": "materials/lasl_shd/deuterium_liquid_t0_20_k_p67_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental",
+                "visual"
+            ],
+            "points": 6,
+            "up_range": [
+                4.27,
+                7.25
+            ],
+            "p_range": [
+                0.04788,
+                0.12964
+            ],
+            "compression_range": [
+                2.28310502,
+                2.94985251
+            ]
+        },
+        {
+            "id": "carbon_graphite_powdered_unpressed_p36_lasl",
+            "name": "CARBON, graphite, powdered, unpressed",
+            "source": "LASL SHD 1980",
+            "rho0": 0.466,
+            "file": "materials/lasl_shd/carbon_graphite_powdered_unpressed_p36_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental",
+                "visual"
+            ],
+            "points": 6,
+            "up_range": [
+                2.114,
+                6.147
+            ],
+            "p_range": [
+                0.03287,
+                0.15559
+            ],
+            "compression_range": [
+                4.20168067,
+                6.17283951
+            ]
+        },
+        {
+            "id": "steel_304_p212_lasl",
+            "name": "STEEL, 304",
+            "source": "LASL SHD 1980",
+            "rho0": 7.89,
+            "file": "materials/lasl_shd/steel_304_p212_lasl.txt",
+            "tags": [
+                "lasl-shd",
+                "experimental",
+                "visual"
+            ],
+            "points": 18,
+            "up_range": [
+                0.0,
+                2.772
+            ],
+            "p_range": [
+                0.0,
+                1.89557
+            ],
+            "compression_range": [
+                1.0,
+                1.47058824
+            ]
         }
     ]
 }

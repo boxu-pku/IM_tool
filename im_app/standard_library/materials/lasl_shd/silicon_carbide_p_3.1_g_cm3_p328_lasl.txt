@@ -1,0 +1,37 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          SILICON CARBIDE, p = 3.1 g/cm3
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   3.1245000000000003 g/cm^3
+# Data Source:       ref/shd.pdf book p.328 (pdf p.344)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 4 row(s) digit-repaired, 29 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+0.00000000E+00	7.99900000E+00	0.00000000E+00	3.12100000E+00	1.00000000E+00			
+9.21000000E-01	9.96900000E+00	2.87660000E-01	3.44500000E+00	1.10179045E+00			
+9.44000000E-01	9.90300000E+00	2.91460000E-01	3.44700000E+00	1.10497238E+00			
+1.36100000E+00	9.69100000E+00	4.18760000E-01	3.64963504E+00	1.16686114E+00			
+1.36600000E+00	9.67700000E+00	4.21570000E-01	3.62200000E+00	1.16144019E+00			
+1.54700000E+00	9.63300000E+00	4.65400000E-01	3.72048714E+00	1.19131833E+00			
+2.06900000E+00	9.86700000E+00	6.39460000E-01	3.95256917E+00	1.26422250E+00			
+2.11200000E+00	9.02300000E+00	5.73220000E-01	3.92463290E+00	1.30559977E+00			
+2.16200000E+00	1.00310000E+01	6.77940000E-01	3.98724490E+00	1.27551020E+00			
+# =============================================================================
+# End of Data
+# Total Points: 9
+# Up Range: [0, 2.162] km/s
+# P Range: [0, 0.67794] Mbar
+# Compression Range: [1, 1.3056]
+# =============================================================================

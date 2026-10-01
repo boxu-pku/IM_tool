@@ -1,0 +1,30 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          PARAFFIN-65.6 wt% CORUNDUM
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   1.662 g/cm^3
+# Data Source:       ref/shd.pdf book p.500 (pdf p.516)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 4 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+2.70100000E+00	7.06900000E+00	3.23760000E-01	2.73664812E+00	1.61836081E+00			
+3.05300000E+00	7.67100000E+00	3.96020000E-01	2.80898876E+00	1.66112957E+00			
+# =============================================================================
+# End of Data
+# Total Points: 2
+# Up Range: [2.701, 3.053] km/s
+# P Range: [0.32376, 0.39602] Mbar
+# Compression Range: [1.6184, 1.6611]
+# =============================================================================

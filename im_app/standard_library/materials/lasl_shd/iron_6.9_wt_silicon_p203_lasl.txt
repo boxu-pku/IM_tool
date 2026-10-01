@@ -1,0 +1,31 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          IRON-6.9 wt% SILICON
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   7.49 g/cm^3
+# Data Source:       ref/shd.pdf book p.203 (pdf p.219)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 1 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+9.75000000E-01	5.70600000E+00	4.16690000E-01	9.03400000E+00	1.20627262E+00			
+1.09200000E+00	5.85000000E+00	4.78480000E-01	9.20900000E+00	1.23001230E+00			
+2.29100000E+00	7.92900000E+00	1.36058000E+00	1.05340000E+01	1.40646976E+00			
+# =============================================================================
+# End of Data
+# Total Points: 3
+# Up Range: [0.975, 2.291] km/s
+# P Range: [0.41669, 1.3606] Mbar
+# Compression Range: [1.2063, 1.4065]
+# =============================================================================

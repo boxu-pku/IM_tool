@@ -1,0 +1,35 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          SULFUR, rhombic
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   2.02 g/cm^3
+# Data Source:       ref/shd.pdf book p.135 (pdf p.151)
+# Date Created:      2026-08-27
+# Notes:             Transcribed visually from the page image (OCR text layer unusable); every row Rankine-Hugoniot validated
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+8.97000000E-01	4.17600000E+00	7.56700000E-02	2.57300000E+00	1.27388535E+00			
+1.43100000E+00	4.50300000E+00	1.30160000E-01	2.96100000E+00	1.46627566E+00			
+1.47000000E+00	4.52000000E+00	1.34220000E-01	2.99400000E+00	1.48148148E+00			
+1.95200000E+00	5.25400000E+00	2.07170000E-01	3.21400000E+00	1.59235669E+00			
+1.96400000E+00	5.03600000E+00	1.99790000E-01	3.31100000E+00	1.63934426E+00			
+1.96400000E+00	5.16200000E+00	2.04790000E-01	3.26100000E+00	1.61290323E+00			
+2.04600000E+00	5.15300000E+00	2.12970000E-01	3.35000000E+00	1.65837479E+00			
+# =============================================================================
+# End of Data
+# Total Points: 7
+# Up Range: [0.897, 2.046] km/s
+# P Range: [0.07567, 0.21297] Mbar
+# Compression Range: [1.2739, 1.6584]
+# =============================================================================

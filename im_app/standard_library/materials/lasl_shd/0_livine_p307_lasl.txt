@@ -1,0 +1,31 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          0:LIVINE
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   3.215 g/cm^3
+# Data Source:       ref/shd.pdf book p.307 (pdf p.323)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 2 row(s) digit-repaired, 0 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+1.43000000E+00	7.42000000E+00	3.40610000E-01	3.97900000E+00	1.23915737E+00			
+4.55000000E+00	9.92000000E+00	1.45112000E+00	5.93900000E+00	1.84842884E+00			
+4.81000000E+00	1.03200000E+01	1.59590000E+00	6.02200000E+00	1.87265918E+00			
+# =============================================================================
+# End of Data
+# Total Points: 3
+# Up Range: [1.43, 4.81] km/s
+# P Range: [0.34061, 1.5959] Mbar
+# Compression Range: [1.2392, 1.8727]
+# =============================================================================

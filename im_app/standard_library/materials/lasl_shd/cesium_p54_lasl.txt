@@ -1,0 +1,37 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          CESIUM
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   1.826 g/cm^3
+# Data Source:       ref/shd.pdf book p.54 (pdf p.70)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 0 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+1.34200000E+00	2.46300000E+00	6.03600000E-02	4.01200000E+00	2.19780220E+00			
+1.34900000E+00	2.45900000E+00	6.05700000E-02	4.04500000E+00	2.21729490E+00			
+1.70400000E+00	2.95800000E+00	9.20400000E-02	4.30700000E+00	2.35849057E+00			
+1.71600000E+00	2.96200000E+00	9.28100000E-02	4.34100000E+00	2.37529691E+00			
+2.18200000E+00	3.65100000E+00	1.45470000E-01	4.53800000E+00	2.48756219E+00			
+2.21000000E+00	3.67400000E+00	1.48260000E-01	4.58200000E+00	2.51256281E+00			
+3.13700000E+00	4.89400000E+00	2.80340000E-01	5.08600000E+00	2.78551532E+00			
+3.82100000E+00	5.75200000E+00	4.01330000E-01	5.43900000E+00	2.97619048E+00			
+3.84600000E+00	5.77700000E+00	4.05710000E-01	5.46300000E+00	2.99401198E+00			
+# =============================================================================
+# End of Data
+# Total Points: 9
+# Up Range: [1.342, 3.846] km/s
+# P Range: [0.06036, 0.40571] Mbar
+# Compression Range: [2.1978, 2.994]
+# =============================================================================

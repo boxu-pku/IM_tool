@@ -1,0 +1,32 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          BORON NITRIDE, pressed, p0 = 1.81 g/cm3
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   1.809 g/cm^3
+# Data Source:       ref/shd.pdf book p.253 (pdf p.269)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 1 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+2.26700000E+00	4.78000000E+00	1.95590000E-01	3.43300000E+00	1.90114068E+00			
+2.49200000E+00	5.37000000E+00	2.45960000E-01	3.42900000E+00	1.86567164E+00			
+3.24900000E+00	6.49000000E+00	3.75750000E-01	3.56800000E+00	2.00400802E+00			
+3.31900000E+00	6.56600000E+00	3.94660000E-01	3.66200000E+00	2.02020202E+00			
+# =============================================================================
+# End of Data
+# Total Points: 4
+# Up Range: [2.267, 3.319] km/s
+# P Range: [0.19559, 0.39466] Mbar
+# Compression Range: [1.8657, 2.0202]
+# =============================================================================

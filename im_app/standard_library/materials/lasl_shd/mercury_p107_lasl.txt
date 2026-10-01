@@ -1,0 +1,31 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          MERCURY
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   13.54 g/cm^3
+# Data Source:       ref/shd.pdf book p.107 (pdf p.123)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 2 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+0.00000000E+00	1.45100000E+00	0.00000000E+00	1.35400000E+01	1.00000000E+00			
+5.60000000E-01	2.71900000E+00	2.06170000E-01	1.70520000E+01	1.25944584E+00			
+7.62000000E-01	3.06400000E+00	3.16130000E-01	1.80220000E+01	1.33155792E+00			
+# =============================================================================
+# End of Data
+# Total Points: 3
+# Up Range: [0, 0.762] km/s
+# P Range: [0, 0.31613] Mbar
+# Compression Range: [1, 1.3316]
+# =============================================================================

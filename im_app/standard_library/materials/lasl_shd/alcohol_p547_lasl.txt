@@ -1,0 +1,30 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          ALCOHOL,
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   0.812 g/cm^3
+# Data Source:       ref/shd.pdf book p.547 (pdf p.563)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 1 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+1.41000000E+00	4.20900000E+00	4.83700000E-02	1.22600000E+00	1.50375940E+00			
+2.40200000E+00	5.74000000E+00	1.11540000E-01	1.39100000E+00	1.71821306E+00			
+# =============================================================================
+# End of Data
+# Total Points: 2
+# Up Range: [1.41, 2.402] km/s
+# P Range: [0.04837, 0.11154] Mbar
+# Compression Range: [1.5038, 1.7182]
+# =============================================================================

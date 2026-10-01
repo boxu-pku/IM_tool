@@ -1,0 +1,30 @@
+# =============================================================================
+# Hugoniot Data File
+# Format Version: 1.0
+# =============================================================================
+# Material:          TNT, liquid, To = 81°C
+# Reference:         LASL Shock Hugoniot Data (Marsh, 1980)
+# Initial Density:   1.624 g/cm^3
+# Data Source:       ref/shd.pdf book p.649 (pdf p.664)
+# Date Created:      2026-08-27
+# Notes:             Experimental Hugoniot from LASL compendium; OCR rows validated via Rankine-Hugoniot relations; 0 row(s) digit-repaired, 8 row(s) rejected
+# =============================================================================
+# Column Units:
+#   Up      km/s       - Particle velocity
+#   Us      km/s       - Shock velocity
+#   P       Mbar       - Pressure (1 Mbar = 100 GPa)
+#   rho     g/cm^3     - Density
+#   eta     -          - Compression ratio (rho/rho0)
+#   T       eV         - Temperature (optional)
+#   E       MJ/g       - Internal energy (optional)
+# =============================================================================
+Up(km/s)	Us(km/s)	P(Mbar)	rho(g/cm3)	compression	T(eV)	E(MJ/g)	source
+1.56800000E+00	4.64000000E+00	1.07080000E-01	2.22182292E+00	1.51041667E+00			
+1.58100000E+00	4.60700000E+00	1.05830000E-01	2.24260112E+00	1.52247191E+00			
+# =============================================================================
+# End of Data
+# Total Points: 2
+# Up Range: [1.568, 1.581] km/s
+# P Range: [0.10583, 0.10708] Mbar
+# Compression Range: [1.5104, 1.5225]
+# =============================================================================
