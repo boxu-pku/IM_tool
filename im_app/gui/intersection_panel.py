@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (
     QComboBox, QPushButton, QLabel, QTableWidget,
     QTableWidgetItem, QHeaderView, QListWidget, QListWidgetItem,
     QCheckBox, QDoubleSpinBox,
+    QDialog, QDialogButtonBox, QFormLayout,
 )
 from PyQt5.QtCore import pyqtSignal, Qt
 
@@ -22,10 +23,38 @@ from im_app.core.data_loader import list_available_materials, load_material_by_i
 from im_app.core.physics import MaterialData
 
 
+class ReleaseEditDialog(QDialog):
+    """双击 Release 列表项时弹出的小对话框，编辑锚定 Up。"""
+
+    def __init__(self, source_name: str, up_value: float, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle(f"Edit Release ({source_name})")
+
+        form = QFormLayout(self)
+
+        self.up_spin = QDoubleSpinBox()
+        self.up_spin.setRange(0, 100)
+        self.up_spin.setDecimals(3)
+        self.up_spin.setValue(up_value)
+        self.up_spin.setSuffix(" km/s")
+        self.up_spin.setSingleStep(0.1)
+        form.addRow("Anchor Up:", self.up_spin)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        form.addWidget(buttons)
+
+    def up_value(self) -> float:
+        return self.up_spin.value()
+
+
 class IntersectionPanel(QWidget):
     """Panel for intersection selection and reflection with precise control."""
 
     reflect_requested = pyqtSignal(str, float)  # (source_material_id, center_up)
+    release_requested = pyqtSignal(str, float)  # (source_material_id, up_value) 固定 Up 锚的 release 线
+    release_edited = pyqtSignal(str, float)  # (reflected_curve_id, new_up) 双击编辑 release 锚点
     find_intersection = pyqtSignal(str, str, bool)  # (curve1_id, curve2_id, include_reflected)
     reverse_match_requested = pyqtSignal(float, float, str)  # (target_up, target_p, hugoniot_id)
     remove_reflected = pyqtSignal(str)  # (reflected_curve_id)
@@ -119,31 +148,60 @@ class IntersectionPanel(QWidget):
 
         layout.addWidget(ix_grp)
 
-        # Reflection controls
-        refl_grp = QGroupBox("Reflect Hugoniot")
-        refl_layout = QHBoxLayout(refl_grp)
+        # Reflection / Release controls
+        refl_grp = QGroupBox("Reflect / Release")
+        refl_layout = QVBoxLayout(refl_grp)
 
-        refl_layout.addWidget(QLabel("Curve:"))
+        # 第一行：交点锚定反射（原 Reflect 功能）
+        refl_row1 = QHBoxLayout()
+        refl_row1.addWidget(QLabel("Curve:"))
         self.reflect_curve_combo = QComboBox()
-        refl_layout.addWidget(self.reflect_curve_combo)
+        refl_row1.addWidget(self.reflect_curve_combo)
 
-        refl_layout.addWidget(QLabel("About intersection:"))
+        refl_row1.addWidget(QLabel("About intersection:"))
         self.reflect_center_combo = QComboBox()
-        refl_layout.addWidget(self.reflect_center_combo)
+        refl_row1.addWidget(self.reflect_center_combo)
 
         self.reflect_btn = QPushButton("Reflect")
         self.reflect_btn.clicked.connect(self._on_reflect)
-        refl_layout.addWidget(self.reflect_btn)
+        refl_row1.addWidget(self.reflect_btn)
+        refl_layout.addLayout(refl_row1)
+
+        # 第二行：固定 Up 锚的 release 线（反射 Hugoniot 近似）
+        refl_row2 = QHBoxLayout()
+        refl_row2.addWidget(QLabel("Release @ Up:"))
+        self.release_up_spin = QDoubleSpinBox()
+        self.release_up_spin.setRange(0, 1e6)
+        self.release_up_spin.setDecimals(3)
+        self.release_up_spin.setValue(5.0)
+        self.release_up_spin.setSingleStep(0.1)
+        self.release_up_spin.setSuffix(" km/s")
+        refl_row2.addWidget(self.release_up_spin)
+
+        self.release_btn = QPushButton("Add Release")
+        self.release_btn.setToolTip(
+            "在所选 Hugoniot 的指定 Up 点绘制 release 线（反射 Hugoniot 近似）。\n"
+            "Release 线与 Reflect 线一样可参与找交点（阻抗匹配）。"
+        )
+        self.release_btn.clicked.connect(self._on_release_clicked)
+        refl_row2.addWidget(self.release_btn)
 
         self.remove_refl_btn = QPushButton("Remove Reflection")
         self.remove_refl_btn.clicked.connect(self._on_remove_reflection)
-        refl_layout.addWidget(self.remove_refl_btn)
+        refl_row2.addWidget(self.remove_refl_btn)
+        refl_layout.addLayout(refl_row2)
 
         layout.addWidget(refl_grp)
 
         # Reflected curves list
         self.refl_list = QListWidget()
         self.refl_list.setMinimumHeight(200)
+        self.refl_list.setToolTip(
+            "双击 Release 条目可编辑其锚定 Up，确认后自动重算镜像曲线与依赖交点。\n"
+            "Reflected 条目锚定在交点上，跟随交点移动，不在此编辑。"
+        )
+        # 双击 Release 条目 → 编辑锚定 Up（与 Rayleigh 线双击编辑 D 的交互一致）
+        self.refl_list.itemDoubleClicked.connect(self._on_refl_item_double_clicked)
         layout.addWidget(self.refl_list)
 
         # Reverse impedance matching
@@ -185,6 +243,32 @@ class IntersectionPanel(QWidget):
         rev_layout.addLayout(rev_hug_row)
 
         layout.addWidget(rev_grp)
+
+    def update_materials(self, materials: dict):
+        """材料勾选变化时同步面板（Reflect/Release 源曲线下拉 + reverse combo + curve1/curve2）。
+
+        保留 reflect_curve_combo 的当前选择（若材料仍勾选），避免打断操作。
+        """
+        self._materials = materials
+
+        cur = self.reflect_curve_combo.currentData()
+        self.reflect_curve_combo.blockSignals(True)
+        self.reflect_curve_combo.clear()
+        for mid, mat in materials.items():
+            self.reflect_curve_combo.addItem(mat.name, mid)
+        if cur is not None:
+            idx = self.reflect_curve_combo.findData(cur)
+            if idx >= 0:
+                self.reflect_curve_combo.setCurrentIndex(idx)
+        elif self.reflect_curve_combo.count() > 0:
+            self.reflect_curve_combo.setCurrentIndex(0)
+        self.reflect_curve_combo.blockSignals(False)
+
+        self.reverse_hugoniot_combo.clear()
+        for mid, mat in materials.items():
+            self.reverse_hugoniot_combo.addItem(mat.name, mid)
+
+        self._update_curve_combos()
 
     def set_intersections(self, intersections: list[Intersection], materials: dict):
         self._intersections = intersections
@@ -292,7 +376,10 @@ class IntersectionPanel(QWidget):
         reflected_entries = []
         for rc in self._reflected_curves:
             source_name = rc.get("source_id", "Unknown")
-            label = f"Reflected {source_name}"
+            if rc.get("kind") == "release":
+                label = f"Release {source_name} @ Up={rc.get('anchor_up', rc.get('center_up', 0)):.3f}"
+            else:
+                label = f"Reflected {source_name}"
             reflected_entries.append((label, rc["id"]))
 
         all_entries = hugoniot_entries + rayleigh_entries + reflected_entries
@@ -388,6 +475,19 @@ class IntersectionPanel(QWidget):
         self.reflect_requested.emit(source_id, ix.up)
         self._reflected_entries[reflection_key] = True
 
+    def _on_release_clicked(self):
+        """固定 Up 锚的 release 线：对所选 Hugoniot 在指定 Up 点做镜像。"""
+        source_id = self.reflect_curve_combo.currentData()
+        if not source_id:
+            return
+        up_value = self.release_up_spin.value()
+        # 去重键与交点反射（f"{source_id}_{up:.4f}"）区分开
+        release_key = f"release_{source_id}_{up_value:.4f}"
+        if release_key in self._reflected_entries:
+            return
+        self.release_requested.emit(source_id, up_value)
+        self._reflected_entries[release_key] = True
+
     def _on_remove_reflection(self):
         current = self.refl_list.currentItem()
         if current:
@@ -414,10 +514,43 @@ class IntersectionPanel(QWidget):
             ix = self._intersections[row]
             self.remove_intersection.emit(ix.id)
 
-    def add_reflected_entry(self, refl_id: str, source_name: str, center_up: float):
-        item = QListWidgetItem(f"Reflected {source_name} @ center_up={center_up:.3f}")
+    def add_reflected_entry(self, refl_id: str, source_name: str, center_up: float,
+                            kind: str = "reflected", source_id: str | None = None):
+        if kind == "release":
+            text = f"Release {source_name} @ Up={center_up:.3f}"
+        else:
+            text = f"Reflected {source_name} @ center_up={center_up:.3f}"
+        item = QListWidgetItem(text)
         item.setData(Qt.UserRole, refl_id)
         self.refl_list.addItem(item)
+        # 登记去重键并绑定到 refl_id，让 _on_remove_reflection 能按 id 清理
+        # （否则删除后同参数 Add 会被静默吞掉）。直接调用 _on_add_release 等
+        # 程序化创建路径不经过 _on_release_clicked，键只能在这里统一登记。
+        if source_id:
+            prefix = "release_" if kind == "release" else ""
+            key = f"{prefix}{source_id}_{center_up:.4f}"
+            self._reflected_entries[key] = refl_id
+
+    def _on_refl_item_double_clicked(self, item: QListWidgetItem):
+        """双击 Release 条目弹编辑对话框，OK 后 emit release_edited。
+
+        MainWindow 侧重算镜像曲线并按需自动重算依赖交点（阻抗匹配结果）。
+        Reflected 条目锚定交点、跟随交点移动，不在此编辑。
+        """
+        refl_id = item.data(Qt.UserRole)
+        rc = next((r for r in self._reflected_curves if r.get("id") == refl_id), None)
+        if rc is None or rc.get("kind") != "release":
+            return
+        old_up = rc.get("anchor_up", 0.0)
+        mat = self._materials.get(rc.get("source_id"))
+        source_name = mat.name if mat is not None else rc.get("source_id", "?")
+        dlg = ReleaseEditDialog(source_name, old_up, self)
+        if dlg.exec_() != QDialog.Accepted:
+            return
+        new_up = dlg.up_value()
+        if abs(new_up - old_up) < 1e-9:
+            return  # 没变化，避免无谓的 refresh
+        self.release_edited.emit(refl_id, new_up)
 
     def _on_reverse_ix_selected(self, index):
         """Auto-fill up and p from selected intersection."""

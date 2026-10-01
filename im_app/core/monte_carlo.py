@@ -334,19 +334,7 @@ class MonteCarloEngine:
         """
         if not _scene_has_error_sources(materials, rayleigh_lines):
             # 无误差源 → 返回空结果
-            print("[MC DEBUG] engine: _scene_has_error_sources returned False")
             return MonteCarloResult(n_total=0)
-
-        print(f"[MC DEBUG] engine: starting {n_samples} samples, "
-              f"{len(materials)} materials, {len(rayleigh_lines)} rayleigh lines, "
-              f"{len(intersections)} intersections, {len(reflected_curves)} reflected curves")
-
-        # 打印 Rayleigh 线的不确定度状态
-        for rl_id, rl in rayleigh_lines.items():
-            sd = getattr(rl, 'sigma_D', 0.0) or 0.0
-            sr = getattr(rl, 'sigma_rho0', 0.0) or 0.0
-            if sd > 0 or sr > 0:
-                print(f"[MC DEBUG]   Rayleigh {rl_id}: sigma_D={sd}, sigma_rho0={sr}")
 
         # 预分类：找出哪些交点/反射曲线依赖反射线
         # 不依赖反射线的交点（Pass 1）
@@ -356,12 +344,6 @@ class MonteCarloEngine:
         # 依赖反射线的交点（Pass 3）
         pass3_ix = [ix for ix in intersections if _depends_on_reflected(ix.source_curve1_id)
                      or _depends_on_reflected(ix.source_curve2_id)]
-
-        print(f"[MC DEBUG] Classification: {len(pass1_ix)} pass1, {len(pass3_ix)} pass3")
-        for ix in pass1_ix:
-            print(f"[MC DEBUG]   Pass1 {ix.id}: src1={ix.source_curve1_id}, src2={ix.source_curve2_id}")
-        for ix in pass3_ix:
-            print(f"[MC DEBUG]   Pass3 {ix.id}: src1={ix.source_curve1_id}, src2={ix.source_curve2_id}")
 
         # 找出有 fit_params 的误差源材料 ID
         error_source_ids = {
@@ -410,8 +392,6 @@ class MonteCarloEngine:
                 sigma_rho0 = getattr(rl, "sigma_rho0", 0.0) or 0.0
                 if sigma_D <= 0 and sigma_rho0 <= 0:
                     continue
-                if i == 0:
-                    print(f"[MC DEBUG] Rayleigh {rl_id}: sigma_D={sigma_D}, sigma_rho0={sigma_rho0}")
                 D_s = self._rng.normal(rl.D, max(sigma_D, 1e-10))
                 rho0_s = self._rng.normal(rl.rho0, max(sigma_rho0, 1e-10))
                 if D_s <= 0 or rho0_s <= 0:
@@ -435,8 +415,6 @@ class MonteCarloEngine:
                         perturbed_rayleigh=perturbed_rayleigh,
                     )
                     if up1 is None or up2 is None:
-                        if i == 0:
-                            print(f"[MC DEBUG]   sample 0, {ix.id}: up1={up1 is not None}, up2={up2 is not None}")
                         sample_ix_results[ix.id] = None
                         continue
 
@@ -445,8 +423,6 @@ class MonteCarloEngine:
                         ignore_first=ix.ignore_first_at_creation,
                     )
                     if len(ints) == 0:
-                        if i == 0:
-                            print(f"[MC DEBUG]   sample 0, {ix.id}: find_intersections returned empty (up1 range=[{up1[0]:.2f},{up1[-1]:.2f}], up2 range=[{up2[0]:.2f},{up2[-1]:.2f}])")
                         sample_ix_results[ix.id] = None
                         continue
 
@@ -464,11 +440,7 @@ class MonteCarloEngine:
                         materials, rayleigh_lines,
                     )
                     sample_ix_results[ix.id] = (up_val, p_val, cr_val, rho_val)
-                except Exception as e:
-                    if i == 0:
-                        import traceback
-                        print("[MC DEBUG] Pass 1 error for %s (sample 0): %s" % (ix.id, e))
-                        traceback.print_exc()
+                except Exception:
                     sample_ix_results[ix.id] = None
 
             # ---- 第 3 步（Pass 2）：反射曲线 ----
@@ -487,6 +459,7 @@ class MonteCarloEngine:
 
                     anchor_id = rc.get("anchor_intersection_id")
                     source_ix_id = rc.get("source_ix_id")
+                    anchor_up = rc.get("anchor_up")
                     center_up = None
 
                     if anchor_id is not None:
@@ -496,14 +469,18 @@ class MonteCarloEngine:
                     elif source_ix_id is not None:
                         # Reverse match：从 source_ix 重解
                         if source_ix_id in sample_ix_results and sample_ix_results[source_ix_id] is not None:
-                            s_up, s_p = sample_ix_results[source_ix_id]
+                            # 存的是 (up, p, cr, rho) 四元组，只取位置解反射
+                            s_up, s_p = sample_ix_results[source_ix_id][:2]
                             rev_results = reverse_impedance_match(s_up, s_p, up_s, p_s)
                             if rev_results:
                                 center_up = rev_results[0]["center_up"]
+                    elif anchor_up is not None:
+                        # 固定 Up 锚的 release 线：锚点无不确定性，直接镜像扰动后的源
+                        center_up = anchor_up
 
                     # 计算反射曲线并保存结果
                     if center_up is not None:
-                        if anchor_id is not None:
+                        if anchor_id is not None or anchor_up is not None:
                             up_r, p_r = reflect_hugoniot(up_s, p_s, center_up)
                         elif source_ix_id is not None:
                             # reverse match 已给出反射曲线，直接用
@@ -514,11 +491,8 @@ class MonteCarloEngine:
 
                         sample_reflected[rc["id"]] = (up_r, p_r)
                         rc_center_samples[rc["id"]].append(center_up)
-                except Exception as e:
-                    if i == 0:
-                        import traceback
-                        print("[MC DEBUG] Pass 2 error for rc %s (sample 0): %s" % (rc.get('id','?'), e))
-                        traceback.print_exc()
+                except Exception:
+                    pass
 
             # ---- 第 4 步（Pass 3）：依赖反射线的交点 ----
             for ix in pass3_ix:
@@ -558,18 +532,8 @@ class MonteCarloEngine:
                         materials, rayleigh_lines,
                     )
                     sample_ix_results[ix.id] = (up_val, p_val, cr_val, rho_val)
-                except Exception as e:
-                    if i == 0:
-                        import traceback
-                        print("[MC DEBUG] Pass 3 error for %s (sample 0): %s" % (ix.id, e))
-                        traceback.print_exc()
+                except Exception:
                     sample_ix_results[ix.id] = None
-
-            # ---- 第 4.5 步：本轮调试 ----
-            if i == 0:
-                n_found = sum(1 for v in sample_ix_results.values() if v is not None)
-                print("[MC DEBUG] Sample 0: %d/%d intersections found, %d reflected" %
-                      (n_found, len(sample_ix_results), len(sample_reflected)))
 
             # ---- 第 5 步：收集本轮结果 ----
             for ix_id, result in sample_ix_results.items():
@@ -599,11 +563,8 @@ class MonteCarloEngine:
                 p_std=float(np.std(p_vals, ddof=1)),
                 compression_std=cr_std,
                 rho_std=rho_std,
-                n_valid=len(samples),
-            )
-
-        print(f"[MC DEBUG] engine done: {len(result.intersection_stats)} intersection stats, "
-              f"{len(result.reflected_stats)} reflected stats")
+            n_valid=len(samples),
+        )
 
         for rc in reflected_curves:
             rc_id = rc["id"]

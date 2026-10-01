@@ -7,6 +7,7 @@ Lets the user create Rayleigh lines by specifying material, D, and rho0.
 from __future__ import annotations
 
 import numpy as np
+import re
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QGroupBox, QFormLayout,
     QComboBox, QDoubleSpinBox, QPushButton,
@@ -205,15 +206,16 @@ class RayleighPanel(QWidget):
         sigma_rho0 = self.sigma_rho0_spin.value()
 
         if explicit_id:
-            # workflow 加载路径：保留原 id，避免 ix.source_curve*_id 失效
+            # workflow 加载路径：无条件保留原 id（可能是 rl_ai_128 这类任意
+            # 命名），否则 ix.source_curve*_id 会失效变孤儿；解析不出序号
+            # 时仅推进计数器避免后续自动 id 撞车
             rl_id = explicit_id
             try:
-                n = int(explicit_id.split("_", 1)[1])
+                n = int(re.search(r"(\d+)$", explicit_id).group(1))
                 if n > self._counter:
                     self._counter = n
-            except (IndexError, ValueError):
+            except AttributeError:
                 self._counter += 1
-                rl_id = f"rl_{self._counter}"
         else:
             self._counter += 1
             rl_id = f"rl_{self._counter}"

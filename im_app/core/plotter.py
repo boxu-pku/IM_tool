@@ -9,6 +9,7 @@ Click-to-select intersections via mpl_connect.
 from __future__ import annotations
 
 import numpy as np
+import re
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.artist import Artist
@@ -21,7 +22,7 @@ from im_app.core.plot_style import (
     PRL_FIGSIZE_DOUBLE, PRL_COLORS,
     LABEL_UP, LABEL_P, LABEL_COMP, LABEL_US, LABEL_RHO, LABEL_T, LABEL_E,
     apply_prl_style, save_prl_figure,
-    LEGEND_FONTSIZE,
+    GUI_LEGEND_FONTSIZE,
     pressure_label, pressure_factor,
 )
 from im_app.core.element_style import (
@@ -59,6 +60,11 @@ def _mask_nonpositive(*arrs) -> np.ndarray:
             return np.array([], dtype=bool)
         mask &= np.isfinite(a) & (a > 0)
     return mask
+
+
+def is_scatter_material(mid: str) -> bool:
+    """LASL SHD 实验散点数据（id 以 _lasl 结尾）按散点绘制，不连线。"""
+    return str(mid).endswith("_lasl")
 
 
 class DragZoomMixin:
@@ -371,9 +377,9 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
         self._selected_element_id: str | None = None
         self._picked_element_id: str | None = None  # For pick event handling
 
-        # Plot settings with defaults
-        self.xlim = (0, 30)
-        self.ylim = (0, 30)
+        # Plot settings with defaults（None = auto：按数据自适应范围）
+        self.xlim = None
+        self.ylim = None
         self.show_legend = True
         self.show_ix_errorbars = True    # 交点误差棒开关
         self.linewidth = 1.2
@@ -455,14 +461,15 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
             up_r_err, p_r_err = reflect_error_propagation(mat.p_err, center_up_err)
 
         if explicit_id:
-            # workflow 加载路径：保留原 id，避免 ix.source_curve*_id 失效
+            # workflow 加载路径：保留原 id（含 refl_ai_* 等任意命名），
+            # 仅尽力恢复计数器，避免后续自动 id 撞车
             rid = explicit_id
             try:
-                n = int(explicit_id.split("_", 1)[1])
+                n = int(re.search(r"(\d+)$", explicit_id).group(1))
                 if n > self._counter:
                     self._counter = n
-            except (IndexError, ValueError):
-                pass
+            except AttributeError:
+                self._counter += 1
         else:
             self._counter += 1
             rid = f"refl_{self._counter}"
@@ -493,6 +500,12 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
 
     def set_ylim(self, ymin: float, ymax: float):
         self.ylim = (ymin, ymax)
+        self.refresh()
+
+    def auto_scale(self):
+        """恢复 auto 视图：清除显式范围，按当前数据自适应（'a' 键 / 默认）。"""
+        self.xlim = None
+        self.ylim = None
         self.refresh()
 
     def set_legend_visible(self, visible: bool):
@@ -597,9 +610,17 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
                     up_arr = up_arr[vmask]
                     p_arr = p_arr[vmask]
 
-            line, = self.ax.plot(up_arr, p_arr, color=line_color, linewidth=linewidth,
-                                 linestyle=linestyle, label=label, alpha=alpha,
-                                 picker=10, pickradius=15, zorder=1)
+            if is_scatter_material(mid):
+                line, = self.ax.plot(
+                    up_arr, p_arr, linestyle="None",
+                    marker="o", markersize=4,
+                    markerfacecolor=line_color, markeredgecolor=line_color,
+                    label=label, alpha=alpha,
+                    picker=10, pickradius=15, zorder=1)
+            else:
+                line, = self.ax.plot(up_arr, p_arr, color=line_color, linewidth=linewidth,
+                                     linestyle=linestyle, label=label, alpha=alpha,
+                                     picker=10, pickradius=15, zorder=1)
 
             # 绘制 Hugoniot 误差带（如果材料有 p_err）
             if hasattr(mat, "p_err") and mat.p_err is not None and len(mat.p_err) > 0:
@@ -728,9 +749,12 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
                 color = "blue"
                 source_name = source_id
 
+            is_release = (rc.get("kind") == "release")
+
             line_color = style.get("color", color)
             linewidth = style.get("linewidth", 0.9)
-            linestyle = style.get("linestyle", ":")
+            # release 线默认用 dash-dot，与交点反射线的 dotted 区分
+            linestyle = style.get("linestyle", "-." if is_release else ":")
             alpha = style.get("alpha", 1.0)
 
             is_selected = (self._selected_element_id == element_id)
@@ -738,7 +762,7 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
                 linewidth *= 1.5
 
             order = np.argsort(rc["up"])
-            label = f"{source_name} reflected Hugoniot"
+            label = f"{source_name} release" if is_release else f"{source_name} reflected Hugoniot"
 
             # P 单位转换 + log 过滤（反射线可能含负 up）
             pf = pressure_factor(self.p_unit)
@@ -855,9 +879,14 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
                          xlim=xlim or self.xlim, ylim=ylim or self.ylim,
                          xscale="log" if self.x_log else "linear",
                          yscale="log" if self.y_log else "linear")
+        # auto 轴：重新开启自适应（之前的 set_xlim 会关闭它）
+        if self.xlim is None:
+            self.ax.set_autoscalex_on(True)
+        if self.ylim is None:
+            self.ax.set_autoscaley_on(True)
 
         if (self.materials or self.rayleigh_lines or self.intersections) and (show_legend if show_legend is not None else self.show_legend):
-            self.ax.legend(loc="best", fontsize=LEGEND_FONTSIZE)
+            self.ax.legend(loc="best", fontsize=GUI_LEGEND_FONTSIZE)
 
         # Render scatter points (interactive on P-Up)
         if self._scatter_points:
@@ -1046,11 +1075,11 @@ class EOSPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
         self._material_color_map: dict[str, str] = {}
         self._color_counter = 0
 
-        # Save last parameters for refresh
+        # Save last parameters for refresh（None = auto：按数据自适应范围）
         self._last_materials = None
         self._last_scatter_points = None
-        self._last_xlim = (1, 5)
-        self._last_ylim = (0, 10)
+        self._last_xlim = None
+        self._last_ylim = None
 
         # Pressure 单位与轴 log 模式（X=compression, Y=P）
         self.p_unit = "Mbar"
@@ -1074,12 +1103,18 @@ class EOSPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
         self.y_log = bool(log)
         self.refresh()
 
+    def auto_scale(self):
+        """恢复 auto 视图：清除显式范围，按当前数据自适应（'a' 键 / 默认）。"""
+        self._last_xlim = None
+        self._last_ylim = None
+        self.update_plot()
+
     def update_plot(
         self,
         materials: dict[str, MaterialData] | None = None,
         scatter_points: list[dict] | None = None,
-        xlim=(1, 5),
-        ylim=(0, 10),
+        xlim=None,
+        ylim=None,
     ):
         """Update EOS plot with reference curves and scatter points."""
         # Save parameters for refresh
@@ -1150,10 +1185,18 @@ class EOSPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
                         comp_arr = comp_arr[vmask]
                         p_arr = p_arr[vmask]
 
-                line, = self.ax.plot(comp_arr, p_arr, color=line_color,
-                                     linewidth=lw, linestyle=ls,
-                                     label=label, alpha=style_dict.get("alpha") or 0.6,
-                                     picker=10, pickradius=15, zorder=1)
+                if is_scatter_material(mid):
+                    line, = self.ax.plot(
+                        comp_arr, p_arr, linestyle="None",
+                        marker="o", markersize=4,
+                        markerfacecolor=line_color, markeredgecolor=line_color,
+                        label=label, alpha=style_dict.get("alpha") or 0.6,
+                        picker=10, pickradius=15, zorder=1)
+                else:
+                    line, = self.ax.plot(comp_arr, p_arr, color=line_color,
+                                         linewidth=lw, linestyle=ls,
+                                         label=label, alpha=style_dict.get("alpha") or 0.6,
+                                         picker=10, pickradius=15, zorder=1)
 
                 # 绘制误差带（P-CR 图纵轴为 P）
                 if hasattr(mat, "p_err") and mat.p_err is not None and len(mat.p_err) > 0:
@@ -1195,10 +1238,15 @@ class EOSPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
                          xlim=xlim, ylim=ylim,
                          xscale="log" if self.x_log else "linear",
                          yscale="log" if self.y_log else "linear")
+        # auto 轴：重新开启自适应（之前的 set_xlim 会关闭它）
+        if xlim is None:
+            self.ax.set_autoscalex_on(True)
+        if ylim is None:
+            self.ax.set_autoscaley_on(True)
 
         # Add legend if there's content
         if has_content:
-            self.ax.legend(loc="best", fontsize=LEGEND_FONTSIZE)
+            self.ax.legend(loc="best", fontsize=GUI_LEGEND_FONTSIZE)
 
         self.draw_idle()
 
@@ -1290,9 +1338,9 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
         self._color_counter = 0
         self._scatter_points: list[dict] = []
 
-        # Plot settings
-        self.xlim = self.DEFAULT_LIMITS.get(x_var, (0, 10))
-        self.ylim = self.DEFAULT_LIMITS.get(y_var, (0, 10))
+        # Plot settings（None = auto：按数据自适应范围）
+        self.xlim = None
+        self.ylim = None
         self.show_legend = True
         self.linewidth = 1.2
         self.linestyle = "-"
@@ -1456,9 +1504,17 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
             if is_selected:
                 lw *= 1.5
 
-            line, = self.ax.plot(x_data, y_data, color=line_color, linewidth=lw,
-                                linestyle=ls, label=label,
-                                picker=10, pickradius=15, zorder=1)
+            if is_scatter_material(mid):
+                line, = self.ax.plot(
+                    x_data, y_data, linestyle="None",
+                    marker="o", markersize=4,
+                    markerfacecolor=line_color, markeredgecolor=line_color,
+                    label=label, alpha=style_dict.get("alpha", 1.0),
+                    picker=10, pickradius=15, zorder=1)
+            else:
+                line, = self.ax.plot(x_data, y_data, color=line_color, linewidth=lw,
+                                    linestyle=ls, label=label,
+                                    picker=10, pickradius=15, zorder=1)
 
             # 绘制误差带（仅当 y 轴变量为 P 时，p_err 才有意义）
             if self.y_var == "P" and hasattr(mat, "p_err") and mat.p_err is not None:
@@ -1508,10 +1564,15 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
                        xlim=xlim, ylim=ylim,
                        xscale="log" if self.x_log else "linear",
                        yscale="log" if self.y_log else "linear")
+        # auto 轴：重新开启自适应（之前的 set_xlim 会关闭它）
+        if xlim is None:
+            self.ax.set_autoscalex_on(True)
+        if ylim is None:
+            self.ax.set_autoscaley_on(True)
 
         # Add legend
         if has_content and self.show_legend:
-            self.ax.legend(loc="best", fontsize=LEGEND_FONTSIZE)
+            self.ax.legend(loc="best", fontsize=GUI_LEGEND_FONTSIZE)
 
         self.draw_idle()
 
@@ -1555,6 +1616,12 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
 
     def set_ylim(self, ymin: float, ymax: float):
         self.ylim = (ymin, ymax)
+        self.update_plot()
+
+    def auto_scale(self):
+        """恢复 auto 视图：清除显式范围，按当前数据自适应（'a' 键 / 默认）。"""
+        self.xlim = None
+        self.ylim = None
         self.update_plot()
 
     def set_legend_visible(self, visible: bool):

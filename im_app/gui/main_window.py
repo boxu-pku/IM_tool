@@ -36,18 +36,8 @@ from im_app.gui.rayleigh_panel import RayleighPanel
 from im_app.gui.intersection_panel import IntersectionPanel
 from im_app.gui.reference_curve_panel import ReferenceCurvePanel
 
-# 硬编码默认范围，'a' 键重置时使用。已和 _init_plot_controls 的初值对齐。
-PLOT_DEFAULTS = {
-    "P-Up":   ((0, 30), (0, 30)),
-    "P-CR":   ((1, 5),  (0, 10)),
-    "P-rho":  ((2, 20), (0, 30)),
-    "Us-Up":  ((0, 30), (0, 30)),
-    "P-T":    ((0, 30), (0, 10)),
-    "rho-Up": ((2, 20), (0, 30)),
-    "T-Up":   ((0, 10), (0, 30)),
-    "E-Up":   ((0, 20), (0, 30)),
-    "P-Us":   ((0, 30), (0, 30)),
-}
+# 默认视图为 auto：_plot_settings 的 xlim/ylim 为 None 时按当前数据自适应；
+# 显式范围仅由拖拽缩放 / Apply / workflow 恢复写入，'a' 键回到 auto。
 
 # Tab key to (x_var, y_var) mapping for scatter points
 TAB_XY_MAP = {
@@ -303,6 +293,11 @@ class MainWindow(QMainWindow):
                 "y_log": False,
             },
         }
+
+        # 默认视图 auto：清除上面占位的硬编码范围（None = 按数据自适应）
+        for _s in self._plot_settings.values():
+            _s["xlim"] = None
+            _s["ylim"] = None
 
         # Store original plot configurations for inverse functionality
         self._original_plot_configs = {
@@ -659,6 +654,8 @@ class MainWindow(QMainWindow):
             plot.style_changed.connect(self._on_element_style_changed)
 
         self.intersection_panel.reflect_requested.connect(self._on_reflect)
+        self.intersection_panel.release_requested.connect(self._on_add_release)
+        self.intersection_panel.release_edited.connect(self._on_edit_release)
         self.intersection_panel.find_intersection.connect(self._find_specific_intersection)
         self.intersection_panel.reverse_match_requested.connect(self._on_reverse_match)
         self.intersection_panel.remove_reflected.connect(self._on_remove_reflected)
@@ -743,14 +740,8 @@ class MainWindow(QMainWindow):
                     plot.materials[mid] = mat
                     plot.update_plot()
 
-        # Update reverse match Hugoniot combo
-        self.intersection_panel._materials = materials
-        self.intersection_panel.reverse_hugoniot_combo.clear()
-        for mid, mat in materials.items():
-            self.intersection_panel.reverse_hugoniot_combo.addItem(mat.name, mid)
-
-        # Refresh curve selection combos
-        self.intersection_panel._update_curve_combos()
+        # 同步 IntersectionPanel：Reflect/Release 源曲线、reverse combo、curve1/curve2
+        self.intersection_panel.update_materials(materials)
 
         # If currently on P-CR tab (index 1), update reference curves
         current_index = self.plot_tabs.currentIndex()
@@ -808,11 +799,10 @@ class MainWindow(QMainWindow):
         if hasattr(self, '_refresh_scatter_ix_combo'):
             self._refresh_scatter_ix_combo()
 
-        # 5. 重置 plot settings 到默认
+        # 5. 重置 plot settings 到默认（auto：按数据自适应）
         for key, settings in self._plot_settings.items():
-            defaults = PLOT_DEFAULTS[key]
-            settings["xlim"] = defaults[0]
-            settings["ylim"] = defaults[1]
+            settings["xlim"] = None
+            settings["ylim"] = None
             settings["show_legend"] = True   # 默认显示图例（之前误设 False 致使切 tab 后 legend 消失）
         if hasattr(self, '_sync_plot_settings_to_ui'):
             self._sync_plot_settings_to_ui()
@@ -1061,6 +1051,23 @@ class MainWindow(QMainWindow):
                     if item.data(Qt.UserRole) == rc["id"]:
                         item.setText(f"Reflected {source_mat.name} @ center_up={r0['center_up']:.3f}")
                         break
+            elif rc.get("kind") == "release" and rc.get("anchor_up") is not None:
+                # 固定 Up 锚 release 线：源材料数据变化时重算镜像（锚点不变，总是重算以保证跟随）
+                source_mat = (self.hugoniot_plot.materials.get(rc["source_id"])
+                              or getattr(self.material_panel, "_loaded", {}).get(rc["source_id"]))
+                if source_mat is None:
+                    refl_orphans.add(rc["id"])
+                    continue
+                anchor_up = rc["anchor_up"]
+                up_r, p_r = reflect_hugoniot(source_mat.up, source_mat.p, anchor_up)
+                rc["up"] = up_r
+                rc["p"] = p_r
+                rc["center_up"] = anchor_up
+                if getattr(source_mat, "p_err", None) is not None:
+                    from im_app.core.error_propagation import reflect_error_propagation
+                    _up_re, _p_re = reflect_error_propagation(source_mat.p_err, 0.0)
+                    rc["up_err"] = _up_re
+                    rc["p_err"] = _p_re
 
         # Pass 3: 反射线依赖的 ix（包含 reverse-match 类）
         for ix in self.hugoniot_plot.intersections:
@@ -1328,7 +1335,9 @@ class MainWindow(QMainWindow):
         else:
             for rc in self.hugoniot_plot.reflected_curves:
                 if rc["id"] == curve1_id:
-                    up1, p1, name1 = rc["up"], rc["p"], f"Reflected {rc['source_id']}"
+                    _lbl = (f"Release {rc['source_id']}" if rc.get("kind") == "release"
+                            else f"Reflected {rc['source_id']}")
+                    up1, p1, name1 = rc["up"], rc["p"], _lbl
                     break
 
         # Find second curve
@@ -1343,7 +1352,9 @@ class MainWindow(QMainWindow):
         else:
             for rc in self.hugoniot_plot.reflected_curves:
                 if rc["id"] == curve2_id:
-                    up2, p2, name2 = rc["up"], rc["p"], f"Reflected {rc['source_id']}"
+                    _lbl = (f"Release {rc['source_id']}" if rc.get("kind") == "release"
+                            else f"Reflected {rc['source_id']}")
+                    up2, p2, name2 = rc["up"], rc["p"], _lbl
                     break
 
         if up1 is None or up2 is None:
@@ -1495,10 +1506,106 @@ class MainWindow(QMainWindow):
                         break
             mat = self.hugoniot_plot.materials.get(source_mat_id)
             name = mat.name if mat else source_mat_id
-            self.intersection_panel.add_reflected_entry(refl_id, name, center_up)
+            self.intersection_panel.add_reflected_entry(refl_id, name, center_up,
+                                                        source_id=source_mat_id)
             self.intersection_panel.update_reflected_curves(self.hugoniot_plot.reflected_curves)
             self.status.showMessage(f"Added reflected {name} @ center_up={center_up:.3f}")
             self._update_status()
+
+    def _on_add_release(self, source_mat_id: str, up_value: float):
+        """在指定 Hugoniot 的指定 Up 点添加 release 线（反射 Hugoniot 近似）。
+
+        与交点锚定的 Reflect 共用 reflected_curves 基础设施，仅锚点不同：
+        kind="release" + anchor_up=固定值 → 自动刷新/MC/找交点/删除全部兼容。
+        """
+        # 源材料数据范围软警告（仍绘制）
+        src_mat = (self.hugoniot_plot.materials.get(source_mat_id)
+                   or getattr(self.material_panel, "_loaded", {}).get(source_mat_id))
+        if src_mat is not None and src_mat.up is not None and len(src_mat.up) > 0:
+            if not (src_mat.up.min() <= up_value <= src_mat.up.max()):
+                self.status.showMessage(
+                    f"Warning: Up={up_value:.3f} outside source data range "
+                    f"[{src_mat.up.min():.3f}, {src_mat.up.max():.3f}] km/s"
+                )
+
+        refl_id = self.hugoniot_plot.add_reflected(source_mat_id, up_value)
+        if refl_id:
+            for rc in self.hugoniot_plot.reflected_curves:
+                if rc["id"] == refl_id:
+                    rc["kind"] = "release"
+                    rc["anchor_up"] = up_value
+                    break
+            # add_reflected 内部 refresh 时 kind 尚未设置，这里重刷让图例显示 release
+            self.hugoniot_plot.refresh()
+            mat = self.hugoniot_plot.materials.get(source_mat_id)
+            name = mat.name if mat else source_mat_id
+            self.intersection_panel.add_reflected_entry(refl_id, name, up_value,
+                                                        kind="release", source_id=source_mat_id)
+            self.intersection_panel.update_reflected_curves(self.hugoniot_plot.reflected_curves)
+            self._update_status()
+
+    def _on_edit_release(self, refl_id: str, new_up: float):
+        """双击编辑 release 线锚点：按新 Up 重算镜像曲线，并自动重算依赖交点。
+
+        auto-update 开启时走 _auto_refresh_intersections（镜像 + 依赖 ix + MC 全链路），
+        关闭时只重算这条 release 线本身，交点保持冻结（与开关语义一致）。
+        """
+        from im_app.core.physics import reflect_hugoniot
+
+        rc = next((r for r in self.hugoniot_plot.reflected_curves if r["id"] == refl_id), None)
+        if rc is None or rc.get("kind") != "release":
+            return
+        old_up = rc.get("anchor_up")
+        if old_up is not None and abs(new_up - old_up) < 1e-9:
+            return
+
+        source_id = rc.get("source_id")
+        src_mat = (self.hugoniot_plot.materials.get(source_id)
+                   or getattr(self.material_panel, "_loaded", {}).get(source_id))
+        if src_mat is None:
+            return  # 源材料已不在，交给 auto-refresh 的孤儿清理路径处理
+
+        # 源材料数据范围软警告（仍重算）
+        if src_mat.up is not None and len(src_mat.up) > 0:
+            if not (src_mat.up.min() <= new_up <= src_mat.up.max()):
+                self.status.showMessage(
+                    f"Warning: Up={new_up:.3f} outside source data range "
+                    f"[{src_mat.up.min():.3f}, {src_mat.up.max():.3f}] km/s"
+                )
+
+        rc["anchor_up"] = new_up
+
+        # 去重键迁移：释放旧锚点，占用新锚点（值绑 refl_id 便于删除时清理）
+        panel = self.intersection_panel
+        if old_up is not None:
+            panel._reflected_entries.pop(f"release_{source_id}_{old_up:.4f}", None)
+        panel._reflected_entries[f"release_{source_id}_{new_up:.4f}"] = refl_id
+
+        if panel.is_auto_update_enabled():
+            # release 分支按新 anchor_up 重新镜像 + Pass 3 重算依赖 ix + MC
+            self._auto_refresh_intersections()
+        else:
+            up_r, p_r = reflect_hugoniot(src_mat.up, src_mat.p, new_up)
+            rc["up"] = up_r
+            rc["p"] = p_r
+            rc["center_up"] = new_up
+            if getattr(src_mat, "p_err", None) is not None:
+                from im_app.core.error_propagation import reflect_error_propagation
+                _up_re, _p_re = reflect_error_propagation(src_mat.p_err, 0.0)
+                rc["up_err"] = _up_re
+                rc["p_err"] = _p_re
+            self.hugoniot_plot.refresh()
+
+        # 同步 refl_list 文本（auto-refresh 的 release 分支不同步文本）
+        name = src_mat.name
+        for i in range(panel.refl_list.count()):
+            item = panel.refl_list.item(i)
+            if item.data(Qt.UserRole) == refl_id:
+                item.setText(f"Release {name} @ Up={new_up:.3f}")
+                break
+        panel.update_reflected_curves(self.hugoniot_plot.reflected_curves)
+        self.status.showMessage(f"Edited release {name}: anchor Up={new_up:.3f}")
+        self._update_status()
 
     def _on_remove_reflected(self, refl_id: str):
         """Remove a reflected curve from the plot."""
@@ -1952,8 +2059,8 @@ class MainWindow(QMainWindow):
 
         # Update values
         if settings:
-            xmin, xmax = settings.get("xlim", (0, 30))
-            ymin, ymax = settings.get("ylim", (0, 30))
+            (xmin, xmax), (ymin, ymax) = self._settings_limits_or_current(
+                settings, self._get_plot_by_key(settings_key))
             self.xmin_spin.setValue(xmin)
             self.xmax_spin.setValue(xmax)
             self.ymin_spin.setValue(ymin)
@@ -2018,9 +2125,9 @@ class MainWindow(QMainWindow):
         if not settings:
             return
 
-        # Get axis limits
-        xmin, xmax = settings.get("xlim", (0, 30))
-        ymin, ymax = settings.get("ylim", (0, 30))
+        # Get axis limits（None = auto → 取 plot 当前实际范围）
+        (xmin, xmax), (ymin, ymax) = self._settings_limits_or_current(
+            settings, self._get_plot_by_key(key))
 
         # Block signals to prevent feedback loops
         self.xmin_spin.blockSignals(True)
@@ -2081,8 +2188,7 @@ class MainWindow(QMainWindow):
 
         # Apply settings to the specific plot
         if index == 0:  # P-Up Diagram
-            self.hugoniot_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
-            self.hugoniot_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
+            self._apply_stored_limits(self.hugoniot_plot, settings)
             self.hugoniot_plot.set_legend_visible(settings["show_legend"])
             self.hugoniot_plot.set_linestyle(settings.get("linestyle", "-"))
             self.hugoniot_plot.set_linewidth(settings.get("linewidth", 1.2))
@@ -2103,32 +2209,25 @@ class MainWindow(QMainWindow):
                 ylim=settings["ylim"],
             )
         elif index == 2:  # P-rho Diagram
-            self.p_rho_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
-            self.p_rho_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
+            self._apply_stored_limits(self.p_rho_plot, settings)
             self.p_rho_plot.set_legend_visible(settings["show_legend"])
         elif index == 3:  # Us-Up Diagram
-            self.us_up_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
-            self.us_up_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
+            self._apply_stored_limits(self.us_up_plot, settings)
             self.us_up_plot.set_legend_visible(settings["show_legend"])
         elif index == 4:  # P-T Diagram
-            self.p_t_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
-            self.p_t_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
+            self._apply_stored_limits(self.p_t_plot, settings)
             self.p_t_plot.set_legend_visible(settings["show_legend"])
         elif index == 5:  # rho-Up Diagram
-            self.rho_up_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
-            self.rho_up_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
+            self._apply_stored_limits(self.rho_up_plot, settings)
             self.rho_up_plot.set_legend_visible(settings["show_legend"])
         elif index == 6:  # T-Up Diagram
-            self.t_up_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
-            self.t_up_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
+            self._apply_stored_limits(self.t_up_plot, settings)
             self.t_up_plot.set_legend_visible(settings["show_legend"])
         elif index == 7:  # E-Up Diagram
-            self.e_up_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
-            self.e_up_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
+            self._apply_stored_limits(self.e_up_plot, settings)
             self.e_up_plot.set_legend_visible(settings["show_legend"])
         elif index == 8:  # P-Us Diagram
-            self.p_us_plot.set_xlim(settings["xlim"][0], settings["xlim"][1])
-            self.p_us_plot.set_ylim(settings["ylim"][0], settings["ylim"][1])
+            self._apply_stored_limits(self.p_us_plot, settings)
             self.p_us_plot.set_legend_visible(settings["show_legend"])
 
         # 应用 Pressure 单位 + 轴 log 模式（切 tab 时确保 plot 状态与设置一致）
@@ -2783,16 +2882,46 @@ class MainWindow(QMainWindow):
             f"Y=[{ymin:.3g}, {ymax:.3g}]"
         )
 
+    def _apply_stored_limits(self, plot, settings: dict):
+        """把 _plot_settings 中的范围应用到 plot；None = auto（数据自适应）。"""
+        xlim = settings.get("xlim")
+        ylim = settings.get("ylim")
+        if xlim is None or ylim is None:
+            plot.auto_scale()
+        else:
+            plot.set_xlim(xlim[0], xlim[1])
+            plot.set_ylim(ylim[0], ylim[1])
+
+    @staticmethod
+    def _settings_limits_or_current(settings: dict, plot):
+        """读 settings 中的范围；None（auto）时取 plot 当前实际范围。"""
+        xlim = settings.get("xlim")
+        ylim = settings.get("ylim")
+        if xlim is None or ylim is None:
+            if plot is not None:
+                xlim = plot.ax.get_xlim()
+                ylim = plot.ax.get_ylim()
+            else:
+                xlim = ylim = (0, 30)
+        return xlim, ylim
+
     def _on_plot_reset_view(self, key: str):
-        """'a' 键重置：恢复硬编码默认范围。"""
-        defaults = PLOT_DEFAULTS.get(key)
-        if defaults is None:
+        """'a' 键重置：回到 auto 视图（按当前数据自适应）。"""
+        plot = self._get_plot_by_key(key)
+        if plot is None:
             return
-        (xlim, ylim) = defaults
-        xmin, xmax = xlim
-        ymin, ymax = ylim
-        self._on_plot_zoom_applied(key, xmin, xmax, ymin, ymax)
-        self.status.showMessage(f"{key} Diagram reset to default view")
+        plot.auto_scale()
+        self._plot_settings[key]["xlim"] = None
+        self._plot_settings[key]["ylim"] = None
+        # 若当前 tab 是该 plot，把 spinbox 同步到自适应后的实际范围
+        if self.target_plot_combo.currentText() == key + " Diagram":
+            xmin, xmax = plot.ax.get_xlim()
+            ymin, ymax = plot.ax.get_ylim()
+            self.xmin_spin.setValue(xmin)
+            self.xmax_spin.setValue(xmax)
+            self.ymin_spin.setValue(ymin)
+            self.ymax_spin.setValue(ymax)
+        self.status.showMessage(f"{key} Diagram reset to auto view")
 
     # ------------------------------------------------------------------
     # Save / Load / Export
@@ -2820,7 +2949,17 @@ class MainWindow(QMainWindow):
         )
         if not path:
             return
+        self.save_workflow_to(path)
 
+    def save_workflow_to(self, path: str):
+        """把当前会话序列化为 workflow JSON 写到指定路径（GUI 对话框与 headless 共用）。"""
+        workflow = self._build_workflow_dict()
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(workflow, f, indent=4, ensure_ascii=False)
+        self.status.showMessage(f"Workflow saved to {path}")
+
+    def _build_workflow_dict(self) -> dict:
+        """收集当前会话状态为 workflow dict（保存/导出共用）。"""
         workflow = {
             "version": "1.0",
             "created": datetime.now().isoformat(),
@@ -2862,13 +3001,17 @@ class MainWindow(QMainWindow):
                     "center_up": rc["center_up"],
                     "anchor_intersection_id": rc.get("anchor_intersection_id"),
                     "source_ix_id": rc.get("source_ix_id"),
+                    "kind": rc.get("kind"),
+                    "anchor_up": rc.get("anchor_up"),
                 }
                 for rc in self.hugoniot_plot.reflected_curves
             ],
             "plot_settings": {
                 "p_up": {
-                    "xlim": list(self.hugoniot_plot.xlim),
-                    "ylim": list(self.hugoniot_plot.ylim),
+                    "xlim": (list(self.hugoniot_plot.xlim)
+                             if self.hugoniot_plot.xlim is not None else None),
+                    "ylim": (list(self.hugoniot_plot.ylim)
+                             if self.hugoniot_plot.ylim is not None else None),
                     "show_legend": self.hugoniot_plot.show_legend,
                     "linewidth": self.hugoniot_plot.linewidth,
                     "linestyle": self.hugoniot_plot.linestyle,
@@ -2887,9 +3030,7 @@ class MainWindow(QMainWindow):
             },
             "scatter_points": self._scatter_points,
         }
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(workflow, f, indent=4, ensure_ascii=False)
-        self.status.showMessage(f"Workflow saved to {path}")
+        return workflow
 
     def _load_workflow(self):
         path, _ = QFileDialog.getOpenFileName(
@@ -2898,269 +3039,294 @@ class MainWindow(QMainWindow):
         if not path:
             return
         try:
-            with open(path, "r", encoding="utf-8") as f:
-                wf = json.load(f)
-
-            # Deselect all materials first
-            self.material_panel._deselect_all()
-
-            # Select materials
-            for m in wf.get("materials", []):
-                mid = m["id"]
-                for i in range(self.material_panel.material_list.count()):
-                    item = self.material_panel.material_list.item(i)
-                    if item.data(Qt.UserRole) == mid:
-                        item.setCheckState(Qt.Checked)
-                        break
-
-            # Add Rayleigh lines
-            for rl_data in wf.get("rayleigh_lines", []):
-                self.rayleigh_panel.D_spin.setValue(rl_data["D"])
-                self.rayleigh_panel.rho0_spin.setValue(rl_data["rho0"])
-                self.rayleigh_panel.sigma_D_spin.setValue(rl_data.get("sigma_D", 0.0))
-                self.rayleigh_panel.sigma_rho0_spin.setValue(rl_data.get("sigma_rho0", 0.0))
-                # Set material combo: preset 命中就选中对应项；否则把保存的
-                # material_id（自定义名）还原成 edit text，让 _add_line 把它
-                # 当成 standalone Rayleigh line 处理，而不是错误地继承先前选中
-                # 项的 data。
-                combo = self.rayleigh_panel.custom_name_edit
-                idx = combo.findData(rl_data["material_id"])
-                if idx >= 0:
-                    combo.setCurrentIndex(idx)
-                else:
-                    combo.setEditText(rl_data["material_id"])
-                # 保留原 rl_id，让 ix.source_curve*_id 仍能解析
-                self.rayleigh_panel._add_line(explicit_id=rl_data.get("id"))
-
-            # Restore reflected curves
-            for refl_data in wf.get("reflected_curves", []):
-                source_id = refl_data["source_id"]
-                center_up = refl_data["center_up"]
-                # 保留原 refl_id（如 "refl_3"），避免 ix.source_curve*_id 失效
-                refl_id = self.hugoniot_plot.add_reflected(
-                    source_id, center_up, explicit_id=refl_data.get("id")
-                )
-                if refl_id:
-                    # 恢复 anchor_intersection_id（若保存在 workflow 中）
-                    anchor_id = refl_data.get("anchor_intersection_id")
-                    source_ix_id = refl_data.get("source_ix_id")
-                    if anchor_id is not None or source_ix_id is not None:
-                        for rc in self.hugoniot_plot.reflected_curves:
-                            if rc["id"] == refl_id:
-                                if anchor_id is not None:
-                                    rc["anchor_intersection_id"] = anchor_id
-                                if source_ix_id is not None:
-                                    rc["source_ix_id"] = source_ix_id
-                                break
-                    mat = self.hugoniot_plot.materials.get(source_id)
-                    name = mat.name if mat else source_id
-                    self.intersection_panel.add_reflected_entry(refl_id, name, center_up)
-
-            # Restore intersections
-            from im_app.core.physics import Intersection
-            self.hugoniot_plot.intersections.clear()
-            for ix_data in wf.get("intersections", []):
-                ix = Intersection(
-                    id=ix_data["id"],
-                    curve1_id=ix_data["curve1_id"],
-                    curve2_id=ix_data["curve2_id"],
-                    up=ix_data["up"],
-                    p=ix_data["p"],
-                    type=ix_data.get("type", "custom"),
-                    material_id=ix_data.get("material_id"),
-                    compression_ratio=ix_data.get("compression_ratio"),
-                    source_curve1_id=ix_data.get("source_curve1_id"),
-                    source_curve2_id=ix_data.get("source_curve2_id"),
-                    ignore_first_at_creation=ix_data.get("ignore_first_at_creation", True),
-                )
-                self.hugoniot_plot.intersections.append(ix)
-
-            # ---- 为加载的交点补算误差（原位更新，不改变位置） ----
-            for ix in self.hugoniot_plot.intersections:
-                if ix.source_curve1_id is None and ix.source_curve2_id is None:
-                    continue  # 无 source 信息，无法计算
-                try:
-                    up1, p1, err1 = self._resolve_curve_data(ix.source_curve1_id)
-                    up2, p2, err2 = self._resolve_curve_data(ix.source_curve2_id)
-                    if up1 is None or up2 is None:
-                        continue
-                    from im_app.core.error_propagation import intersection_error_propagation
-                    e_result = intersection_error_propagation(
-                        ix.up, ix.p,
-                        up1, p1, err1,
-                        up2, p2, err2,
-                    )
-                    if e_result["method"] != "singular":
-                        ix.up_err = e_result["up_err"]
-                        ix.p_err = e_result["p_err"]
-                except Exception:
-                    pass
-            # ----------------------------------------------------
-
-            # Update intersection panel
-            self.intersection_panel.set_intersections(
-                self.hugoniot_plot.intersections,
-                self.hugoniot_plot.materials,
-            )
-            self.intersection_panel.update_rayleigh_lines(self.hugoniot_plot.rayleigh_lines)
-            self.intersection_panel.update_reflected_curves(self.hugoniot_plot.reflected_curves)
-
-            # Restore plot settings
-            ps = wf.get("plot_settings", {})
-            if ps:
-                # P-Up plot settings
-                p_up_ps = ps.get("p_up", {})
-                if p_up_ps:
-                    xlim = p_up_ps.get("xlim", [0, 30])
-                    ylim = p_up_ps.get("ylim", [0, 30])
-                    self.hugoniot_plot.set_xlim(xlim[0], xlim[1])
-                    self.hugoniot_plot.set_ylim(ylim[0], ylim[1])
-                    if "show_legend" in p_up_ps:
-                        self.hugoniot_plot.set_legend_visible(p_up_ps["show_legend"])
-                    if "linewidth" in p_up_ps:
-                        self.hugoniot_plot.set_linewidth(p_up_ps["linewidth"])
-                    if "linestyle" in p_up_ps:
-                        self.hugoniot_plot.set_linestyle(p_up_ps["linestyle"])
-                    # Update internal settings
-                    self._plot_settings["P-Up"]["xlim"] = tuple(xlim)
-                    self._plot_settings["P-Up"]["ylim"] = tuple(ylim)
-                    self._plot_settings["P-Up"]["show_legend"] = p_up_ps.get("show_legend", True)
-                    self._plot_settings["P-Up"]["linewidth"] = p_up_ps.get("linewidth", 1.2)
-                    self._plot_settings["P-Up"]["linestyle"] = p_up_ps.get("linestyle", "-")
-                    self._plot_settings["P-Up"]["p_unit"] = p_up_ps.get("p_unit", "Mbar")
-                    self._plot_settings["P-Up"]["x_log"] = p_up_ps.get("x_log", False)
-                    self._plot_settings["P-Up"]["y_log"] = p_up_ps.get("y_log", False)
-                    self.hugoniot_plot.set_p_unit(self._plot_settings["P-Up"]["p_unit"])
-                    self.hugoniot_plot.set_xscale(self._plot_settings["P-Up"]["x_log"])
-                    self.hugoniot_plot.set_yscale(self._plot_settings["P-Up"]["y_log"])
-
-                # All other plot settings (with migration for old "eos" key)
-                if "p_cr" in ps:
-                    self._plot_settings["P-CR"] = ps["p_cr"]
-                elif "eos" in ps:
-                    # 旧格式迁移：eos -> p_cr
-                    self._plot_settings["P-CR"] = ps["eos"]
-                if "p_rho" in ps:
-                    self._plot_settings["P-rho"] = ps["p_rho"]
-                if "us_up" in ps:
-                    self._plot_settings["Us-Up"] = ps["us_up"]
-                if "p_t" in ps:
-                    self._plot_settings["P-T"] = ps["p_t"]
-                if "rho_up" in ps:
-                    self._plot_settings["rho-Up"] = ps["rho_up"]
-                if "t_up" in ps:
-                    self._plot_settings["T-Up"] = ps["t_up"]
-                if "e_up" in ps:
-                    self._plot_settings["E-Up"] = ps["e_up"]
-                if "p_us" in ps:
-                    self._plot_settings["P-Us"] = ps["p_us"]
-
-                # 迁移：旧 workflow 缺 p_unit / x_log / y_log 键，补默认值
-                for _pk in ("P-Up", "P-CR", "P-rho", "Us-Up", "P-T",
-                            "rho-Up", "T-Up", "E-Up", "P-Us"):
-                    s = self._plot_settings.get(_pk)
-                    if isinstance(s, dict):
-                        s.setdefault("p_unit", "Mbar")
-                        s.setdefault("x_log", False)
-                        s.setdefault("y_log", False)
-
-                # 把加载的 p_unit / log 应用到各 plot 实例
-                for _pk in ("P-Up", "P-CR", "P-rho", "Us-Up", "P-T",
-                            "rho-Up", "T-Up", "E-Up", "P-Us"):
-                    _plot = self._get_plot_by_key(_pk)
-                    if _plot is not None:
-                        _s = self._plot_settings.get(_pk, {})
-                        _plot.set_p_unit(_s.get("p_unit", "Mbar"))
-                        _plot.set_xscale(_s.get("x_log", False))
-                        _plot.set_yscale(_s.get("y_log", False))
-
-            # Restore EOS scatter points with migration from old format
-            # 迁移：兼容旧字段 eos_scatter_points
-            old_pts = wf.get("eos_scatter_points", [])
-            new_pts = wf.get("scatter_points", [])
-            if old_pts and not new_pts:
-                # 旧格式迁移：补全 schema
-                from im_app.core.element_style import DEFAULT_SCATTER_STYLE
-                from im_app.core.plot_style import PRL_COLORS
-                colors = list(PRL_COLORS.values())
-                migrated = []
-                for i, op in enumerate(old_pts, 1):
-                    migrated.append({
-                        "id":         f"sc_{i:04d}",
-                        "label":      op.get("label", f"Point {i}"),
-                        "source":     "manual",
-                        "scope":      "global",
-                        "target_tab": None,
-                        "style":      {**DEFAULT_SCATTER_STYLE, "color": colors[(i-1) % len(colors)]},
-                        "Up":          None,
-                        "P":           op.get("pressure"),
-                        "compression": op.get("compression"),
-                        "T":           None,
-                        "E":           None,
-                        "rho":         None,
-                        "Us":          None,
-                    })
-                self._scatter_points = migrated
-            else:
-                self._scatter_points = new_pts
-
-            # 重置 counter 避免与已加载点冲突
-            existing_ids = []
-            for p in self._scatter_points:
-                pid = p.get("id", "")
-                if "_" in pid:
-                    try:
-                        num = int(pid.split("_")[1])
-                        existing_ids.append(num)
-                    except (ValueError, IndexError):
-                        pass
-            self._scatter_counter = max(existing_ids, default=0)
-            # 也重置 color counter (近似)
-            self._scatter_color_counter = len(self._scatter_points)
-
-            # Refresh UI to show loaded scatter points
-            if hasattr(self, '_update_scatter_list_widget'):
-                self._update_scatter_list_widget()
-            # 合并参考曲线（与 _apply_plot_settings P-CR 分支保持一致），
-            # 否则仅含 compression+P 的参考曲线会在 load 后不显示。
-            materials = dict(self.hugoniot_plot.materials) if self.hugoniot_plot.materials else {}
-            ref_curves = self.reference_curve_panel.get_selected_curves()
-            for mid, mat in ref_curves.items():
-                if mid not in materials:
-                    if (mat.compression is not None and len(mat.compression) > 0
-                            and mat.p is not None and len(mat.p) > 0):
-                        materials[mid] = mat
-            eos_settings = self._plot_settings["P-CR"]
-            self.eos_plot.update_plot(
-                materials=materials,
-                scatter_points=self._scatter_points,
-                xlim=eos_settings["xlim"],
-                ylim=eos_settings["ylim"],
-            )
-
-            # Update plot settings display
-            self._on_target_plot_changed(self.target_plot_combo.currentIndex())
-
-            # TODO Task 15: Replace with scatter_ix_combo mechanism
-            # # Update EOS inputs with the last intersection if available
-            # if self.hugoniot_plot.intersections:
-            #     last_ix = self.hugoniot_plot.intersections[-1]
-            #     cr = f"{last_ix.compression_ratio:.3f}" if hasattr(last_ix, 'compression_ratio') and last_ix.compression_ratio else "-"
-            #     self._update_eos_inputs_from_intersection(last_ix.curve1_id, last_ix.up, last_ix.p, cr)
-
-            self.hugoniot_plot.refresh()
-            # Refresh scatter UI after workflow load
-            if hasattr(self, '_refresh_scatter_ix_combo'):
-                self._refresh_scatter_ix_combo()
-            if hasattr(self, '_update_scatter_list_widget'):
-                self._update_scatter_list_widget()
-            if hasattr(self, '_refresh_all_plots_with_scatter'):
-                self._refresh_all_plots_with_scatter()
-            # 蒙特卡洛误差传播
-            self._run_monte_carlo_for_scene()
+            self.load_workflow_from(path)
             self.status.showMessage(f"Workflow loaded from {path}")
         except Exception as e:
             QMessageBox.critical(self, "Load Error", str(e))
+
+    def load_workflow_from(self, path: str):
+        """从指定路径加载 workflow 并应用到会话（GUI 对话框与 headless 共用，出错抛异常）。"""
+        with open(path, "r", encoding="utf-8") as f:
+            wf = json.load(f)
+        self._apply_workflow_dict(wf)
+
+    def _apply_workflow_dict(self, wf: dict, run_mc: bool = True):
+        """把 workflow dict 应用到当前会话（材料勾选 / Rayleigh / 反射线 / 交点 / 绘图设置 / 散点）。
+
+        run_mc=False 供 headless 批处理使用：加载后由调用方统一 refresh+MC，
+        避免同一份蒙特卡洛跑两遍。
+        """
+        # Deselect all materials first
+        self.material_panel._deselect_all()
+
+        # Select materials
+        for m in wf.get("materials", []):
+            mid = m["id"]
+            for i in range(self.material_panel.material_list.count()):
+                item = self.material_panel.material_list.item(i)
+                if item.data(Qt.UserRole) == mid:
+                    item.setCheckState(Qt.Checked)
+                    break
+
+        # Add Rayleigh lines
+        for rl_data in wf.get("rayleigh_lines", []):
+            self.rayleigh_panel.D_spin.setValue(rl_data["D"])
+            self.rayleigh_panel.rho0_spin.setValue(rl_data["rho0"])
+            self.rayleigh_panel.sigma_D_spin.setValue(rl_data.get("sigma_D", 0.0))
+            self.rayleigh_panel.sigma_rho0_spin.setValue(rl_data.get("sigma_rho0", 0.0))
+            # Set material combo: preset 命中就选中对应项；否则把保存的
+            # material_id（自定义名）还原成 edit text，让 _add_line 把它
+            # 当成 standalone Rayleigh line 处理，而不是错误地继承先前选中
+            # 项的 data。
+            combo = self.rayleigh_panel.custom_name_edit
+            idx = combo.findData(rl_data["material_id"])
+            if idx >= 0:
+                combo.setCurrentIndex(idx)
+            else:
+                combo.setEditText(rl_data["material_id"])
+            # 保留原 rl_id，让 ix.source_curve*_id 仍能解析
+            self.rayleigh_panel._add_line(explicit_id=rl_data.get("id"))
+
+        # Restore reflected curves
+        for refl_data in wf.get("reflected_curves", []):
+            source_id = refl_data["source_id"]
+            center_up = refl_data["center_up"]
+            # 保留原 refl_id（如 "refl_3"），避免 ix.source_curve*_id 失效
+            refl_id = self.hugoniot_plot.add_reflected(
+                source_id, center_up, explicit_id=refl_data.get("id")
+            )
+            if refl_id:
+                # 恢复 anchor_intersection_id（若保存在 workflow 中）
+                anchor_id = refl_data.get("anchor_intersection_id")
+                source_ix_id = refl_data.get("source_ix_id")
+                kind = refl_data.get("kind")
+                anchor_up = refl_data.get("anchor_up")
+                if (anchor_id is not None or source_ix_id is not None
+                        or (kind == "release" and anchor_up is not None)):
+                    for rc in self.hugoniot_plot.reflected_curves:
+                        if rc["id"] == refl_id:
+                            if anchor_id is not None:
+                                rc["anchor_intersection_id"] = anchor_id
+                            if source_ix_id is not None:
+                                rc["source_ix_id"] = source_ix_id
+                            if kind == "release" and anchor_up is not None:
+                                rc["kind"] = "release"
+                                rc["anchor_up"] = anchor_up
+                            break
+                mat = self.hugoniot_plot.materials.get(source_id)
+                name = mat.name if mat else source_id
+                self.intersection_panel.add_reflected_entry(
+                    refl_id, name, center_up,
+                    kind="release" if kind == "release" else "reflected",
+                )
+
+        # Restore intersections
+        from im_app.core.physics import Intersection
+        self.hugoniot_plot.intersections.clear()
+        for ix_data in wf.get("intersections", []):
+            ix = Intersection(
+                id=ix_data["id"],
+                curve1_id=ix_data["curve1_id"],
+                curve2_id=ix_data["curve2_id"],
+                up=ix_data["up"],
+                p=ix_data["p"],
+                type=ix_data.get("type", "custom"),
+                material_id=ix_data.get("material_id"),
+                compression_ratio=ix_data.get("compression_ratio"),
+                source_curve1_id=ix_data.get("source_curve1_id"),
+                source_curve2_id=ix_data.get("source_curve2_id"),
+                ignore_first_at_creation=ix_data.get("ignore_first_at_creation", True),
+            )
+            self.hugoniot_plot.intersections.append(ix)
+
+        # ---- 为加载的交点补算误差（原位更新，不改变位置） ----
+        for ix in self.hugoniot_plot.intersections:
+            if ix.source_curve1_id is None and ix.source_curve2_id is None:
+                continue  # 无 source 信息，无法计算
+            try:
+                up1, p1, err1 = self._resolve_curve_data(ix.source_curve1_id)
+                up2, p2, err2 = self._resolve_curve_data(ix.source_curve2_id)
+                if up1 is None or up2 is None:
+                    continue
+                from im_app.core.error_propagation import intersection_error_propagation
+                e_result = intersection_error_propagation(
+                    ix.up, ix.p,
+                    up1, p1, err1,
+                    up2, p2, err2,
+                )
+                if e_result["method"] != "singular":
+                    ix.up_err = e_result["up_err"]
+                    ix.p_err = e_result["p_err"]
+            except Exception:
+                pass
+        # ----------------------------------------------------
+
+        # Update intersection panel
+        self.intersection_panel.set_intersections(
+            self.hugoniot_plot.intersections,
+            self.hugoniot_plot.materials,
+        )
+        self.intersection_panel.update_rayleigh_lines(self.hugoniot_plot.rayleigh_lines)
+        self.intersection_panel.update_reflected_curves(self.hugoniot_plot.reflected_curves)
+
+        # Restore plot settings
+        ps = wf.get("plot_settings", {})
+        if ps:
+            # P-Up plot settings
+            p_up_ps = ps.get("p_up", {})
+            if p_up_ps:
+                xlim = p_up_ps.get("xlim")
+                ylim = p_up_ps.get("ylim")
+                if xlim is not None and ylim is not None:
+                    self.hugoniot_plot.set_xlim(xlim[0], xlim[1])
+                    self.hugoniot_plot.set_ylim(ylim[0], ylim[1])
+                if "show_legend" in p_up_ps:
+                    self.hugoniot_plot.set_legend_visible(p_up_ps["show_legend"])
+                if "linewidth" in p_up_ps:
+                    self.hugoniot_plot.set_linewidth(p_up_ps["linewidth"])
+                if "linestyle" in p_up_ps:
+                    self.hugoniot_plot.set_linestyle(p_up_ps["linestyle"])
+                # Update internal settings
+                self._plot_settings["P-Up"]["xlim"] = (
+                    tuple(xlim) if xlim is not None else None)
+                self._plot_settings["P-Up"]["ylim"] = (
+                    tuple(ylim) if ylim is not None else None)
+                self._plot_settings["P-Up"]["show_legend"] = p_up_ps.get("show_legend", True)
+                self._plot_settings["P-Up"]["linewidth"] = p_up_ps.get("linewidth", 1.2)
+                self._plot_settings["P-Up"]["linestyle"] = p_up_ps.get("linestyle", "-")
+                self._plot_settings["P-Up"]["p_unit"] = p_up_ps.get("p_unit", "Mbar")
+                self._plot_settings["P-Up"]["x_log"] = p_up_ps.get("x_log", False)
+                self._plot_settings["P-Up"]["y_log"] = p_up_ps.get("y_log", False)
+                self.hugoniot_plot.set_p_unit(self._plot_settings["P-Up"]["p_unit"])
+                self.hugoniot_plot.set_xscale(self._plot_settings["P-Up"]["x_log"])
+                self.hugoniot_plot.set_yscale(self._plot_settings["P-Up"]["y_log"])
+
+            # All other plot settings (with migration for old "eos" key)
+            if "p_cr" in ps:
+                self._plot_settings["P-CR"] = ps["p_cr"]
+            elif "eos" in ps:
+                # 旧格式迁移：eos -> p_cr
+                self._plot_settings["P-CR"] = ps["eos"]
+            if "p_rho" in ps:
+                self._plot_settings["P-rho"] = ps["p_rho"]
+            if "us_up" in ps:
+                self._plot_settings["Us-Up"] = ps["us_up"]
+            if "p_t" in ps:
+                self._plot_settings["P-T"] = ps["p_t"]
+            if "rho_up" in ps:
+                self._plot_settings["rho-Up"] = ps["rho_up"]
+            if "t_up" in ps:
+                self._plot_settings["T-Up"] = ps["t_up"]
+            if "e_up" in ps:
+                self._plot_settings["E-Up"] = ps["e_up"]
+            if "p_us" in ps:
+                self._plot_settings["P-Us"] = ps["p_us"]
+
+            # 迁移：旧 workflow 缺 p_unit / x_log / y_log 键，补默认值
+            for _pk in ("P-Up", "P-CR", "P-rho", "Us-Up", "P-T",
+                        "rho-Up", "T-Up", "E-Up", "P-Us"):
+                s = self._plot_settings.get(_pk)
+                if isinstance(s, dict):
+                    s.setdefault("p_unit", "Mbar")
+                    s.setdefault("x_log", False)
+                    s.setdefault("y_log", False)
+
+            # 把加载的 p_unit / log 应用到各 plot 实例
+            for _pk in ("P-Up", "P-CR", "P-rho", "Us-Up", "P-T",
+                        "rho-Up", "T-Up", "E-Up", "P-Us"):
+                _plot = self._get_plot_by_key(_pk)
+                if _plot is not None:
+                    _s = self._plot_settings.get(_pk, {})
+                    _plot.set_p_unit(_s.get("p_unit", "Mbar"))
+                    _plot.set_xscale(_s.get("x_log", False))
+                    _plot.set_yscale(_s.get("y_log", False))
+
+        # Restore EOS scatter points with migration from old format
+        # 迁移：兼容旧字段 eos_scatter_points
+        old_pts = wf.get("eos_scatter_points", [])
+        new_pts = wf.get("scatter_points", [])
+        if old_pts and not new_pts:
+            # 旧格式迁移：补全 schema
+            from im_app.core.element_style import DEFAULT_SCATTER_STYLE
+            from im_app.core.plot_style import PRL_COLORS
+            colors = list(PRL_COLORS.values())
+            migrated = []
+            for i, op in enumerate(old_pts, 1):
+                migrated.append({
+                    "id":         f"sc_{i:04d}",
+                    "label":      op.get("label", f"Point {i}"),
+                    "source":     "manual",
+                    "scope":      "global",
+                    "target_tab": None,
+                    "style":      {**DEFAULT_SCATTER_STYLE, "color": colors[(i-1) % len(colors)]},
+                    "Up":          None,
+                    "P":           op.get("pressure"),
+                    "compression": op.get("compression"),
+                    "T":           None,
+                    "E":           None,
+                    "rho":         None,
+                    "Us":          None,
+                })
+            self._scatter_points = migrated
+        else:
+            self._scatter_points = new_pts
+
+        # 重置 counter 避免与已加载点冲突
+        existing_ids = []
+        for p in self._scatter_points:
+            pid = p.get("id", "")
+            if "_" in pid:
+                try:
+                    num = int(pid.split("_")[1])
+                    existing_ids.append(num)
+                except (ValueError, IndexError):
+                    pass
+        self._scatter_counter = max(existing_ids, default=0)
+        # 也重置 color counter (近似)
+        self._scatter_color_counter = len(self._scatter_points)
+
+        # Refresh UI to show loaded scatter points
+        if hasattr(self, '_update_scatter_list_widget'):
+            self._update_scatter_list_widget()
+        # 合并参考曲线（与 _apply_plot_settings P-CR 分支保持一致），
+        # 否则仅含 compression+P 的参考曲线会在 load 后不显示。
+        materials = dict(self.hugoniot_plot.materials) if self.hugoniot_plot.materials else {}
+        ref_curves = self.reference_curve_panel.get_selected_curves()
+        for mid, mat in ref_curves.items():
+            if mid not in materials:
+                if (mat.compression is not None and len(mat.compression) > 0
+                        and mat.p is not None and len(mat.p) > 0):
+                    materials[mid] = mat
+        eos_settings = self._plot_settings["P-CR"]
+        self.eos_plot.update_plot(
+            materials=materials,
+            scatter_points=self._scatter_points,
+            xlim=eos_settings["xlim"],
+            ylim=eos_settings["ylim"],
+        )
+
+        # Update plot settings display
+        self._on_target_plot_changed(self.target_plot_combo.currentIndex())
+
+        # TODO Task 15: Replace with scatter_ix_combo mechanism
+        # # Update EOS inputs with the last intersection if available
+        # if self.hugoniot_plot.intersections:
+        #     last_ix = self.hugoniot_plot.intersections[-1]
+        #     cr = f"{last_ix.compression_ratio:.3f}" if hasattr(last_ix, 'compression_ratio') and last_ix.compression_ratio else "-"
+        #     self._update_eos_inputs_from_intersection(last_ix.curve1_id, last_ix.up, last_ix.p, cr)
+
+        self.hugoniot_plot.refresh()
+        # Refresh scatter UI after workflow load
+        if hasattr(self, '_refresh_scatter_ix_combo'):
+            self._refresh_scatter_ix_combo()
+        if hasattr(self, '_update_scatter_list_widget'):
+            self._update_scatter_list_widget()
+        if hasattr(self, '_refresh_all_plots_with_scatter'):
+            self._refresh_all_plots_with_scatter()
+        # 蒙特卡洛误差传播
+        if run_mc:
+            self._run_monte_carlo_for_scene()
+
 
     def showEvent(self, event):
         super().showEvent(event)
