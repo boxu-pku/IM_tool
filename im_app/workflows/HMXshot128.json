@@ -1,0 +1,137 @@
+{
+    "version": "1.0",
+    "created": "2026-09-26T09:23:45.103727",
+    "materials": [
+        {
+            "id": "Al_Celliers2005",
+            "visible": true
+        }
+    ],
+    "rayleigh_lines": [
+        {
+            "id": "rl_2",
+            "material_id": "HMX",
+            "D": 6.4,
+            "rho0": 1.88,
+            "sigma_D": 0.0,
+            "sigma_rho0": 0.0
+        }
+    ],
+    "intersections": [
+        {
+            "id": "ix_specific_0",
+            "curve1_id": "Rayleigh HMX",
+            "curve2_id": "Release Al_Celliers2005",
+            "up": 4.625567457209387,
+            "p": 0.5565482764514335,
+            "type": "custom",
+            "material_id": null,
+            "compression_ratio": 3.607,
+            "source_curve1_id": "rl_2",
+            "source_curve2_id": "refl_3",
+            "ignore_first_at_creation": true
+        }
+    ],
+    "reflected_curves": [
+        {
+            "id": "refl_3",
+            "source_id": "Al_Celliers2005",
+            "center_up": 3.44,
+            "anchor_intersection_id": null,
+            "source_ix_id": null,
+            "kind": "release",
+            "anchor_up": 3.44
+        }
+    ],
+    "plot_settings": {
+        "p_up": {
+            "xlim": [
+                0.06889804016547474,
+                6.789673766210771
+            ],
+            "ylim": [
+                0.006392990056568293,
+                2.3294604023743184
+            ],
+            "show_legend": true,
+            "linewidth": 1.2,
+            "linestyle": "-",
+            "p_unit": "Mbar",
+            "x_log": false,
+            "y_log": false
+        },
+        "p_cr": {
+            "xlim": null,
+            "ylim": null,
+            "show_legend": true,
+            "inverse": false,
+            "p_unit": "Mbar",
+            "x_log": false,
+            "y_log": false
+        },
+        "p_rho": {
+            "xlim": null,
+            "ylim": null,
+            "show_legend": true,
+            "inverse": false,
+            "p_unit": "Mbar",
+            "x_log": false,
+            "y_log": false
+        },
+        "us_up": {
+            "xlim": null,
+            "ylim": null,
+            "show_legend": true,
+            "inverse": false,
+            "p_unit": "Mbar",
+            "x_log": false,
+            "y_log": false
+        },
+        "p_t": {
+            "xlim": null,
+            "ylim": null,
+            "show_legend": true,
+            "inverse": false,
+            "p_unit": "Mbar",
+            "x_log": false,
+            "y_log": false
+        },
+        "rho_up": {
+            "xlim": null,
+            "ylim": null,
+            "show_legend": true,
+            "inverse": false,
+            "p_unit": "Mbar",
+            "x_log": false,
+            "y_log": false
+        },
+        "t_up": {
+            "xlim": null,
+            "ylim": null,
+            "show_legend": true,
+            "inverse": false,
+            "p_unit": "Mbar",
+            "x_log": false,
+            "y_log": false
+        },
+        "e_up": {
+            "xlim": null,
+            "ylim": null,
+            "show_legend": true,
+            "inverse": false,
+            "p_unit": "Mbar",
+            "x_log": false,
+            "y_log": false
+        },
+        "p_us": {
+            "xlim": null,
+            "ylim": null,
+            "show_legend": true,
+            "inverse": false,
+            "p_unit": "Mbar",
+            "x_log": false,
+            "y_log": false
+        }
+    },
+    "scatter_points": []
+}

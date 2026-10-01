@@ -1,0 +1,65 @@
+{
+    "version": "1.0",
+    "created": "2026-09-29T17:41:37.357282",
+    "materials": [
+        {
+            "id": "Al_Celliers2005",
+            "visible": true
+        }
+    ],
+    "rayleigh_lines": [
+        {
+            "id": "rl_ai_128",
+            "material_id": "HMX",
+            "D": 6.4,
+            "rho0": 1.88,
+            "sigma_D": 0.0,
+            "sigma_rho0": 0.0
+        }
+    ],
+    "intersections": [
+        {
+            "id": "ix_specific_0",
+            "curve1_id": "Rayleigh HMX",
+            "curve2_id": "Release Al_Celliers2005",
+            "up": 2.089919,
+            "p": 0.251459,
+            "type": "custom",
+            "material_id": null,
+            "compression_ratio": 1.485,
+            "source_curve1_id": "rl_ai_128",
+            "source_curve2_id": "refl_ai_128",
+            "ignore_first_at_creation": true
+        }
+    ],
+    "reflected_curves": [
+        {
+            "id": "refl_ai_128",
+            "source_id": "Al_Celliers2005",
+            "center_up": 1.6351,
+            "anchor_intersection_id": null,
+            "source_ix_id": null,
+            "kind": "release",
+            "anchor_up": 1.6351
+        }
+    ],
+    "plot_settings": {
+        "p_up": {
+            "xlim": [
+                0,
+                4.20841683
+            ],
+            "ylim": [
+                0,
+                130
+            ],
+            "show_legend": true,
+            "linewidth": 1.2,
+            "linestyle": "-",
+            "p_unit": "GPa",
+            "x_log": false,
+            "y_log": false
+        }
+    },
+    "scatter_points": []
+}
