@@ -506,6 +506,14 @@ class MainWindow(QMainWindow):
         self.setStatusBar(self.status)
         self.status.showMessage("Ready - select materials and add Rayleigh lines")
 
+        # 光标坐标读数（permanent，在 author 标签左侧；画布 motion 时实时刷新）
+        self.coord_label = QLabel("")
+        self.status.addPermanentWidget(self.coord_label)
+        for plot in (self.hugoniot_plot, self.eos_plot, self.p_rho_plot,
+                     self.us_up_plot, self.p_t_plot, self.rho_up_plot,
+                     self.t_up_plot, self.e_up_plot, self.p_us_plot):
+            plot.cursor_moved.connect(self.coord_label.setText)
+
         # Author info (permanent widget on right)
         self.author_label = QLabel("Author: BoXu Email: boxu25@stu.pku.edu.cn")
         self.status.addPermanentWidget(self.author_label)
@@ -2179,6 +2187,9 @@ class MainWindow(QMainWindow):
 
         if index >= len(tab_names):
             return
+
+        # 切 tab 后旧光标读数失效，清空
+        self.coord_label.setText("")
 
         target = tab_names[index]
         settings_key = settings_keys[index]

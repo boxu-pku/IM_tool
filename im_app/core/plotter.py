@@ -67,6 +67,24 @@ def is_scatter_material(mid: str) -> bool:
     return str(mid).endswith("_lasl")
 
 
+# 光标坐标读数用：变量 -> 单位串（与 plot_style.LABEL_* 同源；P 跟 p_unit 走）
+_VAR_UNITS = {
+    "Up": "km/s",
+    "Us": "km/s",
+    "rho": "g/cm^3",
+    "compression": "",      # 无量纲
+    "T": "eV",
+    "E": "MJ/g",
+}
+
+
+def _var_unit(var: str, p_unit: str = "Mbar") -> str:
+    """变量 -> 坐标读数单位。P 跟 p_unit（GPa 切换后读数即 GPa）。"""
+    if var == "P":
+        return "GPa" if (p_unit or "Mbar").lower().startswith("g") else "Mbar"
+    return _VAR_UNITS.get(var, "")
+
+
 class DragZoomMixin:
     """拖拽框选缩放 + 'a' 键重置的纯 Python mixin。
 
@@ -75,6 +93,8 @@ class DragZoomMixin:
     - 定义类属性 ``zoom_applied = pyqtSignal(float, float, float, float)``
       （参数：xmin, xmax, ymin, ymax，data 坐标）
     - 定义类属性 ``reset_view = pyqtSignal()``
+    - 定义类属性 ``cursor_moved = pyqtSignal(str)``（光标坐标读数，
+      见 ``_dz_emit_hover``）
     - 有 ``self.ax``（matplotlib Axes 实例）
     - 在 ``__init__`` 中调用 ``self.setup_drag_zoom()`` 一次
     - 可选：重写 ``_handle_click_release(event)`` 处理非拖拽的点击（默认 no-op）
@@ -114,7 +134,8 @@ class DragZoomMixin:
         self._is_zoom_dragging = False
 
     def _dz_on_motion(self, event):
-        """移动超过阈值时创建/更新红色半透明 Rectangle。"""
+        """移动超过阈值时创建/更新红色半透明 Rectangle；同时刷新光标坐标读数。"""
+        self._dz_emit_hover(event)
         if self._zoom_start is None or event.x is None or event.y is None:
             return
 
@@ -148,6 +169,26 @@ class DragZoomMixin:
         self._zoom_rect_patch.set_width(w)
         self._zoom_rect_patch.set_height(h)
         self.draw_idle()
+
+    def _dz_emit_hover(self, event):
+        """光标坐标读数：data 坐标格式化后 emit ``cursor_moved``（str）。
+
+        axes 数据坐标就是显示单位坐标（p_unit 选 GPa 时画布上即 GPa），
+        直接读 event.xdata/ydata；变量名取 host 的 ``x_var``/``y_var``
+        （未定义时按 P-Up 主图默认 Up/P）。光标不在 axes 内时发空串清位。
+        """
+        if event.xdata is None or event.ydata is None:
+            self.cursor_moved.emit("")
+            return
+        p_unit = getattr(self, "p_unit", "Mbar")
+        parts = []
+        for var, val in (
+            (getattr(self, "x_var", "Up"), event.xdata),
+            (getattr(self, "y_var", "P"), event.ydata),
+        ):
+            unit = _var_unit(var, p_unit)
+            parts.append(f"{var} = {val:.4f} {unit}" if unit else f"{var} = {val:.4f}")
+        self.cursor_moved.emit("    ".join(parts))
 
     def _dz_on_release(self, event):
         """松开时：若曾拖拽则 emit zoom_applied；否则调 _handle_click_release。"""
@@ -353,6 +394,7 @@ class InteractiveHugoniotPlot(FigureCanvas, DragZoomMixin):
     style_changed = pyqtSignal(str, dict)     # emits (element_id, new_style)
     zoom_applied = pyqtSignal(float, float, float, float)   # xmin, xmax, ymin, ymax
     reset_view = pyqtSignal()
+    cursor_moved = pyqtSignal(str)            # 光标坐标读数（DragZoomMixin._dz_emit_hover）
 
     def __init__(self, parent=None):
         self.fig = Figure(figsize=PRL_FIGSIZE_SQUARE, dpi=150)
@@ -1062,6 +1104,7 @@ class EOSPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
 
     zoom_applied = pyqtSignal(float, float, float, float)   # xmin, xmax, ymin, ymax
     reset_view = pyqtSignal()
+    cursor_moved = pyqtSignal(str)            # 光标坐标读数（DragZoomMixin._dz_emit_hover）
     element_selected = pyqtSignal(str, str)
     element_deleted = pyqtSignal(str, str)
     style_changed = pyqtSignal(str, dict)
@@ -1082,6 +1125,8 @@ class EOSPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
         self._last_ylim = None
 
         # Pressure 单位与轴 log 模式（X=compression, Y=P）
+        # x_var 供光标读数用（DragZoomMixin._dz_emit_hover）；Y 恒为 P
+        self.x_var = "compression"
         self.p_unit = "Mbar"
         self.x_log = False
         self.y_log = False
@@ -1274,6 +1319,7 @@ class GenericHugoniotPlot(FigureCanvas, DragZoomMixin, ElementInteractionMixin):
 
     zoom_applied = pyqtSignal(float, float, float, float)   # xmin, xmax, ymin, ymax
     reset_view = pyqtSignal()
+    cursor_moved = pyqtSignal(str)            # 光标坐标读数（DragZoomMixin._dz_emit_hover）
     element_selected = pyqtSignal(str, str)
     element_deleted = pyqtSignal(str, str)
     style_changed = pyqtSignal(str, dict)
