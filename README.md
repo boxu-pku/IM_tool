@@ -12,8 +12,8 @@ IM Tool determines interface pressure and particle velocity from measured shock 
 | --- | --- |
 | Debian / Ubuntu | 用软件安装器打开 `.deb`，从应用菜单启动 **IM Tool**。Open the `.deb` in the software installer, then launch **IM Tool** from Applications. |
 | Fedora | 用软件安装器打开 `.rpm`，从应用菜单启动 **IM Tool**。Open the `.rpm` in the software installer, then launch **IM Tool** from Applications. |
-| macOS · Apple 芯片 / Apple silicon | [下载 arm64 磁盘映像 / Download DMG](https://github.com/boxu-pku/IM_tool/releases/download/macos-v1.2.4/IM-Tool-1.2.4-macOS-arm64.dmg) |
-| macOS · Intel | [下载 Intel 磁盘映像 / Download DMG](https://github.com/boxu-pku/IM_tool/releases/download/macos-v1.2.4/IM-Tool-1.2.4-macOS-x86_64.dmg) |
+| macOS · Apple 芯片 / Apple silicon | [下载 arm64 磁盘映像 / Download DMG](https://github.com/boxu-pku/IM_tool/releases/download/macos-v1.2.4-r2/IM-Tool-1.2.4-macOS-arm64.dmg) |
+| macOS · Intel | [下载 Intel 磁盘映像 / Download DMG](https://github.com/boxu-pku/IM_tool/releases/download/macos-v1.2.4-r2/IM-Tool-1.2.4-macOS-x86_64.dmg) |
 | Windows 10 / 11 x64 | 双击安装程序 `.exe`，完成向导后从“开始”菜单启动。Double-click the installer and launch **IM Tool** from Start. |
 
 在 Mac 上打开对应的 `.dmg`，将 **IM Tool.app** 拖入 **Applications**，推出磁盘映像，再从“应用程序”启动。On Mac, open the DMG, drag the app to **Applications**, eject the image and launch **IM Tool**. [首次打开 / First launch](packaging/README.md#macos)

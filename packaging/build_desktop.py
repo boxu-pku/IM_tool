@@ -22,6 +22,7 @@ ASSETS = PKG / "resources"
 OUT = ROOT / "dist" / "desktop"
 BUILD = ROOT / "build" / "desktop"
 APP_ID = "io.github.boxu_pku.IMTool"
+MACOS_BUNDLE_ID = "io.github.boxu-pku.IMTool"
 LINUX_DIR = "/usr/share/im-tool"
 VERSION = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
 
@@ -77,7 +78,7 @@ def macos_installer():
         staging = Path(temporary)
         library = staging / "desktop_library"
         build_library(library)
-        options = ["--target-arch", arch, "--osx-bundle-identifier", APP_ID,
+        options = ["--target-arch", arch, "--osx-bundle-identifier", MACOS_BUNDLE_ID,
                    "--add-data", f"{library}:im_app/desktop_library"]
         for file, relative in desktop_files():
             options.extend(["--add-data", f"{file}:im_app/{relative.parent.as_posix()}"])

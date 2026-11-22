@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def check_contents(app, image):
     info = plistlib.loads((app / "Contents/Info.plist").read_bytes())
     version = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
-    assert info["CFBundleIdentifier"] == "io.github.boxu_pku.IMTool"
+    assert info["CFBundleIdentifier"] == "io.github.boxu-pku.IMTool"
     assert info["CFBundleVersion"] == info["CFBundleShortVersionString"] == version
     executable = app / "Contents/MacOS" / info["CFBundleExecutable"]
     arch = platform.machine()
