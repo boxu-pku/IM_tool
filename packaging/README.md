@@ -2,7 +2,7 @@
 
 | 系统 / Platform | 1.2.4 安装包 / Installer | 安装和启动 / Install and launch |
 | --- | --- | --- |
-| Windows 10 / 11 x64 | `IM-Tool-Setup-1.2.4-x64.exe` | 双击，选择简体中文或英语，完成向导并从“开始”菜单启动。Double-click, choose a language, then launch IM Tool from Start. |
+| Windows 10 / 11 x64 | [IM-Tool-Setup-1.2.4-x64.exe](https://github.com/boxu-pku/IM_tool/releases/download/windows-v1.2.4/IM-Tool-Setup-1.2.4-x64.exe) | 双击，选择简体中文或英语，完成向导并从“开始”菜单启动。Double-click, choose a language, then launch IM Tool from Start. |
 | Debian / Ubuntu | `im-tool_1.2.4-1_all.deb` | 用软件安装器打开或运行 `sudo apt install ./im-tool_1.2.4-1_all.deb`。Open the package in the software installer or use APT. |
 | Fedora | `im-tool-1.2.4-1.noarch.rpm` | 用软件安装器打开或运行 `sudo dnf install ./im-tool-1.2.4-1.noarch.rpm`。Open the package in the software installer or use DNF. |
 | macOS · Apple silicon | [IM-Tool-1.2.4-macOS-arm64.dmg](https://github.com/boxu-pku/IM_tool/releases/download/macos-v1.2.4-r2/IM-Tool-1.2.4-macOS-arm64.dmg) | 拖入“应用程序”。Drag the app to Applications. |
