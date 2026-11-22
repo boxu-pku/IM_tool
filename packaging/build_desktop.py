@@ -56,7 +56,7 @@ def freeze_windows():
         "--exclude-module", "PySide6", "--exclude-module", "PyQt6", "--exclude-module", "tkinter",
         "--exclude-module", "torch", "--exclude-module", "IPython",
         "--workpath", str(win / "freeze"), "--distpath", str(win / "bundle"),
-        "--specpath", str(win), str(ROOT / "run_app.py"),
+        "--specpath", str(win), str(PKG / "main.py"),
     ], cwd=ROOT, check=True)
 
 
@@ -112,7 +112,6 @@ def linux_installers(staging):
     for file in sorted(library.rglob("*")):
         if file.is_file():
             add(file, f"{LINUX_DIR}/im_app/desktop_library/{file.relative_to(library).as_posix()}")
-    add(ROOT / "run_app.py", f"{LINUX_DIR}/run_app.py")
     add(ROOT / "packaging/linux/im-tool", "/usr/bin/im-tool", 0o755)
     add(ROOT / f"packaging/linux/{APP_ID}.desktop", f"/usr/share/applications/{APP_ID}.desktop")
     add(ROOT / f"packaging/linux/{APP_ID}.metainfo.xml", f"/usr/share/metainfo/{APP_ID}.metainfo.xml")

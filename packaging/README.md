@@ -10,6 +10,32 @@
 
 On Linux, search the application menu for **IM Tool** or run `im-tool` in a desktop terminal. The desktop edition seeds a writable per-user library with 13 reference tables. **Help → Open Working Folder** opens the active library. **Help → Open Practice Workspace** opens the Celliers aluminum and Hamel alpha-quartz standards with the measured-speed lines for Hicks shot 29400 in `Practice/Celliers-Hamel`. Both manuals are available in Help. [中文手册](../im_app/resources/manuals/im-tool-zh.pdf) · [English manual](../im_app/resources/manuals/im-tool-en.pdf)
 
+## Run from source
+
+在图形桌面环境中克隆仓库，在仓库根目录执行对应命令。请使用 Python 3.9 或更高版本。
+
+Clone the repository on a graphical desktop and run the commands for your platform from the repository root with Python 3.9 or later.
+
+**Linux / macOS**
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -e .
+.venv/bin/im-tool
+```
+
+**Windows PowerShell**
+
+```powershell
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e .
+.\.venv\Scripts\im-tool.exe
+```
+
+激活环境后用 `im-tool` 启动图形界面，用 `imt --help` 查看命令行用法。两者分别对应 `python -m im_app.main` 和 `python -m im_app.cli`。
+
+With the environment active, use `im-tool` for the GUI and `imt --help` for the CLI. Their module entry points are `python -m im_app.main` and `python -m im_app.cli`.
+
 ## Build from the checkout
 
 Build tools require Python 3.11 or later and Pillow. The packaging script reads the version from `pyproject.toml`. Output goes to `dist/desktop/`.

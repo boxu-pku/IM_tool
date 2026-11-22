@@ -10,14 +10,14 @@ The GUI presents **8 plot tabs** (P-Up, P-CR, Us-Up, P-T, rho-Up, T-Up, E-Up, P-
 
 ## Running the Application
 
-**GUI Application** (primary workflow):
-```bash
-python -m im_app.main        # primary entry point
-python run_app.py            # alternative launcher (sets PYTHONPATH)
-python run_app.bat           # Windows batch launcher (pauses on exit)
-```
+**GUI Application**
 
-Dependencies: `pip install -r requirements.txt` (PyQt5, numpy, pandas, matplotlib, scipy, xlrd, openpyxl)
+From the repository root in an active virtual environment:
+
+```bash
+python -m pip install -e .
+im-tool                       # GUI, also available as python -m im_app.main
+```
 
 **Headless / AI operator interface** (drive the analysis without the GUI — full manual in `docs/AI_GUIDE.md`):
 ```bash
@@ -26,18 +26,15 @@ python -m im_app.cli template impedance               # two-layer impedance-matc
 python -m im_app.cli run im_app/workflows/AC_shot384-L.json --out runs/AC_shot384-L/   # recompute + MC + export figures/results
 ```
 Engine: `im_app/api/headless.py` (offscreen MainWindow — same code path as the GUI).
-CLI stdout is always pure JSON; debug output goes to stderr. Regression test: `python scripts/smoke_test_headless.py`.
+CLI stdout is always pure JSON; debug output goes to stderr. Regression test: `python tests/smoke_test_headless.py`.
 
-**Packaged release**:
-```bash
-python scripts/package_release.py    # builds dist/im-tool-v*.zip
-```
+Build desktop installers with `packaging/build_desktop.py` as described in [the packaging guide](packaging/README.md).
 
 **Scripts**:
 ```bash
 python scripts/convert_to_standard.py    # raw data → standard library format
 python scripts/convert_csv_to_txt.py     # legacy .csv → .txt format
-python scripts/validate_hugoniot.py      # CLI Hugoniot file validation
+python -m im_app.tools.validate_hugoniot --help  # Hugoniot file validation
 ```
 
 ## Architecture
@@ -85,27 +82,13 @@ im_app/
 
 ### Outside `im_app/`
 
-```
-_root/
-├── pyproject.toml                    # Setuptools packaging (v1.0.0, Python >=3.9)
-├── MANIFEST.in
-├── requirements.txt
-├── run_app.py / run_app.bat
-├── scripts/
-│   ├── convert_to_standard.py
-│   ├── convert_csv_to_txt.py
-│   ├── validate_hugoniot.py
-│   └── package_release.py            # Build distribution zip
-├── docs/
-│   ├── ideal_plasma_hugoniot_theory.md
-│   └── validate_tool.md
-├── _archive/                         # Moved legacy files (not git-tracked)
-│   ├── legacy_notebooks/reference/   # Original Impedance_matching.ipynb etc.
-│   ├── tests/
-│   ├── notes/
-│   └── adhoc/
-├── dist/                             # Built distribution packages (.whl, .tar.gz, .zip)
-└── _test_visibility.py               # Offscreen legend/material visibility test
+```text
+docs/             User guides, theory and manual sources
+packaging/        Linux and Windows desktop installer builds
+ref/              Reference material
+scripts/          Data conversion and maintenance tools
+tests/            GUI and headless regression tests
+pyproject.toml    Python packaging and GUI/CLI entry points
 ```
 
 ### Standard Hugoniot Data Formats
@@ -233,13 +216,14 @@ Lines: serif fonts, inward ticks, colorblind-friendly palette (`PRL_COLORS`), ax
 - **Column names**: full names with units in parentheses, e.g. `Up(km/s)`, `P(Mbar)`.
 - **Material IDs**: `{Name}_{Source}` format. Reference curves use `ref_` prefix when added to plots.
 - **Chinese comments**: code comments and dialog strings are predominantly Chinese; module docstrings are bilingual.
-- **No formal test suite** — validate by running the GUI. `_test_visibility.py` at project root provides offscreen legend/material visibility checks.
+- Run the standalone smoke tests under `tests/` from the repository root, for example `python tests/smoke_test_visibility.py` or `python tests/smoke_test_practice_workspace.py`.
 
 ## Packaging
 
 ```bash
-python -m build              # builds .whl + .tar.gz into dist/
-python scripts/package_release.py    # builds im-tool-v*.zip for end users
+python -m build                           # Python wheel and source distribution in dist/
+python packaging/build_desktop.py linux   # Debian and RPM packages in dist/desktop/
+python packaging/build_desktop.py windows # Windows installer on an x64 Windows host
 ```
 
-`pyproject.toml` specifies project metadata (version 1.0.0, Python >=3.9). `MANIFEST.in` includes standard_library/ and workflows/ in the sdist.
+See [desktop installation and build requirements](packaging/README.md).

@@ -3,10 +3,9 @@ Hugoniot 数据文件格式验证工具
 
 用法:
     python -m im_app.tools.validate_hugoniot <文件路径>
-    python scripts/validate_hugoniot.py <文件路径>
 
 示例:
-    python -m im_app.tools.validate_hugoniot materials/Al_3717_sesame.txt
+    python -m im_app.tools.validate_hugoniot im_app/standard_library/materials/Al_Celliers2005.txt
 """
 
 import argparse

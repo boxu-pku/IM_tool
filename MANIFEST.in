@@ -1,6 +1,11 @@
 include README.md
 include requirements.txt
+recursive-include docs *.md *.tex *.png *.py
+recursive-include packaging *.md *.py *.iss *.desktop *.xml
+include packaging/linux/im-tool
+recursive-include scripts *.py
+recursive-include tests *.py
 recursive-include im_app/standard_library *
 recursive-include im_app/workflows *
 recursive-include im_app/config *
-recursive-include im_app/resources *.png *.pdf *.txt *.json
+recursive-include im_app/resources *.ico *.png *.pdf *.txt *.json

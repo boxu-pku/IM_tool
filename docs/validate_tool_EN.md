@@ -4,16 +4,8 @@ Validate Hugoniot data files for compliance with the standard library format spe
 
 ## Usage
 
-### Method 1: Run as a module
-
 ```bash
 python -m im_app.tools.validate_hugoniot <file_path>
-```
-
-### Method 2: Use the standalone script
-
-```bash
-python scripts/validate_hugoniot.py <file_path>
 ```
 
 ## Examples
@@ -21,7 +13,7 @@ python scripts/validate_hugoniot.py <file_path>
 ### Validate a standard library file
 
 ```bash
-python scripts/validate_hugoniot.py im_app/standard_library/materials/Al_3717_sesame.txt
+python -m im_app.tools.validate_hugoniot im_app/standard_library/materials/Al_3717_sesame.txt
 ```
 
 Output:
@@ -96,7 +88,7 @@ Warnings:
 
 ```bash
 # Validate a newly created file
-python scripts/validate_hugoniot.py materials/MyNewMaterial.txt
+python -m im_app.tools.validate_hugoniot materials/MyNewMaterial.txt
 
 # If validation passes, add to metadata.json
 # If validation fails, fix the file based on error messages
@@ -107,12 +99,12 @@ python scripts/validate_hugoniot.py materials/MyNewMaterial.txt
 ```bash
 # Linux/Mac
 for file in im_app/standard_library/materials/*.txt; do
-    python scripts/validate_hugoniot.py "$file"
+    python -m im_app.tools.validate_hugoniot "$file"
 done
 
 # Windows PowerShell
 Get-ChildItem im_app\standard_library\materials\*.txt | ForEach-Object {
-    python scripts\validate_hugoniot.py $_.FullName
+    python -m im_app.tools.validate_hugoniot $_.FullName
 }
 ```
 
@@ -145,5 +137,5 @@ Get-ChildItem im_app\standard_library\materials\*.txt | ForEach-Object {
 ## Technical Support
 
 For questions, please refer to:
-- [FORMAT_SPECIFICATION.md](../standard_library/FORMAT_SPECIFICATION.md) — Full format specification
-- [USER_GUIDE.md](../standard_library/USER_GUIDE.md) — Guide for manually adding data
+- [FORMAT_SPECIFICATION_EN.md](../im_app/standard_library/FORMAT_SPECIFICATION_EN.md) — Full format specification
+- [USER_GUIDE_EN.md](../im_app/standard_library/USER_GUIDE_EN.md) — Guide for manually adding data

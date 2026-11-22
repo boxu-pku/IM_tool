@@ -1,14 +1,14 @@
 # IM Tool - Impedance Matching Analysis Tool
 
-<img src="im_app/resources/im-tool.png" alt="IM Tool" width="72">
+<img src="../im_app/resources/im-tool.png" alt="IM Tool" width="72">
 
-[Desktop installation guide](packaging/README.md) · [English manual (PDF)](im_app/resources/manuals/im-tool-en.pdf) · [中文手册（PDF）](im_app/resources/manuals/im-tool-zh.pdf)
+[Desktop installation guide](../packaging/README.md) · [English manual (PDF)](../im_app/resources/manuals/im-tool-en.pdf) · [中文手册（PDF）](../im_app/resources/manuals/im-tool-zh.pdf)
 
 The Windows wizard and Linux packages include both offline manuals. **Help → Open Practice Workspace** loads `Al_Celliers2005`, `Quartz_Hamel2012` and the measured speeds for Hicks shot 29400. The worked interface match gives 4.7787 Mbar, compared with 4.79 Mbar inferred in the paper. [Experimental inputs, Table I](https://doi.org/10.1063/1.2009528)
 
 A professional GUI application for **Impedance Matching** analysis in shock physics (HEDP). Computes pressure and compression ratios in multi-layer targets from measured shock velocities using Hugoniot equations of state, providing accurate data analysis tools for shock wave experiments.
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
+![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
 ![PyQt5](https://img.shields.io/badge/PyQt5-5.15+-green.svg)
 ![License](https://img.shields.io/badge/License-Academic%20Use-yellow.svg)
 
@@ -164,54 +164,17 @@ The application interface consists of the following main areas:
 ### System Requirements
 
 - **OS**: Windows 10/11 (recommended), Linux, macOS
-- **Python**: 3.8 or higher
+- **Python**: 3.9 or later for source installations
 - **Memory**: At least 4 GB RAM
 - **Display**: 1920x1080 or higher recommended
 
-### Install from Source
+### Desktop installation
 
-1. **Clone or download the project**
-```bash
-git clone <repository-url>
-cd IM_tool
-```
+On Linux, open the `.deb` or `.rpm` for your distribution. On Windows, run the `.exe` wizard. Launch **IM Tool** from Applications or the Start menu. [Desktop installation steps](../packaging/README.md)
 
-2. **Create a virtual environment (recommended)**
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
+### Run from source
 
-# Linux/macOS
-python3 -m venv venv
-source venv/bin/activate
-```
-
-3. **Install dependencies**
-```bash
-pip install -r requirements.txt
-```
-
-### Run Directly
-
-If Python and PyQt5 are already installed:
-
-```bash
-python -m im_app.main
-```
-
-Or use the launcher script:
-
-**Windows**:
-```cmd
-run_app.bat
-```
-
-**Linux/macOS**:
-```bash
-chmod +x run_app.py
-./run_app.py
-```
+Clone the repository, create and activate a virtual environment, and run `python -m pip install -e .` from the repository root. Use `im-tool` to open the GUI or `imt --help` to explore the CLI. The command examples in this guide assume the repository root as the working directory. [Platform-specific commands](../packaging/README.md#run-from-source)
 
 ### Dependency List
 
@@ -255,10 +218,7 @@ sudo yum install python3-qt5
 
 ### First Run
 
-1. **Launch the application**
-```bash
-python -m im_app.main
-```
+1. Launch **IM Tool** from Applications or Start. For a source installation, run `im-tool` in the activated environment.
 
 2. **Load materials**
    - In the left "Material Library" panel
@@ -1095,50 +1055,22 @@ where:
 
 ### Directory Structure
 
-```
+```text
 IM_tool/
-+-- im_app/                      # Application package
-|   +-- main.py                  # Application entry point
-|   +-- core/                    # Core computation modules
-|   |   +-- data_loader.py       # Data loader (TXT/CSV/FEOS)
-|   |   +-- data_converter.py    # Format converter
-|   |   +-- physics.py           # Physical models (MaterialData, etc.)
-|   |   +-- plot_style.py        # PRL plot style definition
-|   |   +-- plotter.py           # Plot components (HugoniotPlot, etc.)
-|   |   +-- element_style.py     # Element style editor
-|   |   +-- reference_curve.py   # Reference curve loader
-|   +-- gui/                     # GUI modules
-|   |   +-- main_window.py       # Main window (layout, event handling)
-|   |   +-- material_panel.py    # Material selection panel
-|   |   +-- rayleigh_panel.py    # Rayleigh line panel
-|   |   +-- intersection_panel.py # Intersection panel
-|   |   +-- scatter_panel.py     # Scatter points panel
-|   |   +-- reference_curve_panel.py # Reference curve panel
-|   |   +-- material_wizard.py   # Material creation wizard
-|   |   +-- validation_dialog.py # File validation dialog
-|   |   +-- ideal_plasma_dialog.py # Ideal plasma Hugoniot generator
-|   |   +-- reference_curve_dialog.py # Reference curve dialog
-|   |   +-- reference_curve_manager.py # Curve management
-|   +-- standard_library/        # Standard material library
-|   |   +-- metadata.json        # Material index
-|   |   +-- materials/           # Material data files
-|   |   |   +-- *.txt            # Standard format files
-|   |   |   +-- *.hug            # FEOS format files
-|   |   +-- reference_curves/    # Reference curves
-|   |   +-- FORMAT_SPECIFICATION.md # Format spec
-|   |   +-- USER_GUIDE.md        # User guide
-|   +-- workflows/               # Saved analysis states
-+-- scripts/                     # Data conversion scripts
-|   +-- convert_to_standard.py   # Raw data to standard format
-|   +-- package_release.py       # Distribution package builder
-+-- docs/                        # Documentation
-|   +-- ideal_plasma_hugoniot_theory.md  # Theory doc
-|   +-- validate_tool.md         # Validation tool guide
-+-- requirements.txt             # Python dependencies
-+-- run_app.py                   # Application launcher
-+-- run_app.bat                  # Windows launcher
-+-- README.md                    # This file
-+-- README_EN.md                 # English README
+├── im_app/          # Application, material library and bundled resources
+│   ├── main.py      # im-tool GUI entry point
+│   ├── cli.py       # imt command-line entry point
+│   ├── core/        # Physics models, data I/O and plots
+│   ├── gui/         # Main window and interactive panels
+│   ├── standard_library/
+│   ├── resources/   # Icon, bilingual PDFs and aluminum–quartz exercise
+│   └── workflows/   # Saved analysis states
+├── docs/            # User guides, theory and manual sources
+├── packaging/       # Native Linux packages and Windows installer
+├── ref/             # Reference material
+├── scripts/         # Data import and maintenance tools
+├── tests/           # Regression tests
+└── pyproject.toml   # Python package and command entry points
 ```
 
 ### Core Data Model

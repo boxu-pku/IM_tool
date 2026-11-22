@@ -1,2 +1,7 @@
-#!/bin/sh
-exec /usr/bin/python3 -EsB /usr/share/im-tool/run_app.py "$@"
+#!/usr/bin/python3 -EsB
+import sys
+
+sys.path.insert(0, "/usr/share/im-tool")
+from im_app.main import main
+
+sys.exit(main())

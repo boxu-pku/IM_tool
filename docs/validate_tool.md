@@ -4,16 +4,8 @@
 
 ## 用法
 
-### 方法一：作为模块运行
-
 ```bash
 python -m im_app.tools.validate_hugoniot <文件路径>
-```
-
-### 方法二：使用独立脚本
-
-```bash
-python scripts/validate_hugoniot.py <文件路径>
 ```
 
 ## 示例
@@ -21,7 +13,7 @@ python scripts/validate_hugoniot.py <文件路径>
 ### 验证标准库文件
 
 ```bash
-python scripts/validate_hugoniot.py im_app/standard_library/materials/Al_3717_sesame.txt
+python -m im_app.tools.validate_hugoniot im_app/standard_library/materials/Al_3717_sesame.txt
 ```
 
 输出：
@@ -96,7 +88,7 @@ Warnings:
 
 ```bash
 # 验证新创建的文件
-python scripts/validate_hugoniot.py materials/MyNewMaterial.txt
+python -m im_app.tools.validate_hugoniot materials/MyNewMaterial.txt
 
 # 如果验证通过，添加到 metadata.json
 # 如果验证失败，根据错误信息修改文件
@@ -107,12 +99,12 @@ python scripts/validate_hugoniot.py materials/MyNewMaterial.txt
 ```bash
 # Linux/Mac
 for file in im_app/standard_library/materials/*.txt; do
-    python scripts/validate_hugoniot.py "$file"
+    python -m im_app.tools.validate_hugoniot "$file"
 done
 
 # Windows PowerShell
 Get-ChildItem im_app\standard_library\materials\*.txt | ForEach-Object {
-    python scripts\validate_hugoniot.py $_.FullName
+    python -m im_app.tools.validate_hugoniot $_.FullName
 }
 ```
 
@@ -145,5 +137,5 @@ Get-ChildItem im_app\standard_library\materials\*.txt | ForEach-Object {
 ## 技术支持
 
 如有问题，请查看：
-- [FORMAT_SPECIFICATION.md](../standard_library/FORMAT_SPECIFICATION.md) - 完整格式规范
-- [USER_GUIDE.md](../standard_library/USER_GUIDE.md) - 手动添加数据指南
+- [FORMAT_SPECIFICATION.md](../im_app/standard_library/FORMAT_SPECIFICATION.md) - 完整格式规范
+- [USER_GUIDE.md](../im_app/standard_library/USER_GUIDE.md) - 手动添加数据指南
