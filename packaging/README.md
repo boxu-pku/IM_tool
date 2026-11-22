@@ -1,12 +1,12 @@
 # IM Tool 桌面安装 · Desktop installation
 
-| 系统 / Platform | 1.2.4 安装包 / Installer | 安装和启动 / Install and launch |
+| 系统 / Platform | [1.2.4 安装包和校验和 / Installers and checksums](https://github.com/boxu-pku/IM_tool/releases/tag/v1.2.4) | 安装和启动 / Install and launch |
 | --- | --- | --- |
-| Windows 10 / 11 x64 | [IM-Tool-Setup-1.2.4-x64.exe](https://github.com/boxu-pku/IM_tool/releases/download/windows-v1.2.4/IM-Tool-Setup-1.2.4-x64.exe) | 双击，选择简体中文或英语，完成向导并从“开始”菜单启动。Double-click, choose a language, then launch IM Tool from Start. |
-| Debian / Ubuntu | `im-tool_1.2.4-1_all.deb` | 用软件安装器打开或运行 `sudo apt install ./im-tool_1.2.4-1_all.deb`。Open the package in the software installer or use APT. |
-| Fedora | `im-tool-1.2.4-1.noarch.rpm` | 用软件安装器打开或运行 `sudo dnf install ./im-tool-1.2.4-1.noarch.rpm`。Open the package in the software installer or use DNF. |
-| macOS · Apple silicon | [IM-Tool-1.2.4-macOS-arm64.dmg](https://github.com/boxu-pku/IM_tool/releases/download/macos-v1.2.4-r2/IM-Tool-1.2.4-macOS-arm64.dmg) | 拖入“应用程序”。Drag the app to Applications. |
-| macOS · Intel | [IM-Tool-1.2.4-macOS-x86_64.dmg](https://github.com/boxu-pku/IM_tool/releases/download/macos-v1.2.4-r2/IM-Tool-1.2.4-macOS-x86_64.dmg) | 拖入“应用程序”。Drag the app to Applications. |
+| Windows 10 / 11 x64 | [IM-Tool-Setup-1.2.4-x64.exe](https://github.com/boxu-pku/IM_tool/releases/download/v1.2.4/IM-Tool-Setup-1.2.4-x64.exe) | 双击，选择简体中文或英语，完成向导并从“开始”菜单启动。Double-click, choose a language, then launch IM Tool from Start. |
+| Debian / Ubuntu | [im-tool_1.2.4-1_all.deb](https://github.com/boxu-pku/IM_tool/releases/download/v1.2.4/im-tool_1.2.4-1_all.deb) | 用软件安装器打开或运行 `sudo apt install ./im-tool_1.2.4-1_all.deb`。Open the package in the software installer or use APT. |
+| Fedora | [im-tool-1.2.4-1.noarch.rpm](https://github.com/boxu-pku/IM_tool/releases/download/v1.2.4/im-tool-1.2.4-1.noarch.rpm) | 用软件安装器打开或运行 `sudo dnf install ./im-tool-1.2.4-1.noarch.rpm`。Open the package in the software installer or use DNF. |
+| macOS · Apple silicon | [IM-Tool-1.2.4-macOS-arm64.dmg](https://github.com/boxu-pku/IM_tool/releases/download/v1.2.4/IM-Tool-1.2.4-macOS-arm64.dmg) | 拖入“应用程序”。Drag the app to Applications. |
+| macOS · Intel | [IM-Tool-1.2.4-macOS-x86_64.dmg](https://github.com/boxu-pku/IM_tool/releases/download/v1.2.4/IM-Tool-1.2.4-macOS-x86_64.dmg) | 拖入“应用程序”。Drag the app to Applications. |
 
 在 Linux 应用菜单中搜索 **IM Tool**，也可在图形桌面的终端运行 `im-tool`。桌面初始库含 13 条常用参考表。软件首次启动时为当前用户创建可写副本。选择 **Help → Open Working Folder** 可找到当前材料库。通过 **Help → Open Practice Workspace** 可打开 `Al_Celliers2005` 与 `Quartz_Hamel2012` 两条标准曲线及 Hicks 第 29400 号实验的两条瑞利线，练习文件保存在 `Practice/Celliers-Hamel`。
 

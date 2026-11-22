@@ -72,6 +72,6 @@ jobs:
 
           本版采用临时签名，未经 Apple 公证。The app is ad hoc signed and has no Apple notarization. [Apple 首次打开说明](https://support.apple.com/zh-cn/102445) · [Apple first-launch instructions](https://support.apple.com/en-us/102445).
           NOTES
-          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag \
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --latest=false \
             --title "IM Tool for macOS · ${GITHUB_REF_NAME#macos-v}" \
             --notes-file "$RUNNER_TEMP/mac-release.md" *.dmg SHA256SUMS-macOS.txt

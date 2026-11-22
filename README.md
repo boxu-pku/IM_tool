@@ -8,13 +8,15 @@ IM Tool determines interface pressure and particle velocity from measured shock 
 
 ## 桌面安装 · Desktop installation
 
-| 平台 / Platform | 安装与启动 / Install and launch |
+| 平台 / Platform | [IM Tool 1.2.4 安装包 / Installers](https://github.com/boxu-pku/IM_tool/releases/tag/v1.2.4) |
 | --- | --- |
-| Debian / Ubuntu | 用软件安装器打开 `.deb`，从应用菜单启动 **IM Tool**。Open the `.deb` in the software installer, then launch **IM Tool** from Applications. |
-| Fedora | 用软件安装器打开 `.rpm`，从应用菜单启动 **IM Tool**。Open the `.rpm` in the software installer, then launch **IM Tool** from Applications. |
-| macOS · Apple 芯片 / Apple silicon | [下载 arm64 磁盘映像 / Download DMG](https://github.com/boxu-pku/IM_tool/releases/download/macos-v1.2.4-r2/IM-Tool-1.2.4-macOS-arm64.dmg) |
-| macOS · Intel | [下载 Intel 磁盘映像 / Download DMG](https://github.com/boxu-pku/IM_tool/releases/download/macos-v1.2.4-r2/IM-Tool-1.2.4-macOS-x86_64.dmg) |
-| Windows 10 / 11 x64 | [下载 Windows 安装程序 / Download Windows installer (.exe)](https://github.com/boxu-pku/IM_tool/releases/download/windows-v1.2.4/IM-Tool-Setup-1.2.4-x64.exe) |
+| Debian / Ubuntu | [下载 Debian 软件包 / Download DEB](https://github.com/boxu-pku/IM_tool/releases/download/v1.2.4/im-tool_1.2.4-1_all.deb) |
+| Fedora | [下载 Fedora 软件包 / Download RPM](https://github.com/boxu-pku/IM_tool/releases/download/v1.2.4/im-tool-1.2.4-1.noarch.rpm) |
+| macOS · Apple 芯片 / Apple silicon | [下载 arm64 磁盘映像 / Download DMG](https://github.com/boxu-pku/IM_tool/releases/download/v1.2.4/IM-Tool-1.2.4-macOS-arm64.dmg) |
+| macOS · Intel | [下载 Intel 磁盘映像 / Download DMG](https://github.com/boxu-pku/IM_tool/releases/download/v1.2.4/IM-Tool-1.2.4-macOS-x86_64.dmg) |
+| Windows 10 / 11 x64 | [下载 Windows 安装程序 / Download Windows installer (.exe)](https://github.com/boxu-pku/IM_tool/releases/download/v1.2.4/IM-Tool-Setup-1.2.4-x64.exe) |
+
+在 Linux 上用软件安装器打开下载的 `.deb` 或 `.rpm`，安装后从应用菜单启动 **IM Tool**。On Linux, open the package in your software installer, then launch **IM Tool** from Applications.
 
 在 Windows 上双击下载的 `.exe`，完成向导后从“开始”菜单启动 **IM Tool**。On Windows, double-click the installer and launch **IM Tool** from Start.
 
