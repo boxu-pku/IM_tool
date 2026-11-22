@@ -1,5 +1,11 @@
 # IM Tool - Impedance Matching Analysis Tool
 
+<img src="im_app/resources/im-tool.png" alt="IM Tool" width="72">
+
+[Desktop installation guide](packaging/README.md) · [English manual (PDF)](im_app/resources/manuals/im-tool-en.pdf) · [中文手册（PDF）](im_app/resources/manuals/im-tool-zh.pdf)
+
+The Windows wizard and Linux packages include both offline manuals. **Help → Open Practice Workspace** loads `Al_Celliers2005`, `Quartz_Hamel2012` and the measured speeds for Hicks shot 29400. The worked interface match gives 4.7787 Mbar, compared with 4.79 Mbar inferred in the paper. [Experimental inputs, Table I](https://doi.org/10.1063/1.2009528)
+
 A professional GUI application for **Impedance Matching** analysis in shock physics (HEDP). Computes pressure and compression ratios in multi-layer targets from measured shock velocities using Hugoniot equations of state, providing accurate data analysis tools for shock wave experiments.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)

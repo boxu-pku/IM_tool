@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "reference": "D. G. Hicks et al., Physics of Plasmas 12, 082702 (2005), Table I, shot 29400. https://doi.org/10.1063/1.2009528",
+  "materials": [
+    {"id": "Al_Celliers2005"},
+    {"id": "Quartz_Hamel2012"}
+  ],
+  "rayleigh_lines": [
+    {"id": "rl_1", "material_id": "Al_Celliers2005", "D": 18.11, "sigma_D": 0.32, "rho0": 2.70},
+    {"id": "rl_2", "material_id": "Quartz_Hamel2012", "D": 17.96, "sigma_D": 0.26, "rho0": 2.65}
+  ],
+  "plot_settings": {
+    "p_up": {"xlim": [8.8, 11.4], "ylim": [3.8, 6.1], "p_unit": "Mbar", "show_legend": false}
+  }
+}

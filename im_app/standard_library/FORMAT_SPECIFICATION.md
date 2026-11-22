@@ -264,8 +264,8 @@ python -m im_app.core.data_converter validate <文件路径>
 ## 参考资料
 
 - SESAME 数据库：Los Alamos National Laboratory
-- Celliers et al. 2005：J. Appl. Phys. 97, 103529
-- Hamel et al. 2012：物理学报
+- Celliers 等（2005），铝 Hugoniot 拟合。[J. Appl. Phys. 98, 113529](https://doi.org/10.1063/1.2140077)
+- Hamel 等（2012），α-石英参考曲线。[Phys. Rev. B 86, 094113](https://doi.org/10.1103/PhysRevB.86.094113)
 
 ---
 

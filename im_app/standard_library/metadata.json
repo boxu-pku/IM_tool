@@ -109,7 +109,7 @@
         {
             "id": "Al_Celliers2005",
             "name": "Aluminum",
-            "source": "Celliers et al. 2005, PRL",
+            "source": "Celliers et al. 2005, J. Appl. Phys.",
             "rho0": 2.7,
             "file": "materials/Al_Celliers2005.txt",
             "tags": [],
@@ -3426,26 +3426,26 @@
         },
         {
             "id": "lithium_fluoride_single_crystal_loo_p296_lasl",
-            "name": "LITHIUM FLUORIDE, single-crystal, [loo]",
+            "name": "LITHIUM FLUORIDE, single-crystal, [100]",
             "source": "LASL SHD 1980",
-            "rho0": 0.5785,
+            "rho0": 2.638,
             "file": "materials/lasl_shd/lithium_fluoride_single_crystal_loo_p296_lasl.txt",
             "tags": [
                 "lasl-shd",
                 "experimental"
             ],
-            "points": 48,
+            "points": 23,
             "up_range": [
                 0.451,
-                5.372
+                3.931
             ],
             "p_range": [
-                0.01442,
-                5.85
+                0.06902,
+                1.07839
             ],
             "compression_range": [
-                1.0845987,
-                2.07039337
+                1.08436,
+                1.60701
             ]
         },
         {

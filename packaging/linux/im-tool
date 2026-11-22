@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /usr/bin/python3 -EsB /usr/share/im-tool/run_app.py "$@"

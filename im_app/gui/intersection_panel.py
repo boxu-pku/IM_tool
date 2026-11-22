@@ -337,7 +337,11 @@ class IntersectionPanel(QWidget):
             self.reverse_hugoniot_combo.addItem(mat.name, mid)
 
     def clear(self):
-        """清空交点表（用于 material refresh 全局重置）。"""
+        """Clear curve selections and derived entries before rebuilding the scene."""
+        self._rayleigh_lines = {}
+        self._reflected_curves = []
+        self._reflected_entries.clear()
+        self.refl_list.clear()
         self.set_intersections([], {})
 
     def is_auto_update_enabled(self) -> bool:
@@ -359,6 +363,7 @@ class IntersectionPanel(QWidget):
         # Save current selections
         curve1_id = self.curve1_combo.currentData()
         curve2_id = self.curve2_combo.currentData()
+        previous_ids = {self.curve2_combo.itemData(i) for i in range(self.curve2_combo.count())}
 
         self.curve1_combo.clear()
         self.curve2_combo.clear()
@@ -394,11 +399,14 @@ class IntersectionPanel(QWidget):
             if idx >= 0:
                 self.curve1_combo.setCurrentIndex(idx)
 
+        # A result or uncertainty refresh must keep the pair the user just solved.
+        if curve2_id and previous_ids == {entry_id for _, entry_id in all_entries}:
+            self.curve2_combo.setCurrentIndex(self.curve2_combo.findData(curve2_id))
+            return
+
         # Smart default for curve2: prefer different curve matching curve1
         n_hug = len(hugoniot_entries)
         n_rl = len(rayleigh_entries)
-        n_total = len(all_entries)
-
         c1_data = self.curve1_combo.currentData()
         c2_set = False
 

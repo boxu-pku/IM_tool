@@ -10,7 +10,7 @@ from __future__ import annotations
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QGroupBox, QListWidget, QListWidgetItem,
     QPushButton, QHBoxLayout, QLabel, QFileDialog, QMessageBox,
-    QDialog,
+    QDialog, QLineEdit,
 )
 from PyQt5.QtCore import pyqtSignal, Qt
 
@@ -24,11 +24,14 @@ from datetime import datetime
 
 
 class MaterialPanel(QWidget):
-    """Left panel: material selection with checkboxes."""
+    """Left panel: material selection with checkboxes + search filter."""
 
     materials_changed = pyqtSignal()   # emitted when selection changes
     material_added = pyqtSignal(str)      # emitted when new material is added
     reset_all_requested = pyqtSignal()   # emitted when refresh_library is called
+
+    # 列表项上存检索串（id + 名称 + 来源 + tags）的自定义 role
+    _SearchRole = Qt.UserRole + 1
 
     def __init__(self, lib_dir: str, parent=None):
         super().__init__(parent)
@@ -68,6 +71,14 @@ class MaterialPanel(QWidget):
         action_row.addWidget(self.refresh_btn)
 
         vbox.addLayout(action_row)
+
+        # 材料检索框：输入即时过滤（id / 名称 / 来源 / tags，
+        # 空格分隔多关键词 AND）。只隐藏行，不动勾选状态。
+        self.search_edit = QLineEdit()
+        self.search_edit.setPlaceholderText("Search material / id / source / tag...")
+        self.search_edit.setClearButtonEnabled(True)
+        self.search_edit.textChanged.connect(self._apply_filter)
+        vbox.addWidget(self.search_edit)
 
         # Material list
         self.material_list = QListWidget()
@@ -109,6 +120,8 @@ class MaterialPanel(QWidget):
                 f"{entry['name']} ({entry['source']})"
             )
             item.setData(Qt.UserRole, entry["id"])
+            item.setData(self._SearchRole, self._make_search_text(
+                entry["id"], entry["name"], entry["source"], *(entry.get("tags") or [])))
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Unchecked)
             self.material_list.addItem(item)
@@ -122,9 +135,14 @@ class MaterialPanel(QWidget):
                 continue
             item = QListWidgetItem(f"{mat.name} (Ideal Plasma)")
             item.setData(Qt.UserRole, mat_id)
+            item.setData(self._SearchRole, self._make_search_text(
+                mat_id, mat.name, "ideal plasma"))
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Checked if mat_id in self._loaded else Qt.Unchecked)
             self.material_list.addItem(item)
+
+        # 刷新后重应用当前检索词（refresh_library / 新增材料都会走到这里）
+        self._apply_filter(self.search_edit.text())
 
     def _on_item_changed(self, item: QListWidgetItem):
         mat_id = item.data(Qt.UserRole)
@@ -171,12 +189,40 @@ class MaterialPanel(QWidget):
         self._loaded[mat_id] = mat
 
     def _select_all(self):
+        # 只勾选当前可见行（检索过滤激活时即"选中筛选结果"）
         for i in range(self.material_list.count()):
+            if self.material_list.isRowHidden(i):
+                continue
             self.material_list.item(i).setCheckState(Qt.Checked)
 
     def _deselect_all(self):
         for i in range(self.material_list.count()):
+            if self.material_list.isRowHidden(i):
+                continue
             self.material_list.item(i).setCheckState(Qt.Unchecked)
+
+    def _make_search_text(self, *parts) -> str:
+        return " ".join(str(t) for t in parts if t).lower()
+
+    def _apply_filter(self, text: str):
+        """按关键词过滤材料列表（多关键词 AND，匹配 id/名称/来源/tags）。
+
+        只隐藏行（setRowHidden），不动勾选/加载状态——过滤是纯视图操作。
+        """
+        keywords = text.lower().split()
+        total = self.material_list.count()
+        shown = 0
+        for i in range(total):
+            item = self.material_list.item(i)
+            hay = item.data(self._SearchRole) or ""
+            hide = any(kw not in hay for kw in keywords)
+            self.material_list.setRowHidden(i, hide)
+            if not hide:
+                shown += 1
+        if keywords:
+            self.info_label.setText(f"{shown} / {total} shown")
+        else:
+            self.info_label.setText(f"{total} materials available")
 
     def get_selected_materials(self) -> dict[str, MaterialData]:
         return dict(self._loaded)
@@ -375,8 +421,11 @@ class MaterialPanel(QWidget):
                 # 添加列表项并自动勾选
                 item = QListWidgetItem(f"{mat.name} (Ideal Plasma, γ={gamma:.3f})")
                 item.setData(Qt.UserRole, mat_id)
+                item.setData(self._SearchRole, self._make_search_text(
+                    mat_id, mat.name, "ideal plasma"))
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
                 self.material_list.addItem(item)
+                self._apply_filter(self.search_edit.text())
                 self._loaded[mat_id] = mat
                 item.setCheckState(Qt.Checked)
                 self.materials_changed.emit()

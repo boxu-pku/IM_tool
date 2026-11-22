@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.boxu_pku.IMTool</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LicenseRef-Academic</project_license>
+  <developer id="io.github.boxu_pku"><name>Bo Xu</name></developer>
+  <name>IM Tool</name>
+  <summary>Compare material curves and inspect their intersections</summary>
+  <summary xml:lang="zh-CN">比较材料曲线并查看交点</summary>
+  <description><p>View pressure, velocity and density in linked diagrams. Save the plotted figures and reopen analysis workflows. The desktop application includes English and Chinese manuals and a practice workspace.</p></description>
+  <launchable type="desktop-id">io.github.boxu_pku.IMTool.desktop</launchable>
+  <url type="homepage">https://github.com/boxu-pku/IM_tool</url>
+  <provides><binary>im-tool</binary></provides>
+  <content_rating type="oars-1.1"/>
+</component>

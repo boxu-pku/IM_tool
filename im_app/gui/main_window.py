@@ -21,7 +21,10 @@ from PyQt5.QtWidgets import (
     QHBoxLayout, QPushButton, QScrollArea, QDialog,
     QListWidget, QListWidgetItem,
 )
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QUrl
+from PyQt5.QtGui import QDesktopServices
+
+from im_app.desktop import RESOURCES, practice_workspace
 
 from im_app.core.data_loader import list_available_materials, load_material_by_id
 from im_app.core.reference_curve import VARIABLE_MAPPING
@@ -554,6 +557,35 @@ class MainWindow(QMainWindow):
         ref_menu = mb.addMenu("Reference Curves")
         ref_menu.addAction("Manage Curves...", self._manage_reference_curves)
         ref_menu.addAction("Create New Curve...", self._create_reference_curve)
+
+        help_menu = mb.addMenu("Help")
+        help_menu.addAction("Open Practice Workspace", self._open_practice_workspace)
+        help_menu.addAction("Open Working Folder", lambda: self._open_local(self.lib_dir))
+        help_menu.addSeparator()
+        for title, filename in (("User Manual (English)", "im-tool-en.pdf"),
+                                ("用户手册（中文）", "im-tool-zh.pdf")):
+            path = RESOURCES / "manuals" / filename
+            help_menu.addAction(title, lambda checked=False, path=path: self._open_local(path))
+
+    def _open_local(self, path):
+        if not os.path.exists(path) or not QDesktopServices.openUrl(QUrl.fromLocalFile(str(path))):
+            QMessageBox.warning(self, "IM Tool", f"Could not open the local file or folder.\n{path}")
+
+    def _open_practice_workspace(self):
+        try:
+            library, workflows, workflow = practice_workspace()
+        except (OSError, ValueError, KeyError) as error:
+            QMessageBox.warning(self, "IM Tool", f"Could not open the practice workspace.\n{error}")
+            return
+        if os.path.abspath(self.lib_dir) == os.path.abspath(library):
+            return
+        if not hasattr(self, "_practice_window"):
+            self._practice_window = MainWindow(library, workflows)
+            self._practice_window.setWindowTitle("IM Tool — Celliers Al / Hamel quartz (Hicks 29400)")
+            self._practice_window._apply_workflow_dict(workflow, run_mc=False)
+        self._practice_window.show()
+        self._practice_window.raise_()
+        self._practice_window.activateWindow()
 
     def _manage_reference_curves(self):
         """打开参考曲线管理对话框"""
@@ -3067,7 +3099,12 @@ class MainWindow(QMainWindow):
         run_mc=False 供 headless 批处理使用：加载后由调用方统一 refresh+MC，
         避免同一份蒙特卡洛跑两遍。
         """
-        # Deselect all materials first
+        # Loading a session replaces any lines already present in the practice scene.
+        self.hugoniot_plot.intersections.clear()
+        self.hugoniot_plot.reflected_curves.clear()
+        self.hugoniot_plot.rayleigh_lines.clear()
+        self.rayleigh_panel.clear()
+        self.intersection_panel.clear()
         self.material_panel._deselect_all()
 
         # Select materials

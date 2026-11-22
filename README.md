@@ -1,5 +1,11 @@
 # IM Tool - 阻抗匹配分析工具
 
+<img src="im_app/resources/im-tool.png" alt="IM Tool" width="72">
+
+[桌面安装指南](packaging/README.md) · [中文手册（PDF）](im_app/resources/manuals/im-tool-zh.pdf) · [English manual (PDF)](im_app/resources/manuals/im-tool-en.pdf)
+
+Windows 安装向导和 Linux 包均附中英文离线手册。选择 **Help → Open Practice Workspace** 即可载入标准库的 `Al_Celliers2005`、`Quartz_Hamel2012` 及 Hicks 第 29400 号实验的两个实测波速。算例复得界面压强 4.7787 Mbar，论文推得 4.79 Mbar。[实验原文表 I](https://doi.org/10.1063/1.2009528)
+
 一个专业的图形化应用程序，用于冲击波物理（HEDP）中的**阻抗匹配（Impedance Matching）**分析。通过测量多层靶材料的冲击波速度，利用雨贡纽（Hugoniot）状态方程计算压力和压缩比，为冲击波实验提供准确的数据分析工具。
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)

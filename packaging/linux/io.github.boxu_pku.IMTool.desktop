@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=IM Tool
+GenericName=Impedance matching analysis
+GenericName[zh_CN]=阻抗匹配分析
+Comment=Plot and compare material curves
+Comment[zh_CN]=绘制材料曲线并比较交点
+Exec=im-tool
+Icon=io.github.boxu_pku.IMTool
+Terminal=false
+StartupWMClass=IM Tool
+Categories=Science;Physics;DataVisualization;
+Keywords=pressure;curve;impedance;

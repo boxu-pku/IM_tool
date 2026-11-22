@@ -1,0 +1,10 @@
+\chapterpage{validation}{Check an imported table}
+\begin{enumerate}
+\item In the practice window choose \ui{Help → Open Working Folder}. Open the \code{materials} folder and select \code{Quartz_Hamel2012.txt}. Its header gives the fit, the 15 km/s join and the initial density.
+\item Under \ui{Material Library} choose \ui{Validate File}, then \ui{Browse} and \ui{Validate}. The quartz file has 500 rows and no warnings. Repeat for \code{Al_Celliers2005.txt}. It also has 500 rows.
+\item Read the quartz row at $u_p=10.0$ km/s. It gives $U_s=17.65$ km/s, $P=4.67725$ Mbar, $\rho=6.11405$ g/cm³ and a compression ratio of 2.30719. This row samples the fit independently of shot 29400.
+\end{enumerate}
+\pic{validation}{The validator reports the Hamel quartz file's 500 rows, initial density and ranges. The 500 values are samples of its fitted curve.}{78mm}
+\subhead{Common import errors}
+If columns collapse into one field, open the file in a text editor and check for tabs between names and values. If a column is reported missing, match the spelling and unit in the header to the list on page~\pageref{materials}. If the curve looks wrong, compare several original rows and the stated initial density before changing its display range.
+\note{Keeping comparable versions}{For a revised table, use a distinct material ID or keep a versioned copy of the old library. A workflow refers to material IDs, so replacing values under the same ID can change a later replay.}

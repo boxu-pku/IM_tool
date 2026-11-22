@@ -6,27 +6,31 @@ Window starts maximized.
 """
 
 import sys
-import os
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication, QMessageBox
 
-from PyQt5.QtWidgets import QApplication
-
+from im_app.desktop import ICON, application_paths
 from im_app.gui.main_window import MainWindow
 
 
 def main():
     app = QApplication(sys.argv)
+    app.setApplicationName("IM Tool")
+    app.setDesktopFileName("io.github.boxu_pku.IMTool")
+    app.setWindowIcon(QIcon(str(ICON)))
     app.setStyle("Fusion")
 
-    # Paths relative to im_app/main.py
-    base = os.path.dirname(os.path.abspath(__file__))
-    lib_dir = os.path.normpath(os.path.join(base, "standard_library"))
-    workflows_dir = os.path.normpath(os.path.join(base, "workflows"))
+    try:
+        lib_dir, workflows_dir = application_paths()
+    except OSError as error:
+        QMessageBox.critical(None, "IM Tool", f"Could not open the working directory.\n{error}")
+        return 1
 
     window = MainWindow(lib_dir=lib_dir, workflows_dir=workflows_dir)
     window.show()
 
-    sys.exit(app.exec_())
+    return app.exec_()
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -291,7 +291,7 @@ python -m im_app.core.data_converter validate <文件路径>
 完整的示例文件可在 `standard_library/materials/` 目录中找到：
 
 - `Al_3717_sesame.csv` - SESAME 数据库格式
-- `Quartz_Hamel2012.csv` - 实验数据格式
+- `Quartz_Hamel2012.csv` 汇集 Hamel 等的 α-石英拟合采样。
 - `BN_LEA.csv` - 简化格式
 
 参考这些文件的格式创建您自己的数据文件。

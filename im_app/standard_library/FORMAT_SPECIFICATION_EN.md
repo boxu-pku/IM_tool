@@ -228,8 +228,8 @@ python -m im_app.core.data_converter validate <file_path>
 ## References
 
 - SESAME database: Los Alamos National Laboratory
-- Celliers et al. 2005: J. Appl. Phys. 97, 103529
-- Hamel et al. 2012: Acta Physica Sinica
+- Celliers et al. (2005), aluminum Hugoniot fit. [J. Appl. Phys. 98, 113529](https://doi.org/10.1063/1.2140077)
+- Hamel et al. (2012), alpha-quartz reference curve. [Phys. Rev. B 86, 094113](https://doi.org/10.1103/PhysRevB.86.094113)
 
 ---
 

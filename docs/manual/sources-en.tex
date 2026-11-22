@@ -1,0 +1,21 @@
+\chapterpage{sources}{Reference fits and experimental inputs}
+\textbf{Celliers aluminum.} With speeds in km/s and $\rho_0=2.70$ g/cm³, the standard library uses
+\[
+ U_s=17.992+1.167(u_p-9.838).
+\]
+The 500 stored rows sample $u_p=0$ to 50 km/s. The header gives the fit coefficients and their uncertainties. \href{https://doi.org/10.1063/1.2140077}{Celliers et al., J. Appl. Phys. 98, 113529 (2005).}
+
+\textbf{Hamel alpha quartz.} With $\rho_0=2.65$ g/cm³, the library evaluates the quadratic below 15 km/s and continues along its tangent above the join. The 500 rows span 0.1 to 50 km/s.
+\[
+\begin{array}{ll}
+U_s=2.40+1.68u_p-0.0155u_p^2 & (u_p<15),\\
+U_s=5.8875+1.215u_p & (u_p\geq15).
+\end{array}
+\]
+The quartz reference fit is given in Hamel's study of CH$_{1.36}$. The sampling grid in each file describes its coverage. For use outside this example, consult the calibration data in the publications. \href{https://doi.org/10.1103/PhysRevB.86.094113}{Hamel et al., Phys. Rev. B 86, 094113 (2012).}
+
+\subhead{Where the measured speeds come from}
+Table I of Hicks et al. lists shot 29400 with $U_s^{\rm Al}=18.11\pm0.32$ and $U_s^{\rm Q}=17.96\pm0.26$ µm/ns. Numerically, 1 µm/ns equals 1 km/s. The paper infers $P^{\rm Q}=4.79$ Mbar, $\rho^{\rm Q}=6.03$ g/cm³ and $u_p^{\rm Q}=10.07$ km/s using its aluminum standard. The exercise uses only the two speeds as experimental inputs. \href{https://doi.org/10.1063/1.2009528}{Hicks et al., Phys. Plasmas 12, 082702 (2005), Table I.}
+
+\subhead{Check the units independently}
+At $u_p=10.0$ km/s the Hamel table gives $U_s=17.65$ km/s. The stored pressure is $0.01\times2.65\times17.65\times10=4.67725$ Mbar. For aluminum the analytical fit at the same $u_p$ gives 4.90888 Mbar. Linear interpolation in the sampled aluminum table gives 4.90894 Mbar.

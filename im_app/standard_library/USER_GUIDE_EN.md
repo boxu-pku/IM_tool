@@ -291,7 +291,7 @@ After extracting the data, follow this guide to add it to the library.
 Complete example files can be found in the `standard_library/materials/` directory:
 
 - `Al_3717_sesame.csv` — SESAME database format
-- `Quartz_Hamel2012.csv` — Experimental data format
+- `Quartz_Hamel2012.csv` contains samples of the Hamel alpha-quartz fit.
 - `BN_LEA.csv` — Simplified format
 
 Refer to these files as templates when creating your own data files.

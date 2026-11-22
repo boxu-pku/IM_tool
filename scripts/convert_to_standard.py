@@ -80,7 +80,7 @@ CONVERSION_CONFIG = [
         "output": "Al_Celliers2005.csv",
         "format": "csv",
         "material": "Aluminum",
-        "reference": "Celliers et al. 2005, PRL",
+        "reference": "Celliers et al. 2005, J. Appl. Phys. 98, 113529. https://doi.org/10.1063/1.2140077",
         "rho0": 2.70,
         "data_source": "Analytical fit: Us = 17.992 + 1.167*(up - 9.838)",
         "notes": "Aluminum Hugoniot from Celliers et al. 2005 linear Us-Up fit",

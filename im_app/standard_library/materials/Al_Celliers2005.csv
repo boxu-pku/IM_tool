@@ -1,5 +1,5 @@
 # Material: Aluminum
-# Reference: Celliers et al. 2005, PRL
+# Reference: Celliers et al. 2005, J. Appl. Phys. 98, 113529. https://doi.org/10.1063/1.2140077
 # Initial Density (g/cm³): 2.7
 # Data Source: Analytical fit: Us = 17.992 + 1.167*(up - 9.838)
 # Date Created: 2026-06-14

@@ -13,4 +13,4 @@ sys.path.insert(0, project_root)
 # Launch the application
 from im_app.main import main
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

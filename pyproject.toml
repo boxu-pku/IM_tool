@@ -30,4 +30,7 @@ include = ["im_app*"]
     "standard_library/**/*",
     "workflows/**/*",
     "config/**/*",
+    "resources/im-tool.png",
+    "resources/manuals/*.pdf",
+    "resources/practice/*.json",
 ]

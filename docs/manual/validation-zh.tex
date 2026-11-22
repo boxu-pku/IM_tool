@@ -1,0 +1,10 @@
+\chapterpage{validation}{校验导入的表格}
+\begin{enumerate}
+\item 从练习窗口选择 \ui{Help → Open Working Folder}，打开 \code{materials/Quartz_Hamel2012.txt}。表头列出石英拟合、15 km/s 连接点及计算压强采用的初始密度。
+\item 在 \ui{Material Library} 中打开 \ui{Validate File}，点 \ui{Browse} 选择石英表，再点 \ui{Validate}。应识别出 500 行且无警告。以同样方法校验 \code{Al_Celliers2005.txt}，也应为 500 行。
+\item 找到石英表 $u_p=10.0$ km/s 一行，可读出 $U_s=17.65$ km/s、$P=4.67725$ Mbar、$\rho=6.11405$ g/cm³、压缩比 2.30719。这一行可用来核对拟合采样，与第 29400 号实验的测量输入各有来源。
+\end{enumerate}
+\pic{validation}{校验窗口显示 Hamel 石英表的 500 行数据、初始密度及各量范围。行数对应拟合曲线的采样点数。}{78mm}
+\subhead{常见导入问题}
+所有数据挤在同一列时，先用文本编辑器检查列名与数值之间是否有制表符。提示缺列时，按第~\pageref{materials}~页核对拼写和列名中的单位。曲线异常时，可以先对照几行原始数据和声明的初始密度，再调整显示范围。
+\note{保留可比较的版本}{修订材料表时可使用新的材料 ID，或保留旧库的版本化副本。工作流通过 ID 查找材料，用同一 ID 替换内容后，日后恢复的图可能随之改变。}
