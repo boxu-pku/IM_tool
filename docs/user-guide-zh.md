@@ -4,7 +4,7 @@
 
 [桌面安装指南](../packaging/README.md) · [中文手册（PDF）](../im_app/resources/manuals/im-tool-zh.pdf) · [English manual (PDF)](../im_app/resources/manuals/im-tool-en.pdf)
 
-Windows 安装向导和 Linux 包均附中英文离线手册。选择 **Help → Open Practice Workspace** 即可载入标准库的 `Al_Celliers2005`、`Quartz_Hamel2012` 及 Hicks 第 29400 号实验的两个实测波速。算例复得界面压强 4.7787 Mbar，论文推得 4.79 Mbar。[实验原文表 I](https://doi.org/10.1063/1.2009528)
+Windows、Linux 与 macOS 安装包均附中英文离线手册。选择 **Help → Open Practice Workspace** 即可载入标准库的 `Al_Celliers2005`、`Quartz_Hamel2012` 及 Hicks 第 29400 号实验的两个实测波速。算例复得界面压强 4.7787 Mbar，论文推得 4.79 Mbar。[实验原文表 I](https://doi.org/10.1063/1.2009528)
 
 一个专业的图形化应用程序，用于冲击波物理（HEDP）中的**阻抗匹配（Impedance Matching）**分析。通过测量多层靶材料的冲击波速度，利用雨贡纽（Hugoniot）状态方程计算压力和压缩比，为冲击波实验提供准确的数据分析工具。
 
@@ -170,7 +170,7 @@ Windows 安装向导和 Linux 包均附中英文离线手册。选择 **Help →
 
 ### 桌面安装
 
-在 Linux 上使用发行版对应的 `.deb` 或 `.rpm` 安装包，在 Windows 上运行 `.exe` 安装向导。安装后从应用菜单或“开始”菜单打开 **IM Tool**。[桌面安装步骤](../packaging/README.md)
+在 Linux 上打开对应的 `.deb` 或 `.rpm`，在 Windows 上运行 `.exe` 安装向导。在 Mac 上按芯片选择 `.dmg`，把 **IM Tool.app** 拖到“应用程序”，推出映像后再启动。[桌面安装步骤](../packaging/README.md)
 
 ### 从源码运行
 
@@ -1066,7 +1066,7 @@ IM_tool/
 │   ├── resources/   # 图标、中英文 PDF 和铝–石英练习
 │   └── workflows/   # 已保存的分析状态
 ├── docs/            # 中英文详细指南、理论说明和手册源文件
-├── packaging/       # Linux 原生包和 Windows 安装向导
+├── packaging/       # Linux 原生包、Windows 安装向导和 macOS 磁盘映像
 ├── ref/             # 参考资料
 ├── scripts/         # 材料数据导入与维护工具
 ├── tests/           # 回归测试

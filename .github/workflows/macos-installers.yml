@@ -1,0 +1,44 @@
+name: Build macOS installers
+
+on: workflow_dispatch
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: DMG (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x86_64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install desktop build dependencies
+        run: python -m pip install --only-binary=:all: -r requirements.txt Pillow 'PyInstaller>=6,<7'
+      - name: Build native disk image
+        run: |
+          test "$(uname -m)" = '${{ matrix.arch }}'
+          python packaging/build_desktop.py macos
+      - name: Verify the installed app and the aluminum–quartz exercise
+        run: |
+          python -m pip install --only-binary=:all: pyobjc-framework-Quartz
+          python tests/smoke_test_macos_install.py dist/desktop/*-${{ matrix.arch }}.dmg
+          python tests/smoke_test_practice_workspace.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: IM-Tool-macOS-${{ matrix.arch }}
+          path: dist/desktop/*-${{ matrix.arch }}.dmg
+          if-no-files-found: error
+          compression-level: 0

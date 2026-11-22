@@ -3,6 +3,8 @@ import argparse
 import json
 import os
 from pathlib import Path
+import platform
+import plistlib
 import shutil
 import subprocess
 import sys
@@ -45,19 +47,62 @@ def desktop_files():
         yield file, Path("resources") / name
 
 
-def freeze_windows():
-    win = BUILD / "windows"
-    win.mkdir(parents=True, exist_ok=True)
+def freeze_desktop(system, name, icon, options=()):
+    directory = BUILD / system
+    directory.mkdir(parents=True, exist_ok=True)
     subprocess.run([
         sys.executable, "-m", "PyInstaller", "--noconfirm", "--onedir", "--windowed",
-        "--name", "IMTool", "--icon", str(ASSETS / "im-tool.ico"), "--paths", str(ROOT),
+        "--name", name, "--icon", str(icon), "--paths", str(ROOT),
         "--hidden-import", "xlrd", "--hidden-import", "openpyxl",
         "--hidden-import", "matplotlib.backends.backend_qt5agg",
         "--exclude-module", "PySide6", "--exclude-module", "PyQt6", "--exclude-module", "tkinter",
         "--exclude-module", "torch", "--exclude-module", "IPython",
-        "--workpath", str(win / "freeze"), "--distpath", str(win / "bundle"),
-        "--specpath", str(win), str(PKG / "main.py"),
+        "--workpath", str(directory / "freeze"), "--distpath", str(directory / "bundle"),
+        "--specpath", str(directory), *options, str(PKG / "main.py"),
     ], cwd=ROOT, check=True)
+
+
+def freeze_windows():
+    freeze_desktop("windows", "IMTool", ASSETS / "im-tool.ico")
+
+
+def macos_installer():
+    if sys.platform != "darwin":
+        raise SystemExit("Build the macOS disk image on a Mac or use the Build macOS installers workflow.")
+    arch = platform.machine()
+    if arch not in ("arm64", "x86_64"):
+        raise SystemExit(f"Unsupported macOS architecture: {arch}")
+    OUT.mkdir(parents=True, exist_ok=True)
+    with TemporaryDirectory(prefix=".macos-", dir=OUT) as temporary:
+        staging = Path(temporary)
+        library = staging / "desktop_library"
+        build_library(library)
+        options = ["--target-arch", arch, "--osx-bundle-identifier", APP_ID,
+                   "--add-data", f"{library}:im_app/desktop_library"]
+        for file, relative in desktop_files():
+            options.extend(["--add-data", f"{file}:im_app/{relative.parent.as_posix()}"])
+        freeze_desktop("macos", "IM Tool", ASSETS / "im-tool.png", options)
+
+        app = BUILD / "macos" / "bundle" / "IM Tool.app"
+        info = app / "Contents" / "Info.plist"
+        metadata = plistlib.loads(info.read_bytes())
+        metadata.update(CFBundleShortVersionString=VERSION, CFBundleVersion=VERSION,
+                        LSApplicationCategoryType="public.app-category.education")
+        info.write_bytes(plistlib.dumps(metadata))
+        # PyInstaller signs nested code. Seal the final Info.plist into the outer bundle.
+        subprocess.run(["codesign", "--force", "--sign", "-", "--timestamp=none", str(app)], check=True)
+        subprocess.run(["codesign", "--verify", "--deep", "--strict", str(app)], check=True)
+
+        volume = staging / "volume"
+        volume.mkdir()
+        subprocess.run(["ditto", str(app), str(volume / app.name)], check=True)
+        (volume / "Applications").symlink_to("/Applications", target_is_directory=True)
+        image = staging / f"IM-Tool-{VERSION}-macOS-{arch}.dmg"
+        subprocess.run(["hdiutil", "create", "-fs", "HFS+", "-format", "UDZO",
+                        "-volname", "IM Tool", "-srcfolder", str(volume), str(image)], check=True)
+        subprocess.run(["hdiutil", "verify", str(image)], check=True)
+        image.replace(OUT / image.name)
+        print(OUT / image.name)
 
 
 def windows_installer():
@@ -143,11 +188,13 @@ def linux_installers(staging):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("platform", choices=("linux", "windows"))
+    parser.add_argument("platform", choices=("linux", "windows", "macos"))
     args = parser.parse_args()
     if args.platform == "linux":
         with TemporaryDirectory(prefix="im-tool-") as temp:
             linux_installers(Path(temp))
+    elif args.platform == "macos":
+        macos_installer()
     else:
         freeze_windows()
         windows_installer()

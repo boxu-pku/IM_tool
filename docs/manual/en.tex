@@ -38,6 +38,21 @@ In your desktop session, search the applications menu for \ui{IM Tool}. Alternat
 The installed application resources are under \code{/usr/share/im-tool/}. The default user data location is \verb|~/.local/share/IM Tool/|, or the corresponding directory under \code{XDG_DATA_HOME}. Use \ui{Help → Open Working Folder} to see the active library. To update, install the newer local package with the same package manager. For a rebuilt package with the same version, use \code{apt reinstall} or \code{dnf reinstall} with the local package path. Use \code{sudo apt remove im-tool} or \code{sudo dnf remove im-tool} to uninstall.
 \note{Which version is installed?}{On Ubuntu or Debian run \code{dpkg-query -W im-tool}. On Fedora run \code{rpm -q im-tool}. Start the GUI as your normal user so newly created files belong to you.}
 
+\chapterpage{macos}{Install on macOS}
+In the Apple menu, choose \ui{About This Mac}. Use the \code{arm64} disk image if the Chip field names an Apple M-series chip. Use the \code{x86_64} image if the Processor field names Intel. The application includes Python, Qt, the starter tables and both offline manuals.
+\tbl{Mac}{Disk image for version 1.2.4}{
+Apple silicon & \code{IM-Tool-1.2.4-macOS-arm64.dmg}\\
+Intel & \code{IM-Tool-1.2.4-macOS-x86_64.dmg}\\}
+\begin{enumerate}
+\item Double-click the disk image in Finder. Drag \ui{IM Tool.app} onto the \ui{Applications} shortcut in the window and wait for the copy to finish.
+\item Eject the \ui{IM Tool} disk image in Finder. Open \ui{Applications} and double-click \ui{IM Tool}.
+\item Choose \ui{Help → Open Practice Workspace}. The exercise opens with the Celliers aluminum and Hamel quartz standards. Choose either manual in \ui{Help} to open the bundled PDF.
+\end{enumerate}
+\subhead{If macOS asks for approval}
+This release uses an ad hoc signature and has no Apple notarization. If Gatekeeper blocks the first launch, verify the download source. For a copy you trust, follow the per-app approval in \ui{System Settings → Privacy \& Security → Open Anyway}. \href{https://support.apple.com/en-us/102445}{Apple's first-launch instructions}.
+\subhead{Work files, updates and removal}
+Your writable library is under \verb|~/Library/Application Support/|. Use \ui{Help → Open Working Folder} to locate the active library and its sibling \code{workflows} folder. To update, quit the application, drag the newer copy to Applications and choose \ui{Replace}. To uninstall, move \ui{IM Tool.app} from Applications to the Trash. Your work is stored separately in your account.
+
 \chapterpage{workspace}{Load the two reference materials}
 Open \ui{Help → Open Practice Workspace}. The new window selects \ui{Aluminum} (\code{Al_Celliers2005}) and \ui{Alpha Quartz} (\code{Quartz_Hamel2012}) from the standard library. Each table samples a published fit at 500 velocities.
 \begin{enumerate}

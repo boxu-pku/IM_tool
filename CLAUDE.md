@@ -84,7 +84,7 @@ im_app/
 
 ```text
 docs/             User guides, theory and manual sources
-packaging/        Linux and Windows desktop installer builds
+packaging/        Linux, Windows and macOS desktop installer builds
 ref/              Reference material
 scripts/          Data conversion and maintenance tools
 tests/            GUI and headless regression tests
@@ -223,6 +223,7 @@ Lines: serif fonts, inward ticks, colorblind-friendly palette (`PRL_COLORS`), ax
 ```bash
 python -m build                           # Python wheel and source distribution in dist/
 python packaging/build_desktop.py linux   # Debian and RPM packages in dist/desktop/
+python packaging/build_desktop.py macos   # Native disk image on Apple silicon or Intel macOS
 python packaging/build_desktop.py windows # Windows installer on an x64 Windows host
 ```
 

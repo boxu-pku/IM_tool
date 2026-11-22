@@ -37,6 +37,21 @@ Linux 安装包使用发行版提供的 Python 3、PyQt5、绘图库及电子表
 系统程序位于 \code{/usr/share/im-tool/}。用户文件默认在 \verb|~/.local/share/IM Tool/| 下。设置了 \code{XDG_DATA_HOME} 时会使用其对应目录。可从 \ui{Help → Open Working Folder} 查看正在使用的库。升级时用同一包管理器安装新版文件。如果是同一版号的重新构建，可用 \code{apt reinstall} 或 \code{dnf reinstall} 加本地文件路径重装。卸载可用 \code{sudo apt remove im-tool} 或 \code{sudo dnf remove im-tool}。
 \note{检查已安装版本}{Debian 和 Ubuntu 使用 \code{dpkg-query -W im-tool}，Fedora 使用 \code{rpm -q im-tool}。平时以普通用户启动桌面程序，创建的工作文件就属于当前账户。}
 
+\chapterpage{macos}{在 macOS 上安装}
+在苹果菜单中打开“关于本机”。如果“芯片”一栏显示 Apple M 系列，请下载 \code{arm64} 磁盘映像。如果“处理器”一栏显示 Intel，请下载 \code{x86_64} 磁盘映像。软件自带 Python、Qt、初始材料表和中英文离线手册。
+\tbl{Mac 机型}{1.2.4 安装镜像}{
+Apple 芯片 & \code{IM-Tool-1.2.4-macOS-arm64.dmg}\\
+Intel 处理器 & \code{IM-Tool-1.2.4-macOS-x86_64.dmg}\\}
+\begin{enumerate}
+\item 在访达中双击下载的磁盘映像。将 \ui{IM Tool.app} 拖到同一窗口里的 \ui{Applications}（应用程序）快捷方式，等拷贝完成。
+\item 在访达侧边栏推出 \ui{IM Tool} 磁盘映像。打开“应用程序”，双击 \ui{IM Tool}。
+\item 选择 \ui{Help → Open Practice Workspace}。新窗口会加载 Celliers 铝与 Hamel 石英。在 \ui{Help} 中也可以打开任一种语言的离线 PDF 手册。
+\end{enumerate}
+\subhead{首次打开时的系统提示}
+本版采用临时签名，未经 Apple 公证。如果系统阻止首次打开，请核对下载来源。确认副本可信后，打开“系统设置 → 隐私与安全性”，选择“仍要打开”，为这一个应用批准运行。\href{https://support.apple.com/zh-cn/102445}{Apple 首次打开应用说明}。
+\subhead{工作文件、更新与卸载}
+首次启动会在当前账户的 \verb|~/Library/Application Support/| 下创建可写的材料库。在 \ui{Help → Open Working Folder} 中可以定位当前库和同级的 \code{workflows} 文件夹。更新时先退出程序，再将新版拖入“应用程序”并选“替换”。卸载时将“应用程序”中的 \ui{IM Tool.app} 移到废纸篓。工作文件单独保存在用户目录。
+
 \chapterpage{workspace}{载入 Celliers 铝和 Hamel 石英}
 打开 \ui{Help → Open Practice Workspace}。材料列表已勾选 \ui{Aluminum} 和 \ui{Alpha Quartz}。对应的 ID 为 \code{Al_Celliers2005} 和 \code{Quartz_Hamel2012}，各含 500 个拟合采样点。
 \begin{enumerate}
